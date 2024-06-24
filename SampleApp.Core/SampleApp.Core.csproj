@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;Core</DefineConstants>
@@ -10,7 +10,7 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EPPlus\EPPlus.MultiTarget.csproj" />
+    <ProjectReference Include="..\EPPlus\EPPlus.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
