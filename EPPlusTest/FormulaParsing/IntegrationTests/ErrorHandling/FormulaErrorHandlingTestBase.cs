@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests
 {
-    [TestClass]
+    [TestFixture]
     public class FormulaErrorHandlingTestBase
     {
         protected ExcelPackage Package;

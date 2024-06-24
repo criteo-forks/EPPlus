@@ -2,16 +2,16 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.Utils;
 using OfficeOpenXml;
 
 namespace EPPlusTest.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class AddressUtilityTests
     {
-        [TestMethod]
+        [Test]
         public void ParseForEntireColumnSelections_ShouldAddMaxRows()
         {
             // Arrange
@@ -21,10 +21,10 @@ namespace EPPlusTest.Utils
             var result = AddressUtility.ParseEntireColumnSelections(address);
 
             // Assert
-            Assert.AreEqual("A1:A" + ExcelPackage.MaxRows, result);
+            Assert.That("A1:A" + ExcelPackage.MaxRows, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ParseForEntireColumnSelections_ShouldAddMaxRowsOnColumnsWithMultipleLetters()
         {
             // Arrange
@@ -34,10 +34,10 @@ namespace EPPlusTest.Utils
             var result = AddressUtility.ParseEntireColumnSelections(address);
 
             // Assert
-            Assert.AreEqual("AB1:AC" + ExcelPackage.MaxRows, result);
+            Assert.That("AB1:AC" + ExcelPackage.MaxRows, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ParseForEntireColumnSelections_ShouldHandleMultipleRanges()
         {
             // Arrange
@@ -48,7 +48,7 @@ namespace EPPlusTest.Utils
             var result = AddressUtility.ParseEntireColumnSelections(address);
 
             // Assert
-            Assert.AreEqual(expected, result);
+            Assert.That(expected, Is.EqualTo(result));
         }
     }
 }

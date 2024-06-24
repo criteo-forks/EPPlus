@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions;
@@ -8,10 +8,10 @@ using OfficeOpenXml.FormulaParsing.Exceptions;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 {
-	[TestClass]
+	[TestFixture]
 	public class AverageTests
 	{
-		[TestMethod]
+		[Test]
 		public void AverageLiterals()
 		{
 			// In the case of literals, Average DOES parse and include numeric strings, date strings, bools, etc.
@@ -33,10 +33,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 				new FunctionArgument(date1),
 				new FunctionArgument(date2.ToString("d"))
 			}, ParsingContext.Create());
-			Assert.AreEqual((value1 + value2 + value3 + value4 + value5 + value6) / 6, result.Result);
+			Assert.That((value1 + value2 + value3 + value4 + value5 + value6) / 6, Is.EqualTo(result.Result));
 		}
 
-		[TestMethod]
+		[Test]
 		public void AverageCellReferences()
 		{
 			// In the case of cell references, Average DOES NOT parse and include numeric strings, date strings, bools, unparsable strings, etc.
@@ -70,10 +70,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 				new FunctionArgument(rangeInfo2),
 				new FunctionArgument(rangeInfo3)
 			}, context);
-			Assert.AreEqual((2000 + new DateTime(2013, 1, 5).ToOADate()) / 2, result.Result);
+			Assert.Equals((2000 + new DateTime(2013, 1, 5).ToOADate()) / 2, result.Result);
 		}
 
-		[TestMethod]
+		[Test]
 		public void AverageArray()
 		{
 			// In the case of arrays, Average DOES NOT parse and include numeric strings, date strings, bools, unparsable strings, etc.
@@ -94,20 +94,22 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 					new FunctionArgument("test")
 				})
 			}, ParsingContext.Create());
-			Assert.AreEqual((2000 + date1.ToOADate()) / 2, result.Result);
+			Assert.That((2000 + date1.ToOADate()) / 2, Is.EqualTo(result.Result));
 		}
 
-		[TestMethod]
-		[ExpectedException(typeof(ExcelErrorValueException))]
+		[Test]
 		public void AverageUnparsableLiteral()
 		{
-			// In the case of literals, any unparsable string literal results in a #VALUE.
-			Average average = new Average();
-			var result = average.Execute(new FunctionArgument[]
+			Assert.Throws<ExcelErrorValueException>(() =>
 			{
-				new FunctionArgument(1000),
-				new FunctionArgument("Test")
-			}, ParsingContext.Create());
+				// In the case of literals, any unparsable string literal results in a #VALUE.
+				Average average = new Average();
+				var result = average.Execute(new FunctionArgument[]
+				{
+					new FunctionArgument(1000),
+					new FunctionArgument("Test")
+				}, ParsingContext.Create());
+			});
 		}
 	}
 }

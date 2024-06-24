@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using FakeItEasy;
 using ExGraph = OfficeOpenXml.FormulaParsing.ExpressionGraph.ExpressionGraph;
@@ -11,12 +11,12 @@ using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 
 namespace EPPlusTest.FormulaParsing
 {
-    [TestClass]
+    [TestFixture]
     public class FormulaParserTests
     {
         private FormulaParser _parser;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             var provider = A.Fake<ExcelDataProvider>();
@@ -24,13 +24,13 @@ namespace EPPlusTest.FormulaParsing
 
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
 
         }
 
-        [TestMethod]
+        [Test]
         public void ParserShouldCallLexer()
         {
             var lexer = A.Fake<ILexer>();
@@ -42,7 +42,7 @@ namespace EPPlusTest.FormulaParsing
             A.CallTo(() => lexer.Tokenize("ABC")).MustHaveHappened();
         }
 
-        [TestMethod]
+        [Test]
         public void ParserShouldCallGraphBuilder()
         {
             var lexer = A.Fake<ILexer>();
@@ -63,7 +63,7 @@ namespace EPPlusTest.FormulaParsing
             A.CallTo(() => graphBuilder.Build(tokens)).MustHaveHappened();
         }
 
-        [TestMethod]
+        [Test]
         public void ParserShouldCallCompiler()
         {
             var lexer = A.Fake<ILexer>();
@@ -89,20 +89,23 @@ namespace EPPlusTest.FormulaParsing
             A.CallTo(() => compiler.Compile(expectedGraph.Expressions)).MustHaveHappened();
         }
 
-        [TestMethod]
+        [Test]
         public void ParseAtShouldCallExcelDataProvider()
         {
             var excelDataProvider = A.Fake<ExcelDataProvider>();
             A.CallTo(() => excelDataProvider.GetRangeFormula(string.Empty, 1, 1)).Returns("Sum(1,2)");
             var parser = new FormulaParser(excelDataProvider);
             var result = parser.ParseAt("A1");
-            Assert.AreEqual(3d, result);
+            Assert.That(3d, Is.EqualTo(result));
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ParseAtShouldThrowIfAddressIsNull()
         {
-            _parser.ParseAt(null);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                _parser.ParseAt(null);
+            });
         }
     }
 }

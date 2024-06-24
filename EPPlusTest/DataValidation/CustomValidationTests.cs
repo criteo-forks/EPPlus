@@ -2,45 +2,48 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace EPPlusTest.DataValidation
 {
-    [TestClass]
+    [TestFixture]
     public class CustomValidationTests : ValidationTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             SetupTestData();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             CleanupTestData();
         }
 
-        [TestMethod]
+        [Test]
         public void CustomValidation_FormulaIsSet()
         {
             // Act
             var validation = _sheet.DataValidations.AddCustomValidation("A1");
 
             // Assert
-            Assert.IsNotNull(validation.Formula);
+            Assert.That(validation.Formula, Is.Not.Null);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void CustomValidation_ShouldThrowExceptionIfFormulaIsTooLong()
         {
-            // Arrange
-            var sb = new StringBuilder();
-            for (var x = 0; x < 257; x++) sb.Append("x");
-            
-            // Act
-            var validation = _sheet.DataValidations.AddCustomValidation("A1");
-            validation.Formula.ExcelFormula = sb.ToString();
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                // Arrange
+                var sb = new StringBuilder();
+                for (var x = 0; x < 257; x++) sb.Append("x");
+
+                // Act
+                var validation = _sheet.DataValidations.AddCustomValidation("A1");
+                validation.Formula.ExcelFormula = sb.ToString();
+            });
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.IO;
 using OfficeOpenXml.Utils;
 using OfficeOpenXml;
@@ -15,7 +15,7 @@ namespace EPPlusTest
     /// <summary>
     /// Summary description for CompoundDoc
     /// </summary>
-    [TestClass]
+    [TestFixture]
     public class CompoundDoc
     {
         public CompoundDoc()
@@ -65,7 +65,7 @@ namespace EPPlusTest
         //
         #endregion
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void Read()
         {
            //var doc = File.ReadAllBytes(@"c:\temp\vbaProject.bin");
@@ -85,7 +85,7 @@ namespace EPPlusTest
                 printitems(c);
             }
         }
-        [TestMethod]
+        [Test]
         public void WriteReadCompundDoc()
         {
             for(int i=1;i<50;i++)
@@ -107,8 +107,8 @@ namespace EPPlusTest
             var ms = new MemoryStream(b);
             using (var p = new ExcelPackage(ms))
             {
-                Assert.AreEqual(p.Workbook.VbaProject.Modules.Count,noSheets+2);
-                Assert.AreEqual(noSheets, p.Workbook.Worksheets.Count);
+                Assert.Equals(p.Workbook.VbaProject.Modules.Count,noSheets+2);
+                Assert.That(noSheets, Is.EqualTo(p.Workbook.Worksheets.Count));
             }
         }
 
@@ -129,7 +129,7 @@ namespace EPPlusTest
             }
         }
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void ReadEncLong()
         {
             var doc=File.ReadAllBytes(@"c:\temp\EncrDocRead.xlsx");
@@ -139,7 +139,7 @@ namespace EPPlusTest
 
             File.WriteAllBytes(@"c:\temp\vba.xlsx", ms.ToArray());
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void ReadVba()
         {
             var p = new ExcelPackage(new FileInfo(@"c:\temp\pricecheck.xlsm"));
@@ -151,7 +151,7 @@ namespace EPPlusTest
             var baseFolder = Path.Combine(@"c:\temp\bug\");
             return new FileInfo(Path.Combine(baseFolder, name));
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void Issue131()
         {
             var src = TempFile("report.xlsm");
@@ -168,7 +168,7 @@ namespace EPPlusTest
 
             package.Save();
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void Sample7EncrLargeTest()
         {
             int Rows = 1000000;
@@ -264,14 +264,14 @@ namespace EPPlusTest
             }
             Console.WriteLine("{0:HH.mm.ss}\tDone!!", DateTime.Now);
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void ReadPerfTest()
         {
             var p = new ExcelPackage(new FileInfo(@"c:\temp\bug\sample7compdoctest.xlsx"), "");
             //var p = new ExcelPackage(new FileInfo(@"c:\temp\bug\sample7compdoctest_4.5.xlsx"), "");
             //var p = new ExcelPackage(new FileInfo(@"c:\temp\bug\sample7compdoctest.310k.xlsx"), "");
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void ReadVbaIssue107()
         {
             //var p = new ExcelPackage(new FileInfo(@"c:\temp\bug\report.xlsm"));

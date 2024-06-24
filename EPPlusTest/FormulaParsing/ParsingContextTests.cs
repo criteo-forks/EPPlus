@@ -2,26 +2,26 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 
 namespace EPPlusTest.FormulaParsing
 {
-    [TestClass]
+    [TestFixture]
     public class ParsingContextTests
     {
-        [TestMethod]
+        [Test]
         public void ConfigurationShouldBeSetByFactoryMethod()
         {
             var context = ParsingContext.Create();
-            Assert.IsNotNull(context.Configuration);
+            Assert.That(context.Configuration, Is.Not.Null);
         }
 
-        [TestMethod]
+        [Test]
         public void ScopesShouldBeSetByFactoryMethod()
         {
             var context = ParsingContext.Create();
-            Assert.IsNotNull(context.Scopes);
+            Assert.That(context.Scopes, Is.Not.Null);
         }
     }
 }

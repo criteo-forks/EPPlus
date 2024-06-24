@@ -2,29 +2,29 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.DataValidation;
 using OfficeOpenXml;
 
 namespace EPPlusTest.DataValidation.Formulas
 {
-    [TestClass]
+    [TestFixture]
     public class DateTimeFormulaTests : ValidationTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             SetupTestData();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             CleanupTestData();
             _dataValidationNode = null;
         }
 
-        [TestMethod]
+        [Test]
         public void DateTimeFormula_FormulaValueIsSetFromXmlNodeInConstructor()
         {
             // Arrange
@@ -34,10 +34,10 @@ namespace EPPlusTest.DataValidation.Formulas
             // Act
             var validation = new ExcelDataValidationDateTime(_sheet, "A1", ExcelDataValidationType.Decimal, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.AreEqual(date, validation.Formula.Value);
+            Assert.That(date, Is.EqualTo(validation.Formula.Value));
         }
 
-        [TestMethod]
+        [Test]
         public void DateTimeFormula_FormulasFormulaIsSetFromXmlNodeInConstructor()
         {
             // Arrange
@@ -48,7 +48,7 @@ namespace EPPlusTest.DataValidation.Formulas
             var validation = new ExcelDataValidationDateTime(_sheet, "A1", ExcelDataValidationType.Decimal, _dataValidationNode, _namespaceManager);
 
             // Assert
-            Assert.AreEqual("A1", validation.Formula.ExcelFormula);
+            Assert.That("A1", Is.EqualTo(validation.Formula.ExcelFormula));
         }
     }
 }

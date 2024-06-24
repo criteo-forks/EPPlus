@@ -2,21 +2,21 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.ExcelUtilities;
 using OfficeOpenXml.FormulaParsing;
 using FakeItEasy;
 
 namespace EPPlusTest.ExcelUtilities
 {
-    [TestClass]
+    [TestFixture]
     public class AddressTranslatorTests
     {
         private AddressTranslator _addressTranslator;
         private ExcelDataProvider _excelDataProvider;
         private const int ExcelMaxRows = 1356;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _excelDataProvider = A.Fake<ExcelDataProvider>();
@@ -24,46 +24,49 @@ namespace EPPlusTest.ExcelUtilities
             _addressTranslator = new AddressTranslator(_excelDataProvider);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ConstructorShouldThrowIfProviderIsNull()
         {
-            new AddressTranslator(null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                new AddressTranslator(null);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldTranslateRowNumber()
         {
             int col, row;
             _addressTranslator.ToColAndRow("A2", out col, out row);
-            Assert.AreEqual(2, row);
+            Assert.That(2, Is.EqualTo(row));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldTranslateLettersToColumnIndex()
         {
             int col, row;
             _addressTranslator.ToColAndRow("C1", out col, out row);
-            Assert.AreEqual(3, col);
+            Assert.That(3, Is.EqualTo(col));
             _addressTranslator.ToColAndRow("AA2", out col, out row);
-            Assert.AreEqual(27, col);
+            Assert.That(27, Is.EqualTo(col));
             _addressTranslator.ToColAndRow("BC1", out col, out row);
-            Assert.AreEqual(55, col);
+            Assert.That(55, Is.EqualTo(col));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldTranslateLetterAddressUsingMaxRowsFromProviderLower()
         {
             int col, row;
             _addressTranslator.ToColAndRow("A", out col, out row);
-            Assert.AreEqual(1, row);
+            Assert.That(1, Is.EqualTo(row));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldTranslateLetterAddressUsingMaxRowsFromProviderUpper()
         {
             int col, row;
             _addressTranslator.ToColAndRow("A", out col, out row, AddressTranslator.RangeCalculationBehaviour.LastPart);
-            Assert.AreEqual(ExcelMaxRows, row);
+            Assert.That(ExcelMaxRows, Is.EqualTo(row));
         }
     }
 }

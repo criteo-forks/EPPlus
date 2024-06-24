@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Xml;
 using EPPlusTest.Properties;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing;
 using OfficeOpenXml.Drawing.Chart;
@@ -16,10 +16,10 @@ namespace EPPlusTest
     /// <summary>
     /// Summary description for UnitTest1
     /// </summary>
-    [TestClass]
+    [TestFixture]
     public class DrawingTest : TestBase
     {
-        [TestMethod]
+        [Test]
         public void RunDrawingTests()
         {
             BarChart();
@@ -49,19 +49,19 @@ namespace EPPlusTest
             ReadDocument();
             ReadDrawing();
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void ReadDrawing()
         {
             using (ExcelPackage pck = new ExcelPackage(new FileInfo(_worksheetPath + @"Drawing.xlsx")))
             {
                 var ws = pck.Workbook.Worksheets["Pyramid"];
-                Assert.AreEqual(ws.Cells["V24"].Value, 104D);
+                Assert.That(ws.Cells["V24"].Value, Is.EqualTo(104D));
                 ws = pck.Workbook.Worksheets["Scatter"];
                 var cht = ws.Drawings["ScatterChart1"] as ExcelScatterChart;
-                Assert.AreEqual(cht.Title.Text, "Header  Text");
+                Assert.That(cht.Title.Text, Is.EqualTo("Header  Text"));
                 cht.Title.Text = "Test";
-                Assert.AreEqual(cht.Title.Text, "Test");
+                Assert.That(cht.Title.Text, Is.EqualTo("Test"));
             }
         }
         
@@ -113,8 +113,8 @@ namespace EPPlusTest
             var wsCopy = _pck.Workbook.Worksheets.Add("Picture3", ws2);
             //_pck.Workbook.Worksheets.Delete(ws2);
          }
-         //[TestMethod]
-         //[Ignore]
+         //[Test]
+         //[Explicit]
          public void DrawingSizingAndPositioning()
          {
              var ws = _pck.Workbook.Worksheets.Add("DrawingPosSize");
@@ -135,8 +135,8 @@ namespace EPPlusTest
              ws.Column(3).Width = 100;
          }
 
-        //[TestMethod]
-        // [Ignore]
+        //[Test]
+        // [Explicit]
          public void BarChart()
         {
             var ws = _pck.Workbook.Worksheets.Add("BarChart");            
@@ -154,10 +154,10 @@ namespace EPPlusTest
             chrt.DisplayBlanksAs = eDisplayBlanksAs.Zero;
             chrt.Title.RichText.Text = "Barchart Test";
             chrt.GapWidth = 5;
-            Assert.IsTrue(chrt.ChartType == eChartType.BarClustered, "Invalid Charttype");
-            Assert.IsTrue(chrt.Direction == eDirection.Bar, "Invalid Bardirection");
-            Assert.IsTrue(chrt.Grouping == eGrouping.Clustered, "Invalid Grouping");
-            Assert.IsTrue(chrt.Shape == eShape.Box, "Invalid Shape");
+            Assert.That(chrt.ChartType == eChartType.BarClustered, "Invalid Charttype");
+            Assert.That(chrt.Direction == eDirection.Bar, "Invalid Bardirection");
+            Assert.That(chrt.Grouping == eGrouping.Clustered, "Invalid Grouping");
+            Assert.That(chrt.Shape == eShape.Box, "Invalid Shape");
         }
 
         private static void AddTestSerie(ExcelWorksheet ws, ExcelChart chrt)
@@ -198,8 +198,8 @@ namespace EPPlusTest
             ws.Cells["X23"].Value = "ÿ";
             ws.Cells["X24"].Value = "û";
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void PieChart()
         {
             var ws = _pck.Workbook.Worksheets.Add("PieChart");
@@ -214,8 +214,8 @@ namespace EPPlusTest
             chrt.Legend.Font.Color = Color.SteelBlue;
             chrt.Title.Border.Fill.Style = eFillStyle.SolidFill;
             chrt.Legend.Position = eLegendPosition.TopRight;
-            Assert.IsTrue(chrt.ChartType == eChartType.Pie, "Invalid Charttype");
-            Assert.IsTrue(chrt.VaryColors);
+            Assert.That(chrt.ChartType == eChartType.Pie, "Invalid Charttype");
+            Assert.That(chrt.VaryColors);
             chrt.Title.Text = "Piechart";
         }
         public void PieOfChart()
@@ -232,11 +232,11 @@ namespace EPPlusTest
             chrt.Legend.Font.Color = Color.SteelBlue;
             chrt.Title.Border.Fill.Style = eFillStyle.SolidFill;
             chrt.Legend.Position = eLegendPosition.TopRight;
-            Assert.IsTrue(chrt.ChartType == eChartType.BarOfPie, "Invalid Charttype");
+            Assert.That(chrt.ChartType == eChartType.BarOfPie, "Invalid Charttype");
             chrt.Title.Text = "Piechart";
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void PieChart3D()
         {
             var ws = _pck.Workbook.Worksheets.Add("PieChart3d");
@@ -251,12 +251,12 @@ namespace EPPlusTest
             chrt.ShowHiddenData = false;
             chrt.DisplayBlanksAs = eDisplayBlanksAs.Gap;
             chrt.Title.RichText.Add("Pie RT Title add");
-            Assert.IsTrue(chrt.ChartType == eChartType.Pie3D, "Invalid Charttype");
-            Assert.IsTrue(chrt.VaryColors);
+            Assert.That(chrt.ChartType == eChartType.Pie3D, "Invalid Charttype");
+            Assert.That(chrt.VaryColors);
 
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Scatter()
         {
             var ws = _pck.Workbook.Worksheets.Add("Scatter");
@@ -283,7 +283,7 @@ namespace EPPlusTest
             ser.DataLabel.Font.Color = Color.White;
             ser.DataLabel.Font.Italic = true;
             ser.DataLabel.Font.SetFromFont(new Font("bookman old style", 8));
-            Assert.IsTrue(chrt.ChartType == eChartType.XYScatterSmoothNoMarkers, "Invalid Charttype");
+            Assert.That(chrt.ChartType == eChartType.XYScatterSmoothNoMarkers, "Invalid Charttype");
             chrt.Series[0].Header = "Test serie";
             chrt = ws.Drawings.AddChart("ScatterChart2", eChartType.XYScatterSmooth) as ExcelScatterChart;
             chrt.Series.Add("U19:U24", "V19:V24");
@@ -295,11 +295,11 @@ namespace EPPlusTest
             chrt.Legend.Position = eLegendPosition.Bottom;
             
             ////chrt.Series[0].DataLabel.Position = eLabelPosition.Center;
-            //Assert.IsTrue(chrt.ChartType == eChartType.XYScatter, "Invalid Charttype");
+            //Assert.That(chrt.ChartType == eChartType.XYScatter, "Invalid Charttype");
 
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Bubble()
         {
             var ws = _pck.Workbook.Worksheets.Add("Bubble");
@@ -328,8 +328,8 @@ namespace EPPlusTest
             
 
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Radar()
         {
             var ws = _pck.Workbook.Worksheets.Add("Radar");
@@ -368,8 +368,8 @@ namespace EPPlusTest
             chrt.To.Column = 22;
             chrt.Title.Text = "Radar Chart 3";
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Surface()
         {
             var ws = _pck.Workbook.Worksheets.Add("Surface");
@@ -409,8 +409,8 @@ namespace EPPlusTest
             //chrt.To.Column = 22;
             //chrt.Title.Text = "Radar Chart 3";
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Pyramid()
         {
             var ws = _pck.Workbook.Worksheets.Add("Pyramid");
@@ -453,8 +453,8 @@ namespace EPPlusTest
             chrt.DataLabel.Border.Fill.Color=Color.Black;
             chrt.DataLabel.Border.LineStyle = eLineStyle.Solid;
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Cone()
         {
             var ws = _pck.Workbook.Worksheets.Add("Cone");
@@ -466,10 +466,10 @@ namespace EPPlusTest
             chrt.Series[0].Header = "Serie 1";
             chrt.Legend.Position = eLegendPosition.Right;
             chrt.Axis[1].DisplayUnit = 100000;
-            Assert.AreEqual(chrt.Axis[1].DisplayUnit, 100000);
+            Assert.That(chrt.Axis[1].DisplayUnit, Is.EqualTo(100000));
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Column()
         {
             var ws = _pck.Workbook.Worksheets.Add("Column");
@@ -487,10 +487,10 @@ namespace EPPlusTest
             chrt.Print = false;
             chrt.EditAs = eEditAs.TwoCell;
             chrt.Axis[1].DisplayUnit = 10020;
-            Assert.AreEqual(chrt.Axis[1].DisplayUnit, 10020);
+            Assert.That(chrt.Axis[1].DisplayUnit, Is.EqualTo(10020));
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Dougnut()
         {
             var ws = _pck.Workbook.Worksheets.Add("Dougnut");
@@ -501,8 +501,8 @@ namespace EPPlusTest
             chrt.Series[0].Header = "Serie 1";
             chrt.EditAs = eEditAs.Absolute;
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Line()
         {
             var ws = _pck.Workbook.Worksheets.Add("Line");
@@ -553,8 +553,8 @@ namespace EPPlusTest
             chrt.Axis[1].Title.Border.LineStyle=eLineStyle.LongDashDotDot;
 
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void LineMarker()
         {
             var ws = _pck.Workbook.Worksheets.Add("LineMarker1");
@@ -574,8 +574,8 @@ namespace EPPlusTest
             serie.Marker = eMarkerStyle.X;
 
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Drawings()
         {
             var ws = _pck.Workbook.Worksheets.Add("Shapes");
@@ -648,16 +648,16 @@ namespace EPPlusTest
             (ws.Drawings["shape120"] as ExcelShape).LineEnds.HeadEndSizeHeight = eEndSize.Small;
             (ws.Drawings["shape120"] as ExcelShape).LineEnds.HeadEndSizeWidth = eEndSize.Small;
         }
-        [TestMethod]
-        [Ignore]
+        [Test]
+        [Explicit]
         public void DrawingWorksheetCopy()
         {
             var wsShapes = _pck.Workbook.Worksheets.Add("Copy Shapes", _pck.Workbook.Worksheets["Shapes"]);
             var wsScatterChart = _pck.Workbook.Worksheets.Add("Copy Scatter", _pck.Workbook.Worksheets["Scatter"]);
             var wsPicture = _pck.Workbook.Worksheets.Add("Copy Picture", _pck.Workbook.Worksheets["Picture"]);
         }    
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void Line2Test()
         {
            ExcelWorksheet worksheet = _pck.Workbook.Worksheets.Add("LineIssue");
@@ -687,8 +687,8 @@ namespace EPPlusTest
 
            chart.Series[0].Header = "Blah";
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void MultiChartSeries()
         {
             ExcelWorksheet worksheet = _pck.Workbook.Worksheets.Add("MultiChartTypes");
@@ -759,8 +759,8 @@ namespace EPPlusTest
             var element = chart.ChartXml.SelectSingleNode("//c:plotVisOnly", ns);
             if (element!=null) element.ParentNode.RemoveChild(element);
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void DeleteDrawing()
         {
             var ws=_pck.Workbook.Worksheets.Add("DeleteDrawing1");
@@ -787,8 +787,8 @@ namespace EPPlusTest
             pic1 = ws.Drawings.AddPicture("Pic1", Resources.Test1);
             ws.Drawings.Clear();
         }
-        //[TestMethod]
-        //[Ignore]
+        //[Test]
+        //[Explicit]
         public void ReadDocument()
         {
             var fi=new FileInfo(_worksheetPath + "drawing.xlsx");
@@ -812,8 +812,8 @@ namespace EPPlusTest
             }
             pck.Dispose();
         }
-        [TestMethod]
-        [Ignore]
+        [Test]
+        [Explicit]
         public void ReadMultiChartSeries()
         {
             ExcelPackage pck = new ExcelPackage(new FileInfo("c:\\temp\\chartseries.xlsx"), true);
@@ -848,8 +848,8 @@ namespace EPPlusTest
 
             pck.SaveAs(new FileInfo("c:\\temp\\chartseriesnew.xlsx"));
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void ChartWorksheet()
         {
             _pck = new ExcelPackage();
@@ -861,8 +861,8 @@ namespace EPPlusTest
             wsChart.Chart.Series[0].Header = "Serie";
             _pck.SaveAs(new FileInfo(@"c:\temp\chart.xlsx"));
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void ReadChartWorksheet()
         {
             _pck = new ExcelPackage(new FileInfo(@"c:\temp\chart.xlsx"));
@@ -871,8 +871,8 @@ namespace EPPlusTest
             _pck.SaveAs(new FileInfo(@"c:\temp\chart.xlsx"));
 
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void ReadWriteSmoothChart()
         {
             _pck = new ExcelPackage(new FileInfo(@"c:\temp\bug\Xds_2014_TEST.xlsx"));
@@ -881,7 +881,7 @@ namespace EPPlusTest
             _pck.SaveAs(new FileInfo(@"c:\temp\chart.xlsx"));
 
         }
-        [TestMethod]
+        [Test]
         public void TestHeaderaddress()
         {
             _pck = new ExcelPackage();
@@ -894,8 +894,8 @@ namespace EPPlusTest
             _pck.Dispose();
             _pck = null;
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void AllDrawingsInsideMarkupCompatibility()
         {
 #if (Core)
@@ -913,7 +913,7 @@ namespace EPPlusTest
             _pck = new ExcelPackage(new FileInfo(path));
             // Verify the drawing part exists:
             Uri partUri = new Uri("/xl/drawings/drawing1.xml", UriKind.Relative);
-            Assert.IsTrue(_pck.Package.PartExists(partUri));
+            Assert.That(_pck.Package.PartExists(partUri));
 
             // The Excel Drawings NamespaceManager from ExcelDrawing.CreateNSM:
             NameTable nt = new NameTable();
@@ -929,7 +929,7 @@ namespace EPPlusTest
             XmlHelper.LoadXmlSafe(drawingsXml, _pck.Package.GetPart(partUri).GetStream());
 
             // Verify that there are the correct # of drawings:
-            Assert.AreEqual(drawingsXml.SelectNodes("//*[self::xdr:twoCellAnchor or self::xdr:oneCellAnchor or self::xdr:absoluteAnchor]", xmlNsm).Count, 5);
+            Assert.Equals(drawingsXml.SelectNodes("//*[self::xdr:twoCellAnchor or self::xdr:oneCellAnchor or self::xdr:absoluteAnchor]", xmlNsm).Count, 5);
 
             // Make unrelated change. (in this case a useless additional worksheet)
             _pck.Workbook.Worksheets.Add("NewWorksheet");
@@ -943,16 +943,16 @@ namespace EPPlusTest
             _pck = new ExcelPackage(new FileInfo(savedPath));
 
             // Verify the drawing part still exists.
-            Assert.IsTrue(_pck.Package.PartExists(new Uri("/xl/drawings/drawing1.xml", UriKind.Relative)));
+            Assert.That(_pck.Package.PartExists(new Uri("/xl/drawings/drawing1.xml", UriKind.Relative)));
 
             drawingsXml = new XmlDocument();
             drawingsXml.PreserveWhitespace = false;
             XmlHelper.LoadXmlSafe(drawingsXml, _pck.Package.GetPart(partUri).GetStream());
 
             // Verify that there are the correct # of drawings:
-            Assert.AreEqual(drawingsXml.SelectNodes("//*[self::xdr:twoCellAnchor or self::xdr:oneCellAnchor or self::xdr:absoluteAnchor]", xmlNsm).Count, 5);
+            Assert.Equals(drawingsXml.SelectNodes("//*[self::xdr:twoCellAnchor or self::xdr:oneCellAnchor or self::xdr:absoluteAnchor]", xmlNsm).Count, 5);
             // Verify that the new worksheet exists:
-            Assert.IsNotNull(_pck.Workbook.Worksheets["NewWorksheet"]);
+            Assert.That(_pck.Workbook.Worksheets["NewWorksheet"], Is.Not.Null);
             // Cleanup:
             File.Delete(savedPath);
         }
@@ -967,7 +967,7 @@ namespace EPPlusTest
             var pic = ws.Drawings.AddPicture("Pic1", Resources.Test1);
             pic.SetPosition(10,12);
         }
-        [TestMethod]
+        [Test]
         public void DrawingWidthAdjust()
         {
             //using (var p = new ExcelPackage(new FileInfo(@"C:\build\AIM\projects\aimweb\Web\ExcelTemplates\MainTemplate.xlsx")))

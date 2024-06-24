@@ -3,14 +3,14 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 {
-    [TestClass]
+    [TestFixture]
     public class RefAndLookupTests : FormulaParserTestBase
     {
         private ExcelDataProvider _excelDataProvider;
@@ -18,7 +18,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
         private ExcelPackage _package;
         private ExcelWorksheet _worksheet;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             _package = new ExcelPackage();
@@ -29,13 +29,13 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _parser = new FormulaParser(_excelDataProvider);    
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _package.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void VLookupShouldReturnCorrespondingValue()
         {
             using(var pck = new ExcelPackage())
@@ -49,11 +49,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 ws.Cells["A3"].Formula = "VLOOKUP(2, " + lookupAddress + ", 2)";
                 ws.Calculate();
                 var result = ws.Cells["A3"].Value;
-                Assert.AreEqual(5, result);
+                Assert.That(5, Is.EqualTo(result));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void VLookupShouldReturnClosestValueBelowIfLastArgIsTrue()
         {
             using (var pck = new ExcelPackage())
@@ -67,11 +67,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 ws.Cells["A3"].Formula = "VLOOKUP(4, " + lookupAddress + ", 2, true)";
                 ws.Calculate();
                 var result = ws.Cells["A3"].Value;
-                Assert.AreEqual(1, result);
+                Assert.That(1, Is.EqualTo(result));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void HLookupShouldReturnCorrespondingValue()
         {
             var lookupAddress = "A1:B2";
@@ -82,10 +82,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A3"].Formula = "HLOOKUP(2, " + lookupAddress + ", 2)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A3"].Value;
-            Assert.AreEqual(5, result);
+            Assert.That(5, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void HLookupShouldReturnClosestValueBelowIfLastArgIsTrue()
         {
             var lookupAddress = "A1:B2";
@@ -98,11 +98,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s.Cells[2, 2].Value = 2;
                 s.Cells[5, 5].Formula = "HLOOKUP(4, " + lookupAddress + ", 2, true)";
                 s.Calculate();
-                Assert.AreEqual(1, s.Cells[5,5].Value);
+                Assert.Equals(1, s.Cells[5,5].Value);
             }
         }
 
-        [TestMethod]
+        [Test]
         public void LookupShouldReturnMatchingValue()
         {
             var lookupAddress = "A1:B2";
@@ -115,35 +115,35 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s.Cells[2, 2].Value = 1;
                 s.Cells[5, 5].Formula = "LOOKUP(4, " + lookupAddress + ")";
                 s.Calculate();
-                Assert.AreEqual(1, s.Cells[5, 5].Value);
+                Assert.Equals(1, s.Cells[5, 5].Value);
             }
             //    A.CallTo(() => _excelDataProvider.GetCellValue(WorksheetName,1, 1)).Returns(3);
             //A.CallTo(() => _excelDataProvider.GetCellValue(WorksheetName,1, 2)).Returns(5);
             //A.CallTo(() => _excelDataProvider.GetCellValue(WorksheetName,2, 1)).Returns(4);
             //A.CallTo(() => _excelDataProvider.GetCellValue(WorksheetName,2, 2)).Returns(1);
             //var result = _parser.Parse("LOOKUP(4, " + lookupAddress + ")");
-            //Assert.AreEqual(1, result);
+            //Assert.That(1, Is.EqualTo(result));
         }
            
-        [TestMethod]
+        [Test]
         public void MatchShouldReturnIndexOfMatchingValue()
         {
             var lookupAddress = "A1:A2";
             A.CallTo(() => _excelDataProvider.GetCellValue(WorksheetName,1, 1)).Returns(3);
             A.CallTo(() => _excelDataProvider.GetCellValue(WorksheetName,1, 2)).Returns(5);
             var result = _parser.Parse("MATCH(3, " + lookupAddress + ")");
-            Assert.AreEqual(1, result);
+            Assert.That(1, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void RowShouldReturnRowNumber()
         {
             A.CallTo(() => _excelDataProvider.GetRangeFormula("", 4, 1)).Returns("Row()");
             var result = _parser.ParseAt("A4");
-            Assert.AreEqual(4, result);
+            Assert.That(4, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void RowSholdHandleReference()
         {
             using (var package = new ExcelPackage())
@@ -151,19 +151,19 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 var s1 = package.Workbook.Worksheets.Add("test");
                 s1.Cells["A1"].Formula = "ROW(A4)";
                 s1.Calculate();
-                Assert.AreEqual(4, s1.Cells["A1"].Value);
+                Assert.That(4, Is.EqualTo(s1.Cells["A1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ColumnShouldReturnRowNumber()
         {
             A.CallTo(() => _excelDataProvider.GetRangeFormula("", 4, 2)).Returns("Column()");
             var result = _parser.ParseAt("B4");
-            Assert.AreEqual(2, result);
+            Assert.That(2, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ColumnSholdHandleReference()
         {
             using (var package = new ExcelPackage())
@@ -171,42 +171,42 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 var s1 = package.Workbook.Worksheets.Add("test");
                 s1.Cells["A1"].Formula = "COLUMN(B4)";
                 s1.Calculate();
-                Assert.AreEqual(2, s1.Cells["A1"].Value);
+                Assert.That(2, Is.EqualTo(s1.Cells["A1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void RowsShouldReturnNbrOfRows()
         {
             A.CallTo(() => _excelDataProvider.GetRangeFormula("", 4, 1)).Returns("Rows(A5:B7)");
             var result = _parser.ParseAt("A4");
-            Assert.AreEqual(3, result);
+            Assert.That(3, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ColumnsShouldReturnNbrOfCols()
         {
             A.CallTo(() => _excelDataProvider.GetRangeFormula("", 4, 1)).Returns("Columns(A5:B7)");
             var result = _parser.ParseAt("A4");
-            Assert.AreEqual(2, result);
+            Assert.That(2, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ChooseShouldReturnCorrectResult()
         {
             var result = _parser.Parse("Choose(1, \"A\", \"B\")");
-            Assert.AreEqual("A", result);
+            Assert.That("A", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void AddressShouldReturnCorrectResult()
         {
             A.CallTo(() => _excelDataProvider.ExcelMaxRows).Returns(12345);
             var result = _parser.Parse("Address(1, 1)");
-            Assert.AreEqual("$A$1", result);
+            Assert.That("$A$1", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void IndirectShouldReturnARange()
         {
             using (var package = new ExcelPackage(new MemoryStream()))
@@ -215,15 +215,15 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s1.Cells["A1:A2"].Value = 2;
                 s1.Cells["A3"].Formula = "SUM(Indirect(\"A1:A2\"))";
                 s1.Calculate();
-                Assert.AreEqual(4d, s1.Cells["A3"].Value);
+                Assert.That(4d, Is.EqualTo(s1.Cells["A3"].Value));
 
                 s1.Cells["A4"].Formula = "SUM(Indirect(\"A1:A\" & \"2\"))";
                 s1.Calculate();
-                Assert.AreEqual(4d, s1.Cells["A4"].Value);
+                Assert.That(4d, Is.EqualTo(s1.Cells["A4"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void OffsetShouldReturnASingleValue()
         {
             using (var package = new ExcelPackage())
@@ -232,11 +232,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s1.Cells["B3"].Value = 1d;
                 s1.Cells["A5"].Formula = "OFFSET(A1, 2, 1)";
                 s1.Calculate();
-                Assert.AreEqual(1d, s1.Cells["A5"].Value);
+                Assert.That(1d, Is.EqualTo(s1.Cells["A5"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void OffsetShouldReturnARange()
         {
             using (var package = new ExcelPackage())
@@ -247,11 +247,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s1.Cells["B3"].Value = 1d;
                 s1.Cells["A5"].Formula = "SUM(OFFSET(A1:A3, 0, 1))";
                 s1.Calculate();
-                Assert.AreEqual(3d, s1.Cells["A5"].Value);
+                Assert.That(3d, Is.EqualTo(s1.Cells["A5"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void OffsetShouldReturnARange2()
         {
             using (var package = new ExcelPackage())
@@ -262,11 +262,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s1.Cells["B3"].Value = 10d;
                 s1.Cells["A5"].Formula = "COUNTA(OFFSET(Test!B1, 0, 0, Test!B2, Test!B3))";
                 s1.Calculate();
-                Assert.AreEqual(3d, s1.Cells["A5"].Value);
+                Assert.That(3d, Is.EqualTo(s1.Cells["A5"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void OffsetDirectReferenceToMultiRangeShouldSetValueError()
         {
             using (var package = new ExcelPackage())
@@ -278,11 +278,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s1.Cells["A5"].Formula = "OFFSET(A1:A3, 0, 1)";
                 s1.Calculate();
                 var result = s1.Cells["A5"].Value;
-                Assert.AreEqual(ExcelErrorValue.Create(eErrorType.Value), result);
+                Assert.That(ExcelErrorValue.Create(eErrorType.Value), Is.EqualTo(result));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void OffsetShouldReturnARangeAccordingToWidth()
         {
             using (var package = new ExcelPackage())
@@ -293,11 +293,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s1.Cells["B3"].Value = 1d;
                 s1.Cells["A5"].Formula = "SUM(OFFSET(A1:A3, 0, 1, 2))";
                 s1.Calculate();
-                Assert.AreEqual(2d, s1.Cells["A5"].Value);
+                Assert.That(2d, Is.EqualTo(s1.Cells["A5"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void OffsetShouldReturnARangeAccordingToHeight()
         {
             using (var package = new ExcelPackage())
@@ -311,11 +311,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s1.Cells["C3"].Value = 2d;
                 s1.Cells["A5"].Formula = "SUM(OFFSET(A1:A3, 0, 1, 2, 2))";
                 s1.Calculate();
-                Assert.AreEqual(6d, s1.Cells["A5"].Value);
+                Assert.That(6d, Is.EqualTo(s1.Cells["A5"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void OffsetShouldCoverMultipleColumns()
         {
             using (var package = new ExcelPackage())
@@ -329,11 +329,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s1.Cells["D3"].Value = 2d;
                 s1.Cells["A5"].Formula = "SUM(OFFSET(A1:B3, 0, 2))";
                 s1.Calculate();
-                Assert.AreEqual(9d, s1.Cells["A5"].Value);
+                Assert.That(9d, Is.EqualTo(s1.Cells["A5"].Value));
             }
         }
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void VLookupShouldHandleNames()
         {
             using (var package = new ExcelPackage(new FileInfo(@"c:\temp\Book3.xlsx")))
@@ -345,7 +345,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             }
         }
 
-        [TestMethod]
+        [Test]
         public void LookupShouldReturnFromResultVector()
         {
             var lookupAddress = "A1:A5";
@@ -369,7 +369,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 s.Cells[1, 3].Value = 4.14;
                 s.Cells[5, 5].Formula = "LOOKUP(C1, " + lookupAddress + ", " + resultAddress + ")";
                 s.Calculate();
-                Assert.AreEqual("red", s.Cells[5, 5].Value);
+                Assert.Equals("red", s.Cells[5, 5].Value);
             }
         }
     }

@@ -1,62 +1,62 @@
 ﻿using OfficeOpenXml.FormulaParsing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace EPPlusTest.FormulaParsing
 {
-    [TestClass]
+    [TestFixture]
     public class ExcelAddressCacheTests
     {
-        [TestMethod]
+        [Test]
         public void ShouldGenerateNewIds()
         {
             var cache = new ExcelAddressCache();
             var firstId = cache.GetNewId();
-            Assert.AreEqual(1, firstId);
+            Assert.That(1, Is.EqualTo(firstId));
 
             var secondId = cache.GetNewId();
-            Assert.AreEqual(2, secondId);
+            Assert.That(2, Is.EqualTo(secondId));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldReturnCachedAddress()
         {
             var cache = new ExcelAddressCache();
             var id = cache.GetNewId();
             var address = "A1";
             var result = cache.Add(id, address);
-            Assert.IsTrue(result);
-            Assert.AreEqual(address, cache.Get(id));
+            Assert.That(result);
+            Assert.That(address, Is.EqualTo(cache.Get(id)));
         }
 
-        [TestMethod]
+        [Test]
         public void AddShouldReturnFalseIfUsedId()
         {
             var cache = new ExcelAddressCache();
             var id = cache.GetNewId();
             var address = "A1";
             var result = cache.Add(id, address);
-            Assert.IsTrue(result);
+            Assert.That(result);
             var result2 = cache.Add(id, address);
-            Assert.IsFalse(result2);
+            Assert.That(!result2);
         }
 
-        [TestMethod]
+        [Test]
         public void ClearShouldResetId()
         {
             var cache = new ExcelAddressCache();
             var id = cache.GetNewId();
-            Assert.AreEqual(1, id);
+            Assert.That(1, Is.EqualTo(id));
             var address = "A1";
             var result = cache.Add(id, address);
-            Assert.AreEqual(1, cache.Count);
+            Assert.That(1, Is.EqualTo(cache.Count));
             var id2 = cache.GetNewId();
-            Assert.AreEqual(2, id2);
+            Assert.That(2, Is.EqualTo(id2));
             cache.Clear();
             var id3 = cache.GetNewId();
-            Assert.AreEqual(1, id3);
+            Assert.That(1, Is.EqualTo(id3));
             
         }
     }

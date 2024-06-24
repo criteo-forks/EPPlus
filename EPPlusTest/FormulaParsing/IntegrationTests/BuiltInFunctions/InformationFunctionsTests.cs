@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using FakeItEasy;
 using OfficeOpenXml.FormulaParsing;
@@ -10,40 +10,40 @@ using OfficeOpenXml.FormulaParsing.Exceptions;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 {
-    [TestClass]
+    [TestFixture]
     public class InformationFunctionsTests : FormulaParserTestBase
     {
         private ExcelDataProvider _excelDataProvider;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _excelDataProvider = A.Fake<ExcelDataProvider>();
             _parser = new FormulaParser(_excelDataProvider);
         }
 
-        [TestMethod]
+        [Test]
         public void IsBlankShouldReturnCorrectValue()
         {
             var result = _parser.Parse("ISBLANK(A1)");
-            Assert.IsTrue((bool)result);
+            Assert.That((bool)result);
         }
 
-        [TestMethod]
+        [Test]
         public void IsNumberShouldReturnCorrectValue()
         {
             var result = _parser.Parse("ISNUMBER(10/2)");
-            Assert.IsTrue((bool)result);
+            Assert.That((bool)result);
         }
 
-        [TestMethod]
+        [Test]
         public void IsErrorShouldReturnTrueWhenDivBy0()
         {
             var result = _parser.Parse("ISERROR(10/0)");
-            Assert.IsTrue((bool)result);
+            Assert.That((bool)result);
         }
 
-        [TestMethod]
+        [Test]
         public void IsTextShouldReturnTrueWhenReferencedCellContainsText()
         {
             using(var pck = new ExcelPackage())
@@ -53,11 +53,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 sheet.Cells["A2"].Formula = "ISTEXT(A1)";
                 sheet.Calculate();
                 var result = sheet.Cells["A2"].Value;
-                Assert.IsTrue((bool)result);
+                Assert.That((bool)result);
             }
         }
 
-        [TestMethod]
+        [Test]
         public void IsErrShouldReturnFalseIfErrorCodeIsNa()
         {
             using (var pck = new ExcelPackage())
@@ -67,11 +67,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 sheet.Cells["A2"].Formula = "ISERR(A1)";
                 sheet.Calculate();
                 var result = sheet.Cells["A2"].Value;
-                Assert.IsFalse((bool)result);
+                Assert.That(!(bool)result);
             }
         }
 
-        [TestMethod]
+        [Test]
         public void IsNaShouldReturnTrueCodeIsNa()
         {
             using (var pck = new ExcelPackage())
@@ -81,11 +81,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 sheet.Cells["A2"].Formula = "ISNA(A1)";
                 sheet.Calculate();
                 var result = sheet.Cells["A2"].Value;
-                Assert.IsTrue((bool)result);
+                Assert.That((bool)result);
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ErrorTypeShouldReturnCorrectErrorCodes()
         {
             using (var pck = new ExcelPackage())
@@ -116,14 +116,14 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 var numResult = sheet.Cells["B6"].Value;
                 var naResult = sheet.Cells["B7"].Value;
                 var noErrorResult = sheet.Cells["B8"].Value;
-                Assert.AreEqual(1, nullResult, "Null error was not 1");
-                Assert.AreEqual(2, div0Result, "Div0 error was not 2");
-                Assert.AreEqual(3, valueResult, "Value error was not 3");
-                Assert.AreEqual(4, refResult, "Ref error was not 4");
-                Assert.AreEqual(5, nameResult, "Name error was not 5");
-                Assert.AreEqual(6, numResult, "Num error was not 6");
-                Assert.AreEqual(7, naResult, "NA error was not 7");
-                Assert.AreEqual(ExcelErrorValue.Create(eErrorType.NA), noErrorResult, "No error did not return N/A error");
+                Assert.That(1, Is.EqualTo(nullResult), "Null error was not 1");
+                Assert.That(2, Is.EqualTo(div0Result), "Div0 error was not 2");
+                Assert.That(3, Is.EqualTo(valueResult), "Value error was not 3");
+                Assert.That(4, Is.EqualTo(refResult), "Ref error was not 4");
+                Assert.That(5, Is.EqualTo(nameResult), "Name error was not 5");
+                Assert.That(6, Is.EqualTo(numResult), "Num error was not 6");
+                Assert.That(7, Is.EqualTo(naResult), "NA error was not 7");
+                Assert.That(ExcelErrorValue.Create(eErrorType.NA), Is.EqualTo(noErrorResult), "No error did not return N/A error");
             }
         }
     }

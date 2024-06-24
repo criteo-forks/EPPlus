@@ -2,24 +2,24 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using OfficeOpenXml.FormulaParsing.Exceptions;
 
 namespace EPPlusTest.FormulaParsing.LexicalAnalysis
 {
-    [TestClass]
+    [TestFixture]
     public class SyntacticAnalyzerTests
     {
         private ISyntacticAnalyzer _analyser;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _analyser = new SyntacticAnalyzer();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldPassIfParenthesisAreWellformed()
         {
             var input = new List<Token>
@@ -33,20 +33,23 @@ namespace EPPlusTest.FormulaParsing.LexicalAnalysis
             _analyser.Analyze(input);
         }
 
-        [TestMethod, ExpectedException(typeof(FormatException))]
+        [Test]
         public void ShouldThrowExceptionIfParenthesesAreNotWellformed()
         {
-            var input = new List<Token>
+            Assert.Throws<FormatException>(() =>
             {
-                new Token("(", TokenType.OpeningParenthesis),
-                new Token("1", TokenType.Integer),
-                new Token("+", TokenType.Operator),
-                new Token("2", TokenType.Integer)
-            };
-            _analyser.Analyze(input);
+                var input = new List<Token>
+                {
+                    new Token("(", TokenType.OpeningParenthesis),
+                    new Token("1", TokenType.Integer),
+                    new Token("+", TokenType.Operator),
+                    new Token("2", TokenType.Integer)
+                };
+                _analyser.Analyze(input);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldPassIfStringIsWellformed()
         {
             var input = new List<Token>
@@ -58,26 +61,32 @@ namespace EPPlusTest.FormulaParsing.LexicalAnalysis
             _analyser.Analyze(input);
         }
 
-        [TestMethod, ExpectedException(typeof(FormatException))]
+        [Test]
         public void ShouldThrowExceptionIfStringHasNotClosing()
         {
-            var input = new List<Token>
+            Assert.Throws<FormatException>(() =>
             {
-                new Token("'", TokenType.String),
-                new Token("abc123", TokenType.StringContent)
-            };
-            _analyser.Analyze(input);
+                var input = new List<Token>
+                {
+                    new Token("'", TokenType.String),
+                    new Token("abc123", TokenType.StringContent)
+                };
+                _analyser.Analyze(input);
+            });
         }
 
 
-        [TestMethod, ExpectedException(typeof(UnrecognizedTokenException))]
+        [Test]
         public void ShouldThrowExceptionIfThereIsAnUnrecognizedToken()
         {
-            var input = new List<Token>
+            Assert.Throws<UnrecognizedTokenException>(() =>
             {
-                new Token("abc123", TokenType.Unrecognized)
-            };
-            _analyser.Analyze(input);
+                var input = new List<Token>
+                {
+                    new Token("abc123", TokenType.Unrecognized)
+                };
+                _analyser.Analyze(input);
+            });
         }
     }
 }

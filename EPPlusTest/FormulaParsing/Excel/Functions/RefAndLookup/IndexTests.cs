@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using EPPlusTest.FormulaParsing.TestHelpers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
@@ -10,14 +10,14 @@ using Index = OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup.Index;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions.RefAndLookup
 {
-    [TestClass]
+    [TestFixture]
     public class IndexTests
     {
         private ParsingContext _parsingContext;
         private ExcelPackage _package;
         private ExcelWorksheet _worksheet;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             _parsingContext = ParsingContext.Create();
@@ -25,13 +25,13 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.RefAndLookup
             _worksheet = _package.Workbook.Worksheets.Add("test");
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _package.Dispose();
         }
         
-        [TestMethod]
+        [Test]
         public void Index_Should_Return_Value_By_Index()
         {
             var func = new Index();
@@ -40,10 +40,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.RefAndLookup
                     FunctionsHelper.CreateArgs(1, 2, 5),
                     3
                     ),_parsingContext);
-            Assert.AreEqual(5, result.Result);
+            Assert.That(5, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void Index_Should_Handle_SingleRange()
         {
             _worksheet.Cells["A1"].Value = 1d;
@@ -54,7 +54,7 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.RefAndLookup
 
             _worksheet.Calculate();
 
-            Assert.AreEqual(5d, _worksheet.Cells["A4"].Value);
+            Assert.That(5d, Is.EqualTo(_worksheet.Cells["A4"].Value));
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph;
@@ -13,24 +13,24 @@ using System.Threading;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 {
-    [TestClass]
+    [TestFixture]
     public class DateAndTimeFunctionsTests : FormulaParserTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             var excelDataProvider = A.Fake<ExcelDataProvider>();
             _parser = new FormulaParser(excelDataProvider);
         }
 
-        [TestMethod]
+        [Test]
         public void DateShouldReturnCorrectResult()
         {
             var result = _parser.Parse("Date(2012, 2, 2)");
-            Assert.AreEqual(new DateTime(2012, 2, 2).ToOADate(), result);
+            Assert.That(new DateTime(2012, 2, 2).ToOADate(), Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void DateShouldHandleCellReference()
         {
             using (var pck = new ExcelPackage())
@@ -40,139 +40,139 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 sheet.Cells["A2"].Formula = "Date(A1, 2, 2)";
                 sheet.Calculate();
                 var result = sheet.Cells["A2"].Value;
-                Assert.AreEqual(new DateTime(2012, 2, 2).ToOADate(), result);
+                Assert.That(new DateTime(2012, 2, 2).ToOADate(), Is.EqualTo(result));
             }
 
         }
 
-        [TestMethod]
+        [Test]
         public void TodayShouldReturnAResult()
         {
             var result = _parser.Parse("Today()");
-            Assert.IsInstanceOfType(DateTime.FromOADate((double)result), typeof(DateTime));
+            Assert.That(DateTime.FromOADate((double)result), Is.InstanceOf<DateTime>());
         }
 
-        [TestMethod]
+        [Test]
         public void NowShouldReturnAResult()
         {
             var result = _parser.Parse("now()");
-            Assert.IsInstanceOfType(DateTime.FromOADate((double)result), typeof(DateTime));
+            Assert.That(DateTime.FromOADate((double)result), Is.InstanceOf<DateTime>());
         }
 
-        [TestMethod]
+        [Test]
         public void DayShouldReturnCorrectResult()
         {
             var result = _parser.Parse("Day(Date(2012, 4, 2))");
-            Assert.AreEqual(2, result);
+            Assert.That(2, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void MonthShouldReturnCorrectResult()
         {
             var result = _parser.Parse("Month(Date(2012, 4, 2))");
-            Assert.AreEqual(4, result);
+            Assert.That(4, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void YearShouldReturnCorrectResult()
         {
             var result = _parser.Parse("Year(Date(2012, 2, 2))");
-            Assert.AreEqual(2012, result);
+            Assert.That(2012, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void TimeShouldReturnCorrectResult()
         {
             var expectedResult = ((double)(12 * 60 * 60 + 13 * 60 + 14))/((double)(24 * 60 * 60));
             var result = _parser.Parse("Time(12, 13, 14)");
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(expectedResult, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void HourShouldReturnCorrectResult()
         {
             var result = _parser.Parse("HOUR(Time(12, 13, 14))");
-            Assert.AreEqual(12, result);
+            Assert.That(12, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void MinuteShouldReturnCorrectResult()
         {
             var result = _parser.Parse("minute(Time(12, 13, 14))");
-            Assert.AreEqual(13, result);
+            Assert.That(13, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SecondShouldReturnCorrectResult()
         {
             var result = _parser.Parse("Second(Time(12, 13, 59))");
-            Assert.AreEqual(59, result);
+            Assert.That(59, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SecondShouldReturnCorrectResultWhenParsingString()
         {
             var result = _parser.Parse("Second(\"10:12:14\")");
-            Assert.AreEqual(14, result);
+            Assert.That(14, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void MinuteShouldReturnCorrectResultWhenParsingString()
         {
             var result = _parser.Parse("Minute(\"10:12:14 AM\")");
-            Assert.AreEqual(12, result);
+            Assert.That(12, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void HourShouldReturnCorrectResultWhenParsingString()
         {
             var result = _parser.Parse("Hour(\"10:12:14\")");
-            Assert.AreEqual(10, result);
+            Assert.That(10, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void Day360ShouldReturnCorrectResult()
         {
             var result = _parser.Parse("Days360(Date(2012, 4, 2), Date(2012, 5, 2))");
-            Assert.AreEqual(30, result);
+            Assert.That(30, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void YearfracShouldReturnAResult()
         {
             var result = _parser.Parse("Yearfrac(Date(2012, 4, 2), Date(2012, 5, 2))");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void IsoWeekNumShouldReturnAResult()
         {
             var result = _parser.Parse("IsoWeekNum(Date(2012, 4, 2))");
-            Assert.IsInstanceOfType(result, typeof(int));
+            Assert.That(result, Is.InstanceOf<int>());
         }
 
-        [TestMethod]
+        [Test]
         public void EomonthShouldReturnAResult()
         {
             var result = _parser.Parse("Eomonth(Date(2013, 2, 2), 3)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void WorkdayShouldReturnAResult()
         {
             var result = _parser.Parse("Workday(Date(2013, 2, 2), 3)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void DateNotEqualToStringShouldBeTrue()
         {
             var result = _parser.Parse("TODAY() <> \"\"");
-            Assert.IsTrue((bool)result);
+            Assert.That((bool)result);
         }
 
-        [TestMethod]
+        [Test]
         public void Calculation5()
         {
             var pck = new ExcelPackage();
@@ -181,10 +181,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["B1"].Value = "Doe";
             ws.Cells["C1"].Formula = "B1&\", \"&A1";
             ws.Calculate();
-            Assert.AreEqual("Doe, John", ws.Cells["C1"].Value);
+            Assert.Equals("Doe, John", ws.Cells["C1"].Value);
         }
 
-        [TestMethod]
+        [Test]
         public void HourWithExcelReference()
         {
             var pck = new ExcelPackage();
@@ -192,10 +192,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["A1"].Value = new DateTime(2014, 1, 1, 10, 11, 12).ToOADate();
             ws.Cells["B1"].Formula = "HOUR(A1)";
             ws.Calculate();
-            Assert.AreEqual(10, ws.Cells["B1"].Value);
+            Assert.That(10, Is.EqualTo(ws.Cells["B1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void MinuteWithExcelReference()
         {
             var pck = new ExcelPackage();
@@ -203,10 +203,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["A1"].Value = new DateTime(2014, 1, 1, 10, 11, 12).ToOADate();
             ws.Cells["B1"].Formula = "MINUTE(A1)";
             ws.Calculate();
-            Assert.AreEqual(11, ws.Cells["B1"].Value);
+            Assert.That(11, Is.EqualTo(ws.Cells["B1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void SecondWithExcelReference()
         {
             var pck = new ExcelPackage();
@@ -214,10 +214,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["A1"].Value = new DateTime(2014, 1, 1, 10, 11, 12).ToOADate();
             ws.Cells["B1"].Formula = "SECOND(A1)";
             ws.Calculate();
-            Assert.AreEqual(12, ws.Cells["B1"].Value);
+            Assert.That(12, Is.EqualTo(ws.Cells["B1"].Value));
         }
 #if (!Core)
-        [TestMethod]
+        [Test]
         public void DateValueTest1()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -226,10 +226,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["A1"].Value = "21 JAN 2015";
             ws.Cells["B1"].Formula = "DateValue(A1)";
             ws.Calculate();
-            Assert.AreEqual(new DateTime(2015, 1, 21).ToOADate(), ws.Cells["B1"].Value);
+            Assert.That(new DateTime(2015, 1, 21).ToOADate(), Is.EqualTo(ws.Cells["B1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void DateValueTestWithoutYear()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -239,10 +239,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["A1"].Value = "21 JAN";
             ws.Cells["B1"].Formula = "DateValue(A1)";
             ws.Calculate();
-            Assert.AreEqual(new DateTime(currentYear, 1, 21).ToOADate(), ws.Cells["B1"].Value);
+            Assert.That(new DateTime(currentYear, 1, 21).ToOADate(), Is.EqualTo(ws.Cells["B1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void DateValueTestWithTwoDigitYear()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -252,10 +252,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["A1"].Value = "01/01/30";
             ws.Cells["B1"].Formula = "DateValue(A1)";
             ws.Calculate();
-            Assert.AreEqual(new DateTime(expectedYear, 1, 1).ToOADate(), ws.Cells["B1"].Value);
+            Assert.That(new DateTime(expectedYear, 1, 1).ToOADate(), Is.EqualTo(ws.Cells["B1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void DateValueTestWithTwoDigitYear2()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -265,11 +265,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["A1"].Value = "01/01/29";
             ws.Cells["B1"].Formula = "DateValue(A1)";
             ws.Calculate();
-            Assert.AreEqual(new DateTime(expectedYear, 1, 1).ToOADate(), ws.Cells["B1"].Value);
+            Assert.That(new DateTime(expectedYear, 1, 1).ToOADate(), Is.EqualTo(ws.Cells["B1"].Value));
         }
 
 
-        [TestMethod]
+        [Test]
         public void TimeValueTestPm()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -280,11 +280,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["B1"].Formula = "TimeValue(A1)";
             ws.Calculate();
             var result = (double) ws.Cells["B1"].Value;
-            Assert.AreEqual(0.599, Math.Round(result, 3));
+            Assert.Equals(0.599, Math.Round(result, 3));
         }
 
 
-        [TestMethod]
+        [Test]
         public void TimeValueTestFullDate()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -295,7 +295,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             ws.Cells["B1"].Formula = "TimeValue(A1)";
             ws.Calculate();
             var result = (double)ws.Cells["B1"].Value;
-            Assert.AreEqual(0.099, Math.Round(result, 3));
+            Assert.Equals(0.099, Math.Round(result, 3));
         }
 #endif
     }

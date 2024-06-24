@@ -1,42 +1,42 @@
 ﻿using System;
 using System.Drawing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
 namespace EPPlusTest
 {
-    [TestClass]
+    [TestFixture]
     public class CellStoreTest : TestBase
     {
         
-        [TestMethod]
+        [Test]
         public void Insert1()
         {
             var ws=_pck.Workbook.Worksheets.Add("Insert1");
             LoadData(ws);
 
             ws.InsertRow(2, 1000);
-            Assert.AreEqual(ws.GetValue(1002,1),"1,0");
+            Assert.Equals(ws.GetValue(1002,1),"1,0");
             ws.InsertRow(1003, 1000);
-            Assert.AreEqual(ws.GetValue(2003, 1), "2,0");
+            Assert.Equals(ws.GetValue(2003, 1), "2,0");
             ws.InsertRow(2004, 1000);
-            Assert.AreEqual(ws.GetValue(3004, 1), "3,0");
+            Assert.Equals(ws.GetValue(3004, 1), "3,0");
             ws.InsertRow(2006, 1000);
-            Assert.AreEqual(ws.GetValue(4005, 1), "4,0");
+            Assert.Equals(ws.GetValue(4005, 1), "4,0");
             ws.InsertRow(4500, 500);
-            Assert.AreEqual(ws.GetValue(5000, 1), "499,0");
+            Assert.Equals(ws.GetValue(5000, 1), "499,0");
 
             ws.InsertRow(1, 1);
-            Assert.AreEqual(ws.GetValue(1003, 1), "1,0");
-            Assert.AreEqual(ws.GetValue(5001, 1), "499,0");
+            Assert.Equals(ws.GetValue(1003, 1), "1,0");
+            Assert.Equals(ws.GetValue(5001, 1), "499,0");
 
             ws.InsertRow(1, 15);
-            Assert.AreEqual(ws.GetValue(4020, 1), "3,0");
-            Assert.AreEqual(ws.GetValue(5016, 1), "499,0");
+            Assert.Equals(ws.GetValue(4020, 1), "3,0");
+            Assert.Equals(ws.GetValue(5016, 1), "499,0");
    
         }
-        [TestMethod]
+        [Test]
         public void Insert2()
         {
             var ws = _pck.Workbook.Worksheets.Add("Insert2-1");
@@ -46,7 +46,7 @@ namespace EPPlusTest
             {
                 ws.InsertRow(1, 1);
             }
-            Assert.AreEqual(ws.GetValue(33,1),"0,0");
+            Assert.Equals(ws.GetValue(33,1),"0,0");
 
             ws = _pck.Workbook.Worksheets.Add("Insert2-2");
             LoadData(ws);
@@ -55,10 +55,10 @@ namespace EPPlusTest
             {
                 ws.InsertRow(15, 1);
             }
-            Assert.AreEqual(ws.GetValue(1, 1), "0,0");
-            Assert.AreEqual(ws.GetValue(47, 1), "14,0");
+            Assert.Equals(ws.GetValue(1, 1), "0,0");
+            Assert.Equals(ws.GetValue(47, 1), "14,0");
         }
-        [TestMethod]
+        [Test]
         public void Insert3()
         {
             var ws = _pck.Workbook.Worksheets.Add("Insert3");
@@ -70,7 +70,7 @@ namespace EPPlusTest
             }
         }
 
-        [TestMethod]
+        [Test]
         public void InsertRandomTest()
         {
             var ws = _pck.Workbook.Worksheets.Add("Insert4-1");
@@ -82,7 +82,7 @@ namespace EPPlusTest
                 ws.InsertRow(i, 1);
             }
         }
-        [TestMethod]
+        [Test]
         public void EnumCellstore()
         {
             var ws = _pck.Workbook.Worksheets.Add("enum");
@@ -95,24 +95,24 @@ namespace EPPlusTest
                 Console.WriteLine(i);
             }
         }
-        [TestMethod]
+        [Test]
         public void DeleteCells()
         {
             var ws = _pck.Workbook.Worksheets.Add("Delete");
             LoadData(ws, 5000);
 
             ws.DeleteRow(2, 2);
-            Assert.AreEqual("3,0",ws.GetValue(2,1));
+            Assert.Equals("3,0",ws.GetValue(2,1));
             ws.DeleteRow(10, 10);
-            Assert.AreEqual("21,0", ws.GetValue(10, 1));
+            Assert.Equals("21,0", ws.GetValue(10, 1));
             ws.DeleteRow(50, 40);
-            Assert.AreEqual("101,0", ws.GetValue(50, 1));
+            Assert.Equals("101,0", ws.GetValue(50, 1));
             ws.DeleteRow(100, 100);
-            Assert.AreEqual("251,0", ws.GetValue(100, 1));
+            Assert.Equals("251,0", ws.GetValue(100, 1));
             ws.DeleteRow(1, 31);
-            Assert.AreEqual("43,0", ws.GetValue(1, 1));
+            Assert.Equals("43,0", ws.GetValue(1, 1));
         }
-        [TestMethod]
+        [Test]
         public void DeleteCellsFirst()
         {
             var ws = _pck.Workbook.Worksheets.Add("DeleteFirst");
@@ -124,7 +124,7 @@ namespace EPPlusTest
                 ws.DeleteRow(1,1);
             }
         }
-        [TestMethod]
+        [Test]
         public void DeleteInsert()
         {
             var ws = _pck.Workbook.Worksheets.Add("DeleteInsert");
@@ -155,7 +155,7 @@ namespace EPPlusTest
                 }
             }
         }
-        [TestMethod]
+        [Test]
         public void FillInsertTest()
         {
             var ws = _pck.Workbook.Worksheets.Add("FillInsert");
@@ -166,11 +166,11 @@ namespace EPPlusTest
             for(int i=1;i<=500;i++)
             {
                 ws.InsertRow(r,i);
-                Assert.AreEqual((i-1).ToString()+",0", ws.GetValue(r+i,1).ToString());
+                Assert.Equals((i-1).ToString()+",0", ws.GetValue(r+i,1).ToString());
                 r+=i+1;
             }
         }
-        [TestMethod]
+        [Test]
         public void CopyCellsTest()
         {
             var ws = _pck.Workbook.Worksheets.Add("CopyCells");
@@ -181,13 +181,13 @@ namespace EPPlusTest
             ws.Cells["B1"].Copy(ws.Cells["C1"]);
             ws.Cells["B1"].Copy(ws.Cells["D1"], ExcelRangeCopyOptionFlags.ExcludeFormulas);
 
-            Assert.AreEqual(ws.Cells["B1"].Value, ws.Cells["C1"].Value);
-            Assert.AreEqual("SUM(B1:B500)", ws.Cells["C1"].Formula);
+            Assert.That(ws.Cells["B1"].Value, Is.EqualTo(ws.Cells["C1"].Value));
+            Assert.That("SUM(B1:B500)", Is.EqualTo(ws.Cells["C1"].Formula));
 
-            Assert.AreEqual(ws.Cells["B1"].Value, ws.Cells["D1"].Value);
-            Assert.AreNotEqual(ws.Cells["B1"].Formula, ws.Cells["D1"].Formula);
+            Assert.That(ws.Cells["B1"].Value, Is.EqualTo(ws.Cells["D1"].Value));
+            Assert.That(ws.Cells["B1"].Formula, Is.Not.EqualTo(ws.Cells["D1"].Formula));
         }
-        [TestMethod]
+        [Test]
         public void Issues351()
         {
             using (var package = new ExcelPackage())
@@ -205,7 +205,7 @@ namespace EPPlusTest
                 worksheet.InsertRow(1024, 1);
 
                 // Assert - This value should be null, instead it's "B"
-                Assert.IsNull(worksheet.Cells[1025, 1].Value);
+                Assert.That(worksheet.Cells[1025, 1].Value, Is.Null);
             }
         }
     }

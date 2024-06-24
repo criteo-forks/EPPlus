@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.DataValidation;
 
 namespace EPPlusTest.DataValidation
 {
-    [TestClass]
+    [TestFixture]
     public class ExcelTimeTests
     {
         private ExcelTime _time;
@@ -20,71 +20,85 @@ namespace EPPlusTest.DataValidation
             return Math.Round(value, ExcelTime.NumberOfDecimals);
         }
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _time = new ExcelTime();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _time = null;
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ExcelTimeTests_ConstructorWithValue_ShouldThrowIfValueIsLessThan0()
         {
-            new ExcelTime(-1);
+            Assert.Throws<ArgumentException>(() => { 
+                new ExcelTime(-1);
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ExcelTimeTests_ConstructorWithValue_ShouldThrowIfValueIsEqualToOrGreaterThan1()
         {
-            new ExcelTime(1);
+            Assert.Throws<ArgumentException>(() => { 
+                new ExcelTime(1);
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelTimeTests_Hour_ShouldThrowIfNegativeValue()
         {
-            _time.Hour = -1;
+            Assert.Throws<InvalidOperationException>(() => { 
+                _time.Hour = -1;
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelTimeTests_Minute_ShouldThrowIfNegativeValue()
         {
-            _time.Minute = -1;
+            Assert.Throws<InvalidOperationException>(() => { 
+                _time.Minute = -1;
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelTimeTests_Minute_ShouldThrowIValueIsGreaterThan59()
         {
-            _time.Minute = 60;
+            Assert.Throws<InvalidOperationException>(() => { 
+                _time.Minute = 60;
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelTimeTests_Second_ShouldThrowIfNegativeValue()
         {
-            _time.Second = -1;
+            Assert.Throws<InvalidOperationException>(() => {
+                _time.Second = -1;
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelTimeTests_Second_ShouldThrowIValueIsGreaterThan59()
         {
-            _time.Second = 60;
+            Assert.Throws<InvalidOperationException>(() => {
+                _time.Second = 60;
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelTimeTests_ToExcelTime_HourIsSet()
         {
             // Act
             _time.Hour = 1;
             
             // Assert
-            Assert.AreEqual(Round(SecondsPerHour/SecondsPerDay), _time.ToExcelTime());
+            Assert.That(Round(SecondsPerHour/SecondsPerDay), Is.EqualTo(_time.ToExcelTime()));
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelTimeTests_ToExcelTime_MinuteIsSet()
         {
             // Arrange
@@ -94,10 +108,10 @@ namespace EPPlusTest.DataValidation
             _time.Minute = 20;
 
             // Assert
-            Assert.AreEqual(Round(expected/SecondsPerDay), _time.ToExcelTime());
+            Assert.That(Round(expected/SecondsPerDay), Is.EqualTo(_time.ToExcelTime()));
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelTimeTests_ToExcelTime_SecondIsSet()
         {
             // Arrange
@@ -108,10 +122,10 @@ namespace EPPlusTest.DataValidation
             _time.Second = 10;
 
             // Assert
-            Assert.AreEqual(Round(expected / SecondsPerDay), _time.ToExcelTime());
+            Assert.That(Round(expected / SecondsPerDay), Is.EqualTo(_time.ToExcelTime()));
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelTimeTests_ConstructorWithValue_ShouldSetHour()
         {
             // Arrange
@@ -121,10 +135,10 @@ namespace EPPlusTest.DataValidation
             var time = new ExcelTime(value);
 
             // Assert
-            Assert.AreEqual(1, time.Hour);
+            Assert.That(1, Is.EqualTo(time.Hour));
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelTimeTests_ConstructorWithValue_ShouldSetMinute()
         {
             // Arrange
@@ -134,10 +148,10 @@ namespace EPPlusTest.DataValidation
             var time = new ExcelTime(value);
 
             // Assert
-            Assert.AreEqual(1, time.Minute);
+            Assert.That(1, Is.EqualTo(time.Minute));
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelTimeTests_ConstructorWithValue_ShouldSetSecond()
         {
             // Arrange
@@ -147,7 +161,7 @@ namespace EPPlusTest.DataValidation
             var time = new ExcelTime(value);
 
             // Assert
-            Assert.AreEqual(2, time.Second);
+            Assert.That(2, Is.EqualTo(time.Second));
         }
     }
 }

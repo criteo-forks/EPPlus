@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Threading;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
@@ -14,7 +14,7 @@ using OfficeOpenXml.FormulaParsing.Excel.Functions;
 
 namespace EPPlusTest.Excel.Functions
 {
-    [TestClass]
+    [TestFixture]
     public class DateTimeFunctionsTests
     {
         private ParsingContext _parsingContext = ParsingContext.Create();
@@ -25,36 +25,36 @@ namespace EPPlusTest.Excel.Functions
             var secondsOfExample = (double)(hour * 60 * 60 + minute * 60 + second);
             return secondsOfExample / secInADay;
         }
-        [TestMethod]
+        [Test]
         public void DateFunctionShouldReturnADate()
         {
             var func = new Date();
             var args = FunctionsHelper.CreateArgs(2012, 4, 3);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(DataType.Date, result.DataType);
+            Assert.That(DataType.Date, Is.EqualTo(result.DataType));
         }
 
-        [TestMethod]
+        [Test]
         public void DateFunctionShouldReturnACorrectDate()
         {
             var expectedDate = new DateTime(2012, 4, 3);
             var func = new Date();
             var args = FunctionsHelper.CreateArgs(2012, 4, 3);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(expectedDate.ToOADate(), result.Result);
+            Assert.That(expectedDate.ToOADate(), Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void DateFunctionShouldMonthFromPrevYearIfMonthIsNegative()
         {
             var expectedDate = new DateTime(2011, 11, 3);
             var func = new Date();
             var args = FunctionsHelper.CreateArgs(2012, -1, 3);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(expectedDate.ToOADate(), result.Result);
+            Assert.That(expectedDate.ToOADate(), Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void NowFunctionShouldReturnNow()
         {
             var startTime = DateTime.Now;
@@ -65,192 +65,202 @@ namespace EPPlusTest.Excel.Functions
             Thread.Sleep(1);
             var endTime = DateTime.Now;
             var resultDate = DateTime.FromOADate((double)result.Result);
-            Assert.IsTrue(resultDate > startTime && resultDate < endTime);
+            Assert.That(resultDate > startTime && resultDate < endTime);
         }
 
-        [TestMethod]
+        [Test]
         public void TodayFunctionShouldReturnTodaysDate()
         {
             var func = new Today();
             var args = new FunctionArgument[0];
             var result = func.Execute(args, _parsingContext);
             var resultDate = DateTime.FromOADate((double)result.Result);
-            Assert.AreEqual(DateTime.Now.Date, resultDate);
+            Assert.That(DateTime.Now.Date, Is.EqualTo(resultDate));
         }
 
-        [TestMethod]
+        [Test]
         public void DayShouldReturnDayInMonth()
         {
             var date = new DateTime(2012, 3, 12);
             var func = new Day();
             var args = FunctionsHelper.CreateArgs(date.ToOADate());
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(12, result.Result);
+            Assert.That(12, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void DayShouldReturnMonthOfYearWithStringParam()
         {
             var date = new DateTime(2012, 3, 12);
             var func = new Day();
             var result = func.Execute(FunctionsHelper.CreateArgs("2012-03-12"), _parsingContext);
-            Assert.AreEqual(12, result.Result);
+            Assert.That(12, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MonthShouldReturnMonthOfYear()
         {
             var date = new DateTime(2012, 3, 12);
             var func = new Month();
             var result = func.Execute(FunctionsHelper.CreateArgs(date.ToOADate()), _parsingContext);
-            Assert.AreEqual(3, result.Result);
+            Assert.That(3, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MonthShouldReturnMonthOfYearWithStringParam()
         {
             var date = new DateTime(2012, 3, 12);
             var func = new Month();
             var result = func.Execute(FunctionsHelper.CreateArgs("2012-03-12"), _parsingContext);
-            Assert.AreEqual(3, result.Result);
+            Assert.That(3, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void YearShouldReturnCorrectYear()
         {
             var date = new DateTime(2012, 3, 12);
             var func = new Year();
             var result = func.Execute(FunctionsHelper.CreateArgs(date.ToOADate()), _parsingContext);
-            Assert.AreEqual(2012, result.Result);
+            Assert.That(2012, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void YearShouldReturnCorrectYearWithStringParam()
         {
             var date = new DateTime(2012, 3, 12);
             var func = new Year();
             var result = func.Execute(FunctionsHelper.CreateArgs("2012-03-12"), _parsingContext);
-            Assert.AreEqual(2012, result.Result);
+            Assert.That(2012, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void TimeShouldReturnACorrectSerialNumber()
         {
             var expectedResult = GetTime(10, 11, 12);
             var func = new Time();
             var result = func.Execute(FunctionsHelper.CreateArgs(10, 11, 12), _parsingContext);
-            Assert.AreEqual(expectedResult, result.Result);  
+            Assert.That(expectedResult, Is.EqualTo(result.Result));  
         }
 
-        [TestMethod]
+        [Test]
         public void TimeShouldParseStringCorrectly()
         {
             var expectedResult = GetTime(10, 11, 12);
             var func = new Time();
             var result = func.Execute(FunctionsHelper.CreateArgs("10:11:12"), _parsingContext);
-            Assert.AreEqual(expectedResult, result.Result);
+            Assert.That(expectedResult, Is.EqualTo(result.Result));
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void TimeShouldThrowExceptionIfSecondsIsOutOfRange()
         {
-            var func = new Time();
-            var result = func.Execute(FunctionsHelper.CreateArgs(10, 11, 60), _parsingContext);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                var func = new Time();
+                var result = func.Execute(FunctionsHelper.CreateArgs(10, 11, 60), _parsingContext);
+            });
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void TimeShouldThrowExceptionIfMinuteIsOutOfRange()
         {
-            var func = new Time();
-            var result = func.Execute(FunctionsHelper.CreateArgs(10, 60, 12), _parsingContext);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                var func = new Time();
+                var result = func.Execute(FunctionsHelper.CreateArgs(10, 60, 12), _parsingContext);
+            });
+            
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void TimeShouldThrowExceptionIfHourIsOutOfRange()
         {
-            var func = new Time();
-            var result = func.Execute(FunctionsHelper.CreateArgs(24, 12, 12), _parsingContext);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                var func = new Time();
+                var result = func.Execute(FunctionsHelper.CreateArgs(24, 12, 12), _parsingContext);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void HourShouldReturnCorrectResult()
         {
             var func = new Hour();
             var result = func.Execute(FunctionsHelper.CreateArgs(GetTime(9, 13, 14)), _parsingContext);
-            Assert.AreEqual(9, result.Result);
+            Assert.That(9, Is.EqualTo(result.Result));
 
             result = func.Execute(FunctionsHelper.CreateArgs(GetTime(23, 13, 14)), _parsingContext);
-            Assert.AreEqual(23, result.Result);
+            Assert.That(23, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MinuteShouldReturnCorrectResult()
         {
             var func = new Minute();
             var result = func.Execute(FunctionsHelper.CreateArgs(GetTime(9, 14, 14)), _parsingContext);
-            Assert.AreEqual(14, result.Result);
+            Assert.That(14, Is.EqualTo(result.Result));
 
             result = func.Execute(FunctionsHelper.CreateArgs(GetTime(9, 55, 14)), _parsingContext);
-            Assert.AreEqual(55, result.Result);
+            Assert.That(55, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void SecondShouldReturnCorrectResult()
         {
             var func = new Second();
             var result = func.Execute(FunctionsHelper.CreateArgs(GetTime(9, 14, 17)), _parsingContext);
-            Assert.AreEqual(17, result.Result);
+            Assert.That(17, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void SecondShouldReturnCorrectResultWithStringArgument()
         {
             var func = new Second();
             var result = func.Execute(FunctionsHelper.CreateArgs("2012-03-27 10:11:12"), _parsingContext);
-            Assert.AreEqual(12, result.Result);
+            Assert.That(12, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MinuteShouldReturnCorrectResultWithStringArgument()
         {
             var func = new Minute();
             var result = func.Execute(FunctionsHelper.CreateArgs("2012-03-27 10:11:12"), _parsingContext);
-            Assert.AreEqual(11, result.Result);
+            Assert.That(11, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void HourShouldReturnCorrectResultWithStringArgument()
         {
             var func = new Hour();
             var result = func.Execute(FunctionsHelper.CreateArgs("2012-03-27 10:11:12"), _parsingContext);
-            Assert.AreEqual(10, result.Result);
+            Assert.That(10, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void WeekdayShouldReturnCorrectResultForASundayWhenReturnTypeIs1()
         {
             var func = new Weekday();
             var result = func.Execute(FunctionsHelper.CreateArgs(new DateTime(2012, 4, 1).ToOADate(), 1), _parsingContext);
-            Assert.AreEqual(1, result.Result);
+            Assert.That(1, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void WeekdayShouldReturnCorrectResultForASundayWhenReturnTypeIs2()
         {
             var func = new Weekday();
             var result = func.Execute(FunctionsHelper.CreateArgs(new DateTime(2012, 4, 1).ToOADate(), 2), _parsingContext);
-            Assert.AreEqual(7, result.Result);
+            Assert.That(7, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void WeekdayShouldReturnCorrectResultForASundayWhenReturnTypeIs3()
         {
             var func = new Weekday();
             var result = func.Execute(FunctionsHelper.CreateArgs(new DateTime(2012, 4, 1).ToOADate(), 3), _parsingContext);
-            Assert.AreEqual(6, result.Result);
+            Assert.That(6, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void WeekNumShouldReturnCorrectResult()
         {
             var func = new Weeknum();
@@ -262,12 +272,12 @@ namespace EPPlusTest.Excel.Functions
             var r2 = func.Execute(FunctionsHelper.CreateArgs(dt2), _parsingContext);
             var r3 = func.Execute(FunctionsHelper.CreateArgs(dt3, 2), _parsingContext);
 
-            Assert.AreEqual(53, r1.Result, "r1.Result was not 53, but " + r1.Result.ToString());
-            Assert.AreEqual(1, r2.Result, "r2.Result was not 1, but " + r2.Result.ToString());
-            Assert.AreEqual(3, r3.Result, "r3.Result was not 3, but " + r3.Result.ToString());
+            Assert.Equals(53, r1.Result);
+            Assert.Equals(1, r2.Result);
+            Assert.Equals(3, r3.Result);
         }
 
-        [TestMethod]
+        [Test]
         public void EdateShouldReturnCorrectResult()
         {
             var func = new Edate();
@@ -288,12 +298,12 @@ namespace EPPlusTest.Excel.Functions
             var exp2 = new DateTime(2012, 12, 1);
             var exp3 = new DateTime(2013, 4, 28);
 
-            Assert.AreEqual(exp1, dt1, "dt1 was not " + exp1.ToString("yyyy-MM-dd") + ", but " + dt1.ToString("yyyy-MM-dd"));
-            Assert.AreEqual(exp2, dt2, "dt1 was not " + exp2.ToString("yyyy-MM-dd") + ", but " + dt2.ToString("yyyy-MM-dd"));
-            Assert.AreEqual(exp3, dt3, "dt1 was not " + exp3.ToString("yyyy-MM-dd") + ", but " + dt3.ToString("yyyy-MM-dd"));
+            Assert.Equals(exp1, dt1);
+            Assert.Equals(exp2, dt2);
+            Assert.Equals(exp3, dt3);
         }
 
-        [TestMethod]
+        [Test]
         public void Days360ShouldReturnCorrectResultWithNoMethodSpecified2()
         {
             var func = new Days360();
@@ -303,10 +313,10 @@ namespace EPPlusTest.Excel.Functions
 
             var result = func.Execute(FunctionsHelper.CreateArgs(dt1arg, dt2arg), _parsingContext);
 
-            Assert.AreEqual(90, result.Result);
+            Assert.That(90, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void Days360ShouldReturnCorrectResultWithEuroMethodSpecified()
         {
             var func = new Days360();
@@ -316,10 +326,10 @@ namespace EPPlusTest.Excel.Functions
 
             var result = func.Execute(FunctionsHelper.CreateArgs(dt1arg, dt2arg, true), _parsingContext);
 
-            Assert.AreEqual(89, result.Result);
+            Assert.That(89, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void Days360ShouldHandleFebWithEuroMethodSpecified()
         {
             var func = new Days360();
@@ -329,10 +339,10 @@ namespace EPPlusTest.Excel.Functions
 
             var result = func.Execute(FunctionsHelper.CreateArgs(dt1arg, dt2arg, true), _parsingContext);
 
-            Assert.AreEqual(359, result.Result);
+            Assert.That(359, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void Days360ShouldHandleFebWithUsMethodSpecified()
         {
             var func = new Days360();
@@ -342,10 +352,10 @@ namespace EPPlusTest.Excel.Functions
 
             var result = func.Execute(FunctionsHelper.CreateArgs(dt1arg, dt2arg, false), _parsingContext);
 
-            Assert.AreEqual(358, result.Result);
+            Assert.That(358, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void Days360ShouldHandleFebWithUsMethodSpecified2()
         {
             var func = new Days360();
@@ -355,10 +365,10 @@ namespace EPPlusTest.Excel.Functions
 
             var result = func.Execute(FunctionsHelper.CreateArgs(dt1arg, dt2arg, false), _parsingContext);
 
-            Assert.AreEqual(30, result.Result);
+            Assert.That(30, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void YearFracShouldReturnCorrectResultWithUsBasis()
         {
             var func = new Yearfrac();
@@ -369,10 +379,10 @@ namespace EPPlusTest.Excel.Functions
 
             var roundedResult = Math.Round((double) result.Result, 4);
 
-            Assert.IsTrue(Math.Abs(0.0861 - roundedResult) < double.Epsilon);
+            Assert.That(Math.Abs(0.0861 - roundedResult) < double.Epsilon);
         }
 
-        [TestMethod]
+        [Test]
         public void YearFracShouldReturnCorrectResultWithEuroBasis()
         {
             var func = new Yearfrac();
@@ -383,10 +393,10 @@ namespace EPPlusTest.Excel.Functions
 
             var roundedResult = Math.Round((double)result.Result, 4);
 
-            Assert.IsTrue(Math.Abs(0.0889 - roundedResult) < double.Epsilon);
+            Assert.That(Math.Abs(0.0889 - roundedResult) < double.Epsilon);
         }
 
-        [TestMethod]
+        [Test]
         public void YearFracActualActual()
         {
             var func = new Yearfrac();
@@ -397,10 +407,10 @@ namespace EPPlusTest.Excel.Functions
 
             var roundedResult = Math.Round((double)result.Result, 4);
 
-            Assert.IsTrue(Math.Abs(1.0862 - roundedResult) < double.Epsilon);
+            Assert.That(Math.Abs(1.0862 - roundedResult) < double.Epsilon);
         }
 
-        [TestMethod]
+        [Test]
         public void IsoWeekShouldReturn1When1StJan()
         {
             var func = new IsoWeekNum();
@@ -408,10 +418,10 @@ namespace EPPlusTest.Excel.Functions
 
             var result = func.Execute(FunctionsHelper.CreateArgs(arg), _parsingContext);
 
-            Assert.AreEqual(1, result.Result);
+            Assert.That(1, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void EomonthShouldReturnCorrectResultWithPositiveArg()
         {
             var func = new Eomonth();
@@ -419,10 +429,10 @@ namespace EPPlusTest.Excel.Functions
 
             var result = func.Execute(FunctionsHelper.CreateArgs(arg, 3), _parsingContext);
 
-            Assert.AreEqual(41425d, result.Result);
+            Assert.That(41425d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void EomonthShouldReturnCorrectResultWithNegativeArg()
         {
             var func = new Eomonth();
@@ -430,10 +440,10 @@ namespace EPPlusTest.Excel.Functions
 
             var result = func.Execute(FunctionsHelper.CreateArgs(arg, -3), _parsingContext);
 
-            Assert.AreEqual(41243d, result.Result);
+            Assert.That(41243d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void WorkdayShouldReturnCorrectResultIfNoHolidayIsSupplied()
         {
             var inputDate = new DateTime(2014, 1, 1).ToOADate();
@@ -442,10 +452,10 @@ namespace EPPlusTest.Excel.Functions
             var func = new Workday();
             var args = FunctionsHelper.CreateArgs(inputDate, 20);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(expectedDate, result.Result);
+            Assert.That(expectedDate, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void WorkdayShouldReturnCorrectResultWithNegativeArg()
         {
             var inputDate = new DateTime(2016, 6, 15).ToOADate();
@@ -454,10 +464,10 @@ namespace EPPlusTest.Excel.Functions
             var func = new Workday();
             var args = FunctionsHelper.CreateArgs(inputDate, -30);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(DateTime.FromOADate(expectedDate), DateTime.FromOADate((double)result.Result));
+            Assert.That(DateTime.FromOADate(expectedDate), Is.EqualTo(DateTime.FromOADate((double)result.Result)));
         }
 
-        [TestMethod]
+        [Test]
         public void WorkdayShouldReturnCorrectResultWithFourDaysSupplied()
         {
             var inputDate = new DateTime(2014, 1, 1).ToOADate();
@@ -466,10 +476,10 @@ namespace EPPlusTest.Excel.Functions
             var func = new Workday();
             var args = FunctionsHelper.CreateArgs(inputDate, 4);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(expectedDate, result.Result);
+            Assert.That(expectedDate, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void WorkdayWithNegativeArgShouldReturnCorrectWhenArrayOfHolidayDatesIsSupplied()
         {
             var inputDate = new DateTime(2016, 7, 27).ToOADate();
@@ -480,10 +490,10 @@ namespace EPPlusTest.Excel.Functions
             var func = new Workday();
             var args = FunctionsHelper.CreateArgs(inputDate, -30, FunctionsHelper.CreateArgs(holidayDate1, holidayDate2));
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(expectedDate, result.Result);
+            Assert.That(expectedDate, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void WorkdayWithNegativeArgShouldReturnCorrectWhenRangeWithHolidayDatesIsSupplied()
         {
             using (var package = new ExcelPackage())
@@ -497,11 +507,11 @@ namespace EPPlusTest.Excel.Functions
 
                 var expectedDate = new DateTime(2016, 6, 13).ToOADate();
                 var actualDate = ws.Cells["B3"].Value;
-                Assert.AreEqual(expectedDate, actualDate);
+                Assert.That(expectedDate, Is.EqualTo(actualDate));
             } 
         }
 
-        [TestMethod]
+        [Test]
         public void NetworkdaysShouldReturnNumberOfDays()
         {
             using (var package = new ExcelPackage())
@@ -509,11 +519,11 @@ namespace EPPlusTest.Excel.Functions
                 var ws = package.Workbook.Worksheets.Add("test");
                 ws.Cells["A1"].Formula = "NETWORKDAYS(DATE(2016,1,1), DATE(2016,1,20))";
                 ws.Calculate();
-                Assert.AreEqual(14, ws.Cells["A1"].Value);
+                Assert.That(14, Is.EqualTo(ws.Cells["A1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NetworkdaysShouldReturnNumberOfDaysWithHolidayRange()
         {
             using (MemoryStream ms = new MemoryStream())
@@ -530,11 +540,11 @@ namespace EPPlusTest.Excel.Functions
                 ws.Cells["A1"].Formula = "NETWORKDAYS(DATE(2016,1,1), DATE(2016,1,20),B1)";
                 ws.Cells["B1"].Formula = "DATE(2016,1,15)";
                 ws.Calculate();
-                Assert.AreEqual(13, ws.Cells["A1"].Value);
+                Assert.That(13, Is.EqualTo(ws.Cells["A1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NetworkdaysNegativeShouldReturnNumberOfDays()
         {
             using (var package = new ExcelPackage())
@@ -542,11 +552,11 @@ namespace EPPlusTest.Excel.Functions
                 var ws = package.Workbook.Worksheets.Add("test");
                 ws.Cells["A1"].Formula = "NETWORKDAYS(DATE(2016,1,1), DATE(2015,12,20))";
                 ws.Calculate();
-                Assert.AreEqual(10, ws.Cells["A1"].Value);
+                Assert.That(10, Is.EqualTo(ws.Cells["A1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NetworkdayIntlShouldUseWeekendArg()
         {
             using (var package = new ExcelPackage())
@@ -554,11 +564,11 @@ namespace EPPlusTest.Excel.Functions
                 var ws = package.Workbook.Worksheets.Add("test");
                 ws.Cells["A1"].Formula = "NETWORKDAYS.INTL(DATE(2016,1,1), DATE(2016,1,20), 11)";
                 ws.Calculate();
-                Assert.AreEqual(17, ws.Cells["A1"].Value);
+                Assert.That(17, Is.EqualTo(ws.Cells["A1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NetworkdayIntlShouldUseWeekendStringArg()
         {
             using (var package = new ExcelPackage())
@@ -566,11 +576,11 @@ namespace EPPlusTest.Excel.Functions
                 var ws = package.Workbook.Worksheets.Add("test");
                 ws.Cells["A1"].Formula = "NETWORKDAYS.INTL(DATE(2016,1,1), DATE(2016,1,20), \"0000011\")";
                 ws.Calculate();
-                Assert.AreEqual(14, ws.Cells["A1"].Value);
+                Assert.That(14, Is.EqualTo(ws.Cells["A1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NetworkdayIntlShouldReduceHoliday()
         {
             using (var package = new ExcelPackage())
@@ -578,11 +588,11 @@ namespace EPPlusTest.Excel.Functions
                 var ws = package.Workbook.Worksheets.Add("test");
                 ws.Cells["A1"].Formula = "NETWORKDAYS.INTL(DATE(2016,1,1), DATE(2016,1,20), \"0000011\", DATE(2016,1,4))";
                 ws.Calculate();
-                Assert.AreEqual(13, ws.Cells["A1"].Value);
+                Assert.That(13, Is.EqualTo(ws.Cells["A1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void TimeAddition()
         {
             using (var package = new ExcelPackage())
@@ -592,7 +602,7 @@ namespace EPPlusTest.Excel.Functions
                 ws.Calculate();
                 var result = Convert.ToDouble(ws.Cells["A1"].Value);
                 result = Math.Round(result, 2);
-                Assert.AreEqual(1.42d, result);
+                Assert.That(1.42d, Is.EqualTo(result));
             }
         }
     }

@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.DataValidation;
 using System.IO;
 using OfficeOpenXml;
@@ -12,22 +12,22 @@ namespace EPPlusTest.DataValidation.IntegrationTests
     /// <summary>
     /// Remove the Ignore attributes from the testmethods if you want to run any of these tests
     /// </summary>
-    [TestClass]
+    [TestFixture]
     public class IntegrationTests : ValidationTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             SetupTestData();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             CleanupTestData();
         }
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void DataValidations_AddOneValidationOfTypeWhole()
         {
             _sheet.Cells["B1"].Value = 2;
@@ -42,7 +42,7 @@ namespace EPPlusTest.DataValidation.IntegrationTests
 
             _package.SaveAs(new FileInfo(GetTestOutputPath("AddOneValidationOfTypeWhole.xlsx")));
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void DataValidations_AddOneValidationOfTypeDecimal()
         {
             var validation = _sheet.DataValidations.AddDecimalValidation("A1");
@@ -59,7 +59,7 @@ namespace EPPlusTest.DataValidation.IntegrationTests
             _package.SaveAs(new FileInfo(GetTestOutputPath("AddOneValidationOfTypeDecimal.xlsx")));
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_AddOneValidationOfTypeListOfTypeList()
         {
             var validation = _sheet.DataValidations.AddListValidation("A:A");
@@ -73,7 +73,7 @@ namespace EPPlusTest.DataValidation.IntegrationTests
             _package.SaveAs(new FileInfo(GetTestOutputPath("AddOneValidationOfTypeList.xlsx")));
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_AddOneValidationOfTypeListOfTypeTime()
         {
             var validation = _sheet.DataValidations.AddTimeValidation("A1");
@@ -89,16 +89,16 @@ namespace EPPlusTest.DataValidation.IntegrationTests
             _package.SaveAs(new FileInfo(GetTestOutputPath("AddOneValidationOfTypeTime.xlsx")));
         }
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void DataValidations_ReadExistingWorkbookWithDataValidations()
         {
             using (var package = new ExcelPackage(new FileInfo(GetTestOutputPath("DVTest.xlsx"))))
             {
-                Assert.AreEqual(3, package.Workbook.Worksheets[1].DataValidations.Count);
+                Assert.That(3, Is.EqualTo(package.Workbook.Worksheets[1].DataValidations.Count));
             }
         }
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void RemoveDataValidation()
         {
             var fileInfo = new FileInfo(@"c:\Temp\DvTest.xlsx");
@@ -132,7 +132,7 @@ namespace EPPlusTest.DataValidation.IntegrationTests
             }
         }
 
-        //[TestMethod]
+        //[Test]
         //public void Bug_OpenOffice()
         //{
         //    var xlsPath = GetTestOutputPath("OpenOffice.xlsx");

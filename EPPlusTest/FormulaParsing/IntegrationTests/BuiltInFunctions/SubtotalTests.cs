@@ -3,18 +3,18 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml;
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 {
-    [TestClass]
+    [TestFixture]
     public class SubtotalTests : FormulaParserTestBase
     {
         private ExcelWorksheet _worksheet;
         private ExcelPackage _package;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _package = new ExcelPackage(new MemoryStream());
@@ -22,13 +22,13 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _parser = _worksheet.Workbook.FormulaParser;
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _package.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_Avg()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(1, A2:A3)";
@@ -37,10 +37,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A5"].Value = 2d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_Count()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(2, A2:A3)";
@@ -49,10 +49,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A5"].Value = 2d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(1d, result);
+            Assert.That(1d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_CountA()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(3, A2:A3)";
@@ -61,10 +61,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A5"].Value = 2d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(1d, result);
+            Assert.That(1d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_Max()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(4, A2:A3)";
@@ -73,10 +73,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A5"].Value = 2d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_Min()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(5, A2:A3)";
@@ -85,10 +85,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A5"].Value = 2d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_Product()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(6, A2:A3)";
@@ -97,10 +97,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A5"].Value = 2d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_Stdev()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(7, A2:A4)";
@@ -112,10 +112,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
             result = Math.Round((double)result, 9);
-            Assert.AreEqual(0.707106781d, result);
+            Assert.That(0.707106781d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_StdevP()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(8, A2:A4)";
@@ -126,10 +126,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A6"].Value = 4d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(0.5d, result);
+            Assert.That(0.5d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_Sum()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(9, A2:A3)";
@@ -138,10 +138,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A5"].Value = 2d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_Var()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(9, A2:A4)";
@@ -152,10 +152,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A6"].Value = 4d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(9d, result);
+            Assert.That(9d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNotIncludeSubtotalChildren_VarP()
         {
             _worksheet.Cells["A1"].Formula = "SUBTOTAL(10, A2:A4)";
@@ -166,7 +166,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _worksheet.Cells["A6"].Value = 4d;
             _worksheet.Calculate();
             var result = _worksheet.Cells["A1"].Value;
-            Assert.AreEqual(0.5d, result);
+            Assert.That(0.5d, Is.EqualTo(result));
         }
     }
 }

@@ -2,12 +2,12 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.Utils;
 
 namespace EPPlusTest.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class GuardingTests
     {
         private class TestClass
@@ -15,42 +15,51 @@ namespace EPPlusTest.Utils
 
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void Require_IsNotNull_ShouldThrowIfArgumentIsNull()
         {
-            TestClass obj = null;
-            Require.Argument(obj).IsNotNull("test");
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                TestClass obj = null;
+                Require.Argument(obj).IsNotNull("test");
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void Require_IsNotNull_ShouldNotThrowIfArgumentIsAnInstance()
         {
             var obj = new TestClass();
             Require.Argument(obj).IsNotNull("test");
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void Require_IsNotNullOrEmpty_ShouldThrowIfStringIsNull()
         {
-            string arg = null;
-            Require.Argument(arg).IsNotNullOrEmpty("test");
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                string arg = null;
+                Require.Argument(arg).IsNotNullOrEmpty("test");
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void Require_IsNotNullOrEmpty_ShouldNotThrowIfStringIsNotNullOrEmpty()
         {
             string arg = "test";
             Require.Argument(arg).IsNotNullOrEmpty("test");
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentOutOfRangeException))]
+        [Test]
         public void Require_IsInRange_ShouldThrowIfArgumentIsOutOfRange()
         {
-            int arg = 3;
-            Require.Argument(arg).IsInRange(5, 7, "test");
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                int arg = 3;
+                Require.Argument(arg).IsInRange(5, 7, "test");
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void Require_IsInRange_ShouldNotThrowIfArgumentIsInRange()
         {
             int arg = 6;

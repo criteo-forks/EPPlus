@@ -1,15 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using OfficeOpenXml;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
 
 namespace EPPlusTest
 {
-    [TestClass]
+    [TestFixture]
     public class Encrypt : TestBase
     {
-        [TestMethod]
-        [Ignore]
+        [Test]
+        [Explicit]
         public void ReadWriteEncrypt()
         {
             using (ExcelPackage pck = new ExcelPackage(new FileInfo(@"Test\Drawing.xlsx"), true))   
@@ -37,8 +37,8 @@ namespace EPPlusTest
             }
 
         }
-        [TestMethod]
-        [Ignore]
+        [Test]
+        [Explicit]
         public void WriteEncrypt()
         {
             ExcelPackage package = new ExcelPackage();
@@ -59,8 +59,8 @@ namespace EPPlusTest
             package.Encryption.IsEncrypted = true;
             package.SaveAs(new FileInfo(@"c:\temp\encrTest.xlsx"));
         }
-        [TestMethod]
-        [Ignore]
+        [Test]
+        [Explicit]
         public void WriteProtect()
         {
             ExcelPackage package = new ExcelPackage(new FileInfo(@"c:\temp\workbookprot2.xlsx"), "");
@@ -84,8 +84,8 @@ namespace EPPlusTest
             package.SaveAs(new FileInfo(@"c:\temp\workbookprot2.xlsx"));
 
         }
-        [TestMethod]
-        [Ignore]
+        [Test]
+        [Explicit]
         public void DecrypTest()
         {
             var p = new ExcelPackage(new FileInfo(@"c:\temp\encr.xlsx"), "test");
@@ -95,7 +95,7 @@ namespace EPPlusTest
             p.SaveAs(new FileInfo(@"c:\temp\encrNew.xlsx"));
         
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void DecrypTestBug()
         {
             var p = new ExcelPackage(new FileInfo(@"c:\temp\bug\TestExcel_2040.xlsx"), "");
@@ -105,8 +105,8 @@ namespace EPPlusTest
             p.SaveAs(new FileInfo(@"c:\temp\encrNew.xlsx"));
 
         }
-        [TestMethod]
-        [Ignore]
+        [Test]
+        [Explicit]
         public void EncrypTest()
         {
             var f = new FileInfo(@"c:\temp\encrwrite.xlsx");

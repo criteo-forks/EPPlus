@@ -2,29 +2,30 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.DataValidation;
 using System.Collections;
+using NUnit.Framework.Legacy;
 
 namespace EPPlusTest.DataValidation.Formulas
 {
-    [TestClass]
+    [TestFixture]
     public class ListFormulaTests : ValidationTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             SetupTestData();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             CleanupTestData();
             _dataValidationNode = null;
         }
 
-        [TestMethod]
+        [Test]
         public void ListFormula_FormulaValueIsSetFromXmlNodeInConstructor()
         {
             // Arrange
@@ -32,10 +33,10 @@ namespace EPPlusTest.DataValidation.Formulas
             // Act
             var validation = new ExcelDataValidationList(_sheet, "A1", ExcelDataValidationType.List, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.AreEqual(2, validation.Formula.Values.Count);
+            Assert.That(2, Is.EqualTo(validation.Formula.Values.Count));
         }
 
-        [TestMethod]
+        [Test]
         public void ListFormula_FormulaValueIsSetFromXmlNodeInConstructorOrderIsCorrect()
         {
             // Arrange
@@ -46,7 +47,7 @@ namespace EPPlusTest.DataValidation.Formulas
             CollectionAssert.AreEquivalent(new List<string>{ "1", "2"}, (ICollection)validation.Formula.Values);
         }
 
-        [TestMethod]
+        [Test]
         public void ListFormula_FormulasExcelFormulaIsSetFromXmlNodeInConstructor()
         {
             // Arrange
@@ -54,7 +55,7 @@ namespace EPPlusTest.DataValidation.Formulas
             // Act
             var validation = new ExcelDataValidationList(_sheet, "A1", ExcelDataValidationType.List, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.AreEqual("A1", validation.Formula.ExcelFormula);
+            Assert.That("A1", Is.EqualTo(validation.Formula.ExcelFormula));
         }
     }
 }

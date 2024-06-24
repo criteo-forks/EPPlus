@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph.CompileStrategy;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
@@ -12,13 +12,13 @@ using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing.ExpressionGraph
 {
-    [TestClass]
+    [TestFixture]
     public class ExpressionGraphBuilderTests
     {
         private IExpressionGraphBuilder _graphBuilder;
         private ExcelDataProvider _excelDataProvider;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _excelDataProvider = A.Fake<ExcelDataProvider>();
@@ -26,13 +26,13 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             _graphBuilder = new ExpressionGraphBuilder(_excelDataProvider, parsingContext);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
 
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldNotUseStringIdentifyersWhenBuildingStringExpression()
         {
             var tokens = new List<Token>
@@ -44,10 +44,10 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = _graphBuilder.Build(tokens);
 
-            Assert.AreEqual(1, result.Expressions.Count());
+            Assert.That(1, Is.EqualTo(result.Expressions.Count()));
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldNotEvaluateExpressionsWithinAString()
         {
             var tokens = new List<Token>
@@ -59,10 +59,10 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = _graphBuilder.Build(tokens);
 
-            Assert.AreEqual("1 + 2", result.Expressions.First().Compile().Result);
+            Assert.That("1 + 2", Is.EqualTo(result.Expressions.First().Compile().Result));
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldSetOperatorOnGroupExpressionCorrectly()
         {
             var tokens = new List<Token>
@@ -77,11 +77,11 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             };
             var result = _graphBuilder.Build(tokens);
 
-            Assert.AreEqual(Operator.Multiply.Operator, result.Expressions.First().Operator.Operator);
+            Assert.That(Operator.Multiply.Operator, Is.EqualTo(result.Expressions.First().Operator.Operator));
 
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldSetChildrenOnGroupExpression()
         {
             var tokens = new List<Token>
@@ -96,11 +96,11 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             };
             var result = _graphBuilder.Build(tokens);
 
-            Assert.IsInstanceOfType(result.Expressions.First(), typeof(GroupExpression));
-            Assert.AreEqual(2, result.Expressions.First().Children.Count());
+            Assert.That(result.Expressions.First(), Is.InstanceOf<GroupExpression>());
+            Assert.That(2, Is.EqualTo(result.Expressions.First().Children.Count()));
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldSetNextOnGroupedExpression()
         {
             var tokens = new List<Token>
@@ -115,12 +115,12 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             };
             var result = _graphBuilder.Build(tokens);
 
-            Assert.IsNotNull(result.Expressions.First().Next);
-            Assert.IsInstanceOfType(result.Expressions.First().Next, typeof(IntegerExpression));
+            Assert.That(result.Expressions.First().Next, Is.Not.Null);
+            Assert.That(result.Expressions.First().Next, Is.InstanceOf<IntegerExpression>());
 
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldBuildFunctionExpressionIfFirstTokenIsFunction()
         {
             var tokens = new List<Token>
@@ -132,11 +132,11 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             };
             var result = _graphBuilder.Build(tokens);
 
-            Assert.AreEqual(1, result.Expressions.Count());
-            Assert.IsInstanceOfType(result.Expressions.First(), typeof(FunctionExpression));
+            Assert.That(1, Is.EqualTo(result.Expressions.Count()));
+            Assert.That(result.Expressions.First(), Is.InstanceOf<FunctionExpression>());
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldSetChildrenOnFunctionExpression()
         {
             var tokens = new List<Token>
@@ -148,13 +148,13 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             };
             var result = _graphBuilder.Build(tokens);
 
-            Assert.AreEqual(1, result.Expressions.First().Children.Count());
-            Assert.IsInstanceOfType(result.Expressions.First().Children.First(), typeof(GroupExpression));
-            Assert.IsInstanceOfType(result.Expressions.First().Children.First().Children.First(), typeof(IntegerExpression));
-            Assert.AreEqual(2d, result.Expressions.First().Children.First().Compile().Result);
+            Assert.That(1, Is.EqualTo(result.Expressions.First().Children.Count()));
+            Assert.That(result.Expressions.First().Children.First(), Is.InstanceOf<GroupExpression>());
+            Assert.That(result.Expressions.First().Children.First().Children.First(), Is.InstanceOf<IntegerExpression>());
+            Assert.That(2d, Is.EqualTo(result.Expressions.First().Children.First().Compile().Result));
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldAddOperatorToFunctionExpression()
         {
             var tokens = new List<Token>
@@ -168,11 +168,11 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             };
             var result = _graphBuilder.Build(tokens);
 
-            Assert.AreEqual(1, result.Expressions.First().Children.Count());
-            Assert.AreEqual(2, result.Expressions.Count());
+            Assert.That(1, Is.EqualTo(result.Expressions.First().Children.Count()));
+            Assert.That(2, Is.EqualTo(result.Expressions.Count()));
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldAddCommaSeparatedFunctionArgumentsAsChildrenToFunctionExpression()
         {
             var tokens = new List<Token>
@@ -189,10 +189,10 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = _graphBuilder.Build(tokens);
 
-            Assert.AreEqual(2, result.Expressions.First().Children.Count());
+            Assert.That(2, Is.EqualTo(result.Expressions.First().Children.Count()));
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldCreateASingleExpressionOutOfANegatorAndANumericToken()
         {
             var tokens = new List<Token>
@@ -203,11 +203,11 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = _graphBuilder.Build(tokens);
 
-            Assert.AreEqual(1, result.Expressions.Count());
-            Assert.AreEqual(-2d, result.Expressions.First().Compile().Result);
+            Assert.That(1, Is.EqualTo(result.Expressions.Count()));
+            Assert.That(-2d, Is.EqualTo(result.Expressions.First().Compile().Result));
         }
 
-        [TestMethod]
+        [Test]
         public void BuildShouldHandleEnumerableTokens()
         {
             var tokens = new List<Token>
@@ -224,15 +224,15 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = _graphBuilder.Build(tokens);
             var funcArgExpression = result.Expressions.First().Children.First();
-            Assert.IsInstanceOfType(funcArgExpression, typeof(FunctionArgumentExpression));
+            Assert.That(funcArgExpression, Is.InstanceOf<FunctionArgumentExpression>());
 
             var enumerableExpression = funcArgExpression.Children.First();
 
-            Assert.IsInstanceOfType(enumerableExpression, typeof(EnumerableExpression));
-            Assert.AreEqual(2, enumerableExpression.Children.Count(), "Enumerable.Count was not 2");
+            Assert.That(enumerableExpression, Is.InstanceOf<EnumerableExpression>());
+            Assert.That(2, Is.EqualTo(enumerableExpression.Children.Count()), "Enumerable.Count was not 2");
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldHandleInnerFunctionCall2()
         {
             var ctx = ParsingContext.Create();
@@ -240,14 +240,14 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             var tokenizer = new SourceCodeTokenizer(ctx.Configuration.FunctionRepository, ctx.NameValueProvider);
             var tokens = tokenizer.Tokenize(formula);
             var expression = _graphBuilder.Build(tokens);
-            Assert.AreEqual(1, expression.Expressions.Count());
+            Assert.That(1, Is.EqualTo(expression.Expressions.Count()));
 
             var compiler = new ExpressionCompiler(new ExpressionConverter(), new CompileStrategyFactory());
             var result = compiler.Compile(expression.Expressions);
-            Assert.AreEqual("Yes", result.Result);
+            Assert.That("Yes", Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldHandleInnerFunctionCall3()
         {
             var ctx = ParsingContext.Create();
@@ -255,11 +255,11 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             var tokenizer = new SourceCodeTokenizer(ctx.Configuration.FunctionRepository, ctx.NameValueProvider);
             var tokens = tokenizer.Tokenize(formula);
             var expression = _graphBuilder.Build(tokens);
-            Assert.AreEqual(1, expression.Expressions.Count());
+            Assert.That(1, Is.EqualTo(expression.Expressions.Count()));
             var exp1 = expression.Expressions.First();
-            Assert.AreEqual(3, exp1.Children.Count());
+            Assert.That(3, Is.EqualTo(exp1.Children.Count()));
         }
-        [TestMethod]
+        [Test]
         public void RemoveDuplicateOperators1()
         {
             var ctx = ParsingContext.Create();
@@ -267,14 +267,14 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             var tokenizer = new SourceCodeTokenizer(ctx.Configuration.FunctionRepository, ctx.NameValueProvider);
             var tokens = tokenizer.Tokenize(formula).ToList();
             var expression = _graphBuilder.Build(tokens);
-            Assert.AreEqual(11, tokens.Count());
-            Assert.AreEqual("+", tokens[1].Value);
-            Assert.AreEqual("-", tokens[3].Value);
-            Assert.AreEqual("-", tokens[5].Value);
-            Assert.AreEqual("+", tokens[7].Value);
-            Assert.AreEqual("-", tokens[9].Value);
+            Assert.That(11, Is.EqualTo(tokens.Count()));
+            Assert.That("+", Is.EqualTo(tokens[1].Value));
+            Assert.That("-", Is.EqualTo(tokens[3].Value));
+            Assert.That("-", Is.EqualTo(tokens[5].Value));
+            Assert.That("+", Is.EqualTo(tokens[7].Value));
+            Assert.That("-", Is.EqualTo(tokens[9].Value));
         }
-        [TestMethod]
+        [Test]
         public void RemoveDuplicateOperators2()
         {
             var ctx = ParsingContext.Create();
@@ -283,7 +283,7 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             var tokens = tokenizer.Tokenize(formula).ToList();
         }
 
-        [TestMethod]
+        [Test]
         public void BuildExcelAddressExpressionSimple()
         {
             var tokens = new List<Token>
@@ -292,7 +292,7 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             };
 
             var result = _graphBuilder.Build(tokens);
-            Assert.IsInstanceOfType(result.Expressions.First(), typeof(ExcelAddressExpression));
+            Assert.That(result.Expressions.First(), Is.InstanceOf<ExcelAddressExpression>());
         }
     }
 }

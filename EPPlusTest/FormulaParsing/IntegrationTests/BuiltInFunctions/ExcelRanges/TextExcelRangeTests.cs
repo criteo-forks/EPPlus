@@ -4,19 +4,19 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRanges
 {
-    [TestClass]
+    [TestFixture]
     public class TextExcelRangeTests
     {
         private ExcelPackage _package;
         private ExcelWorksheet _worksheet;
         private CultureInfo _currentCulture;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             _currentCulture = CultureInfo.CurrentCulture;
@@ -28,24 +28,24 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A3"].Value = 6;
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _package.Dispose();
             Thread.CurrentThread.CurrentCulture = _currentCulture;
         }
 
-        [TestMethod]
+        [Test]
         public void ExactShouldReturnTrueWhenEqualValues()
         {
             _worksheet.Cells["A2"].Value = 1d;
             _worksheet.Cells["A4"].Formula = "EXACT(A1,A2)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.IsTrue((bool)result);
+            Assert.That((bool)result);
         }
 
-        [TestMethod]
+        [Test]
         public void FindShouldReturnIndexCaseSensitive()
         {
             _worksheet.Cells["A1"].Value = "h";
@@ -53,10 +53,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Find(A1,A2)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(5, result);
+            Assert.That(5, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SearchShouldReturnIndexCaseInSensitive()
         {
             _worksheet.Cells["A1"].Value = "h";
@@ -64,20 +64,20 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Search(A1,A2)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(1, result);
+            Assert.That(1, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ValueShouldHandleStringWithIntegers()
         {
             _worksheet.Cells["A1"].Value = "12";
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(12d, result);
+            Assert.That(12d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ValueShouldHandle1000delimiter()
         {
             var delimiter = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
@@ -86,10 +86,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(5000d, result);
+            Assert.That(5000d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ValueShouldHandle1000DelimiterAndDecimal()
         {
             var delimiter = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
@@ -99,10 +99,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(5000.123d, result);
+            Assert.That(5000.123d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ValueShouldHandlePercent()
         {
             var val = $"20%";
@@ -110,10 +110,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(0.2d, result);
+            Assert.That(0.2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ValueShouldHandleScientificNotation()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -121,10 +121,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(0.012345d, result);
+            Assert.That(0.012345d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ValueShouldHandleDate()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -133,10 +133,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(date.ToOADate(), result);
+            Assert.That(date.ToOADate(), Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ValueShouldHandleTime()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -147,10 +147,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(0.5, result);
+            Assert.That(0.5, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ValueShouldReturn0IfValueIsNull()
         {
 
@@ -158,7 +158,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _worksheet.Cells["A4"].Formula = "Value(A1)";
             _worksheet.Calculate();
             var result = _worksheet.Cells["A4"].Value;
-            Assert.AreEqual(0d, result);
+            Assert.That(0d, Is.EqualTo(result));
         }
 
     }

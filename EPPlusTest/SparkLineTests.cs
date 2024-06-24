@@ -1,12 +1,12 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Sparkline;
 
 namespace EPPlusTest
 {
-    [TestClass]
+    [TestFixture]
     public class SparkLineTests : TestBase
     {
         string _pckfile;
@@ -15,7 +15,7 @@ namespace EPPlusTest
             InitBase();
             _pckfile = "Sparklines.xlsx";
         }
-        [TestMethod]
+        [Test]
         public void StartTest()
         {
             WriteSparklines();
@@ -26,29 +26,29 @@ namespace EPPlusTest
             _pck = new ExcelPackage();
             OpenPackage(_pckfile);
             var ws = _pck.Workbook.Worksheets[_pck.Compatibility.IsWorksheets1Based?1:0];
-            Assert.AreEqual(4, ws.SparklineGroups.Count);
+            Assert.That(4, Is.EqualTo(ws.SparklineGroups.Count));
             var sg1 = ws.SparklineGroups[0];
-            Assert.AreEqual("A1:A4",sg1.LocationRange.Address);
-            Assert.AreEqual("B1:C4", sg1.DataRange.Address);
-            Assert.AreEqual(null, sg1.DateAxisRange);
+            Assert.Equals("A1:A4",sg1.LocationRange.Address);
+            Assert.That("B1:C4", Is.EqualTo(sg1.DataRange.Address));
+            Assert.That(sg1.DateAxisRange, Is.Null);
 
             var sg2 = ws.SparklineGroups[1];
-            Assert.AreEqual("D1:D2", sg2.LocationRange.Address);
-            Assert.AreEqual("B1:C4", sg2.DataRange.Address);
+            Assert.That("D1:D2", Is.EqualTo(sg2.LocationRange.Address));
+            Assert.That("B1:C4", Is.EqualTo(sg2.DataRange.Address));
 
             var sg3 = ws.SparklineGroups[2];
-            Assert.AreEqual("A10:B10", sg3.LocationRange.Address);
-            Assert.AreEqual("B1:C4", sg3.DataRange.Address);
+            Assert.That("A10:B10", Is.EqualTo(sg3.LocationRange.Address));
+            Assert.That("B1:C4", Is.EqualTo(sg3.DataRange.Address));
 
             var sg4 = ws.SparklineGroups[3];
-            Assert.AreEqual("D10:G10", sg4.LocationRange.Address);
-            Assert.AreEqual("B1:C4", sg4.DataRange.Address);
-            Assert.AreEqual("'Sparklines'!A20:A23", sg4.DateAxisRange.Address);
+            Assert.That("D10:G10", Is.EqualTo(sg4.LocationRange.Address));
+            Assert.That("B1:C4", Is.EqualTo(sg4.DataRange.Address));
+            Assert.That("'Sparklines'!A20:A23", Is.EqualTo(sg4.DateAxisRange.Address));
 
             var c1 = sg1.ColorMarkers;
-            Assert.AreEqual(c1.Rgb, "FFD00000");
+            Assert.That(c1.Rgb, Is.EqualTo("FFD00000"));
             var ec = sg1.DisplayEmptyCellsAs;
-            Assert.AreEqual(eDispBlanksAs.Gap, ec);
+            Assert.That(eDispBlanksAs.Gap, Is.EqualTo(ec));
             var t = sg1.Type;
         }
         public void WriteSparklines()

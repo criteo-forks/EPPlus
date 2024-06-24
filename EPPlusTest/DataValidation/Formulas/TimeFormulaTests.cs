@@ -2,27 +2,27 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.DataValidation;
 
 namespace EPPlusTest.DataValidation.Formulas
 {
-    [TestClass]
+    [TestFixture]
     public class TimeFormulaTests : ValidationTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             SetupTestData();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             CleanupTestData();
         }
 
-        [TestMethod]
+        [Test]
         public void TimeFormula_ValueIsSetFromConstructorValidateHour()
         {
             // Arrange
@@ -33,10 +33,10 @@ namespace EPPlusTest.DataValidation.Formulas
             var formula = new ExcelDataValidationTime(_sheet, "A1", ExcelDataValidationType.Time, _dataValidationNode, _namespaceManager);
             
             // Assert
-            Assert.AreEqual(time.Hour, formula.Formula.Value.Hour);
+            Assert.That(time.Hour, Is.EqualTo(formula.Formula.Value.Hour));
         }
 
-        [TestMethod]
+        [Test]
         public void TimeFormula_ValueIsSetFromConstructorValidateMinute()
         {
             // Arrange
@@ -47,10 +47,10 @@ namespace EPPlusTest.DataValidation.Formulas
             var formula = new ExcelDataValidationTime(_sheet, "A1", ExcelDataValidationType.Time, _dataValidationNode, _namespaceManager);
 
             // Assert
-            Assert.AreEqual(time.Minute, formula.Formula.Value.Minute);
+            Assert.That(time.Minute, Is.EqualTo(formula.Formula.Value.Minute));
         }
 
-        [TestMethod]
+        [Test]
         public void TimeFormula_ValueIsSetFromConstructorValidateSecond()
         {
             // Arrange
@@ -61,7 +61,7 @@ namespace EPPlusTest.DataValidation.Formulas
             var formula = new ExcelDataValidationTime(_sheet, "A1", ExcelDataValidationType.Time, _dataValidationNode, _namespaceManager);
 
             // Assert
-            Assert.AreEqual(time.Second.Value, formula.Formula.Value.Second.Value);
+            Assert.That(time.Second.Value, Is.EqualTo(formula.Formula.Value.Second.Value));
         }
     }
 }

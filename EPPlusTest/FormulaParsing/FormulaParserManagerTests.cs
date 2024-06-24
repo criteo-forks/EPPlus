@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions;
@@ -10,7 +10,7 @@ using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
 
 namespace EPPlusTest.FormulaParsing
 {
-    [TestClass]
+    [TestFixture]
     public class FormulaParserManagerTests
     {
         #region test classes
@@ -37,7 +37,7 @@ namespace EPPlusTest.FormulaParsing
         }
         #endregion
 
-        [TestMethod]
+        [Test]
         public void FunctionsShouldBeCopied()
         {
             using (var package1 = new ExcelPackage())
@@ -51,8 +51,8 @@ namespace EPPlusTest.FormulaParsing
                     package2.Workbook.FormulaParserManager.CopyFunctionsFrom(package1.Workbook);
 
                     // Assertions: number of functions are increased with 1, and the list of function names contains the custom function.
-                    Assert.AreEqual(origNumberOfFuncs + 1, package2.Workbook.FormulaParserManager.GetImplementedFunctionNames().Count());
-                    Assert.IsTrue(package2.Workbook.FormulaParserManager.GetImplementedFunctionNames().Contains("myfunction"));
+                    Assert.That(origNumberOfFuncs + 1, Is.EqualTo(package2.Workbook.FormulaParserManager.GetImplementedFunctionNames().Count()));
+                    Assert.That(package2.Workbook.FormulaParserManager.GetImplementedFunctionNames().Contains("myfunction"));
                 }
             }
         }

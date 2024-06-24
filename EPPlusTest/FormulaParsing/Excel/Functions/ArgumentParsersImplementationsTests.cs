@@ -2,114 +2,120 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.Excel.Functions;
 
 namespace EPPlusTest.Excel.Functions
 {
-    [TestClass]
+    [TestFixture]
     public class ArgumentParsersImplementationsTests
     {
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void IntParserShouldThrowIfArgumentIsNull()
         {
-            var parser = new IntArgumentParser();
-            parser.Parse(null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var parser = new IntArgumentParser();
+                parser.Parse(null);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void IntParserShouldConvertToAnInteger()
         {
             var parser = new IntArgumentParser();
             var result = parser.Parse(3);
-            Assert.AreEqual(3, result);
+            Assert.That(3, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void IntParserShouldConvertADoubleToAnInteger()
         {
             var parser = new IntArgumentParser();
             var result = parser.Parse(3d);
-            Assert.AreEqual(3, result);
+            Assert.That(3, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void IntParserShouldConvertAStringValueToAnInteger()
         {
             var parser = new IntArgumentParser();
             var result = parser.Parse("3");
-            Assert.AreEqual(3, result);
+            Assert.That(3, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void BoolParserShouldConvertNullToFalse()
         {
             var parser = new BoolArgumentParser();
             var result = (bool)parser.Parse(null);
-            Assert.IsFalse(result);
+            Assert.That(!result);
         }
 
-        [TestMethod]
+        [Test]
         public void BoolParserShouldConvertStringValueTrueToBoolValueTrue()
         {
             var parser = new BoolArgumentParser();
             var result = (bool)parser.Parse("true");
-            Assert.IsTrue(result);
+            Assert.That(result);
         }
 
-        [TestMethod]
+        [Test]
         public void BoolParserShouldConvert0ToFalse()
         {
             var parser = new BoolArgumentParser();
             var result = (bool)parser.Parse(0);
-            Assert.IsFalse(result);
+            Assert.That(!result);
         }
 
-        [TestMethod]
+        [Test]
         public void BoolParserShouldConvert1ToTrue()
         {
             var parser = new BoolArgumentParser();
             var result = (bool)parser.Parse(0);
-            Assert.IsFalse(result);
+            Assert.That(!result);
         }
 
-        [TestMethod]
+        [Test]
         public void DoubleParserShouldConvertDoubleToDouble()
         {
             var parser = new DoubleArgumentParser();
             var result = parser.Parse(3d);
-            Assert.AreEqual(3d, result);
+            Assert.That(3d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void DoubleParserShouldConvertIntToDouble()
         {
             var parser = new DoubleArgumentParser();
             var result = parser.Parse(3);
-            Assert.AreEqual(3d, result);
+            Assert.That(3d, Is.EqualTo(result));
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void DoubleParserShouldThrowIfArgumentIsNull()
         {
-            var parser = new DoubleArgumentParser();
-            parser.Parse(null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var parser = new DoubleArgumentParser();
+                parser.Parse(null);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void DoubleParserConvertStringToDoubleWithDotSeparator()
         {
             var parser = new DoubleArgumentParser();
             var result = parser.Parse("3.3");
-            Assert.AreEqual(3.3d, result);
+            Assert.That(3.3d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void DoubleParserConvertDateStringToDouble()
         {
             var parser = new DoubleArgumentParser();
             var result = parser.Parse("3.3.2015");
-            Assert.AreEqual(new DateTime(2015,3,3).ToOADate(), result);
+            Assert.That(new DateTime(2015,3,3).ToOADate(), Is.EqualTo(result));
         }
     }
 }

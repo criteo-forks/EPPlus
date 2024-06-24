@@ -2,14 +2,14 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Exceptions;
 using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.ExcelDataProviderTests
 {
-    [TestClass]
+    [TestFixture]
     public class ExcelDataProviderIntegrationTests
     {
         private ExcelCell CreateItem(object val, int row)
@@ -19,7 +19,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.ExcelDataProviderTests
 
       
 
-        //[TestMethod]
+        //[Test]
         //public void ShouldExecuteFormulaInRange()
         //{
         //    var expectedAddres = "A1:A2";
@@ -29,10 +29,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.ExcelDataProviderTests
         //        .Return(new object[] { 1, new ExcelCell(null, "SUM(1,2)", 0, 1) });
         //    var parser = new FormulaParser(provider);
         //    var result = parser.Parse(string.Format("sum({0})", expectedAddres));
-        //    Assert.AreEqual(4d, result);
+        //    Assert.That(4d, Is.EqualTo(result));
         //}
 
-        //[TestMethod, ExpectedException(typeof(CircularReferenceException))]
+        //[TestAssert.Throws<CircularReferenceException>(() => {});]
         //public void ShouldHandleCircularReference2()
         //{
         //    var expectedAddres = "A1:A2";

@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Chart;
 using System;
@@ -12,13 +12,13 @@ using System.Xml;
 namespace EPPlusTest.Drawing.Chart
 {
 
-    [TestClass]
+    [TestFixture]
     public class ExcelChartDataTableTest : TestBase
     {
         /// <summary>
         /// Basic test to check output with excel. need enhanced to be stand alone checking
         /// </summary>
-        [TestMethod,Ignore]
+        [Test] [Explicit]
         public void DataTableFile()
         {
             string outfile = Path.Combine(_worksheetPath, "DataTableFile.xlsx");
@@ -41,11 +41,11 @@ namespace EPPlusTest.Drawing.Chart
                 var chart = chartsheet.Chart as ExcelLineChart;
                 chart.Series.Add(worksheet.Cells["B2:B12"], worksheet.Cells["A2:A12"]).Header = "Data Test";
 
-                Assert.AreEqual(null, chart.PlotArea.DataTable);
+                Assert.That(chart.PlotArea.DataTable, Is.Null);
                 chart.PlotArea.CreateDataTable();
-                Assert.AreEqual(true, chart.PlotArea.DataTable.ShowVerticalBorder);
+                Assert.That(true, Is.EqualTo(chart.PlotArea.DataTable.ShowVerticalBorder));
                 chart.PlotArea.RemoveDataTable();
-                Assert.AreEqual(null, chart.PlotArea.DataTable);
+                Assert.That(chart.PlotArea.DataTable, Is.Null);
                 chart.PlotArea.CreateDataTable();
                 chart.PlotArea.DataTable.ShowOutline = false;
                 pkg.Save();
@@ -53,8 +53,8 @@ namespace EPPlusTest.Drawing.Chart
                 XmlDocument xmldoc = chart.ChartXml;
                 string xml = xmldoc.InnerXml;
                 Console.WriteLine(xml);
-                Assert.IsTrue(xml.Contains("c:dTable"));
-                Assert.IsTrue(xml.Contains("/c:dTable"));
+                Assert.That(xml.Contains("c:dTable"));
+                Assert.That(xml.Contains("/c:dTable"));
             }
         }
     }

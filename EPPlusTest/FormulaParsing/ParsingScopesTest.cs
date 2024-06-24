@@ -2,71 +2,71 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.ExcelUtilities;
 using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing
 {
-    [TestClass]
+    [TestFixture]
     public class ParsingScopesTest
     {
         private ParsingScopes _parsingScopes;
         private IParsingLifetimeEventHandler _lifeTimeEventHandler;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _lifeTimeEventHandler = A.Fake<IParsingLifetimeEventHandler>();
             _parsingScopes = new ParsingScopes(_lifeTimeEventHandler);
         }
 
-        [TestMethod]
+        [Test]
         public void CreatedScopeShouldBeCurrentScope()
         {
             using (var scope = _parsingScopes.NewScope(RangeAddress.Empty))
             {
-                Assert.AreEqual(_parsingScopes.Current, scope);
+                Assert.That(_parsingScopes.Current, Is.EqualTo(scope));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CurrentScopeShouldHandleNestedScopes()
         {
             using (var scope1 = _parsingScopes.NewScope(RangeAddress.Empty))
             {
-                Assert.AreEqual(_parsingScopes.Current, scope1);
+                Assert.That(_parsingScopes.Current, Is.EqualTo(scope1));
                 using (var scope2 = _parsingScopes.NewScope(RangeAddress.Empty))
                 {
-                    Assert.AreEqual(_parsingScopes.Current, scope2);
+                    Assert.That(_parsingScopes.Current, Is.EqualTo(scope2));
                 }
-                Assert.AreEqual(_parsingScopes.Current, scope1);
+                Assert.That(_parsingScopes.Current, Is.EqualTo(scope1));
             }
-            Assert.IsNull(_parsingScopes.Current);
+            Assert.That(_parsingScopes.Current, Is.Null);
         }
 
-        [TestMethod]
+        [Test]
         public void CurrentScopeShouldBeNullWhenScopeHasTerminated()
         {
             using (var scope = _parsingScopes.NewScope(RangeAddress.Empty))
             { }
-            Assert.IsNull(_parsingScopes.Current);
+            Assert.That(_parsingScopes.Current, Is.Null);
         }
 
-        [TestMethod]
+        [Test]
         public void NewScopeShouldSetParentOnCreatedScopeIfParentScopeExisted()
         {
             using (var scope1 = _parsingScopes.NewScope(RangeAddress.Empty))
             {
                 using (var scope2 = _parsingScopes.NewScope(RangeAddress.Empty))
                 {
-                    Assert.AreEqual(scope1, scope2.Parent);
+                    Assert.That(scope1, Is.EqualTo(scope2.Parent));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void LifetimeEventHandlerShouldBeCalled()
         {
             using (var scope = _parsingScopes.NewScope(RangeAddress.Empty))

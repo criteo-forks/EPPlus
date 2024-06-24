@@ -2,67 +2,70 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.ExcelUtilities;
 
 namespace EPPlusTest.ExcelUtilities
 {
-    [TestClass]
+    [TestFixture]
     public class ExcelAddressInfoTests
     {
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void ParseShouldThrowIfAddressIsNull()
         {
-            ExcelAddressInfo.Parse(null);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                ExcelAddressInfo.Parse(null);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void ParseShouldSetWorksheet()
         {
             var info = ExcelAddressInfo.Parse("Worksheet!A1");
-            Assert.AreEqual("Worksheet", info.Worksheet);
+            Assert.That("Worksheet", Is.EqualTo(info.Worksheet));
         }
 
-        [TestMethod]
+        [Test]
         public void WorksheetIsSpecifiedShouldBeTrueWhenWorksheetIsSupplied()
         {
             var info = ExcelAddressInfo.Parse("Worksheet!A1");
-            Assert.IsTrue(info.WorksheetIsSpecified);
+            Assert.That(info.WorksheetIsSpecified);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldIndicateMultipleCellsWhenAddressContainsAColon()
         {
             var info = ExcelAddressInfo.Parse("A1:A2");
-            Assert.IsTrue(info.IsMultipleCells);
+            Assert.That(info.IsMultipleCells);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSetStartCell()
         {
             var info = ExcelAddressInfo.Parse("A1:A2");
-            Assert.AreEqual("A1", info.StartCell);
+            Assert.That("A1", Is.EqualTo(info.StartCell));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSetEndCell()
         {
             var info = ExcelAddressInfo.Parse("A1:A2");
-            Assert.AreEqual("A2", info.EndCell);
+            Assert.That("A2", Is.EqualTo(info.EndCell));
         }
 
-        [TestMethod]
+        [Test]
         public void ParseShouldSetAddressOnSheet()
         {
             var info = ExcelAddressInfo.Parse("Worksheet!A1:A2");
-            Assert.AreEqual("A1:A2", info.AddressOnSheet);
+            Assert.That("A1:A2", Is.EqualTo(info.AddressOnSheet));
         }
 
-        [TestMethod]
+        [Test]
         public void AddressOnSheetShouldBeSameAsAddressIfNoWorksheetIsSpecified()
         {
             var info = ExcelAddressInfo.Parse("A1:A2");
-            Assert.AreEqual("A1:A2", info.AddressOnSheet);
+            Assert.That("A1:A2", Is.EqualTo(info.AddressOnSheet));
         }
     }
 }

@@ -2,66 +2,85 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.DataValidation;
 
 namespace EPPlusTest.DataValidation
 {
-    [TestClass]
+    [TestFixture]
     public class ValidationCollectionTests : ValidationTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             SetupTestData();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             CleanupTestData();
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ExcelDataValidationCollection_AddDecimal_ShouldThrowWhenAddressIsNullOrEmpty()
         {
-            // Act
-            _sheet.DataValidations.AddDecimalValidation(string.Empty);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                // Act
+                _sheet.DataValidations.AddDecimalValidation(string.Empty);
+            });
+            
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelDataValidationCollection_AddDecimal_ShouldThrowWhenNewValidationCollidesWithExisting()
         {
-            // Act
-            _sheet.DataValidations.AddDecimalValidation("A1");
-            _sheet.DataValidations.AddDecimalValidation("A1");
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                // Act
+                _sheet.DataValidations.AddDecimalValidation("A1");
+                _sheet.DataValidations.AddDecimalValidation("A1");
+            });
+            
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelDataValidationCollection_AddInteger_ShouldThrowWhenNewValidationCollidesWithExisting()
         {
-            // Act
-            _sheet.DataValidations.AddIntegerValidation("A1");
-            _sheet.DataValidations.AddIntegerValidation("A1");
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                // Act
+                _sheet.DataValidations.AddIntegerValidation("A1");
+                _sheet.DataValidations.AddIntegerValidation("A1");
+            });
+            
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelDataValidationCollection_AddTextLength_ShouldThrowWhenNewValidationCollidesWithExisting()
         {
-            // Act
-            _sheet.DataValidations.AddTextLengthValidation("A1");
-            _sheet.DataValidations.AddTextLengthValidation("A1");
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                // Act
+                _sheet.DataValidations.AddTextLengthValidation("A1");
+                _sheet.DataValidations.AddTextLengthValidation("A1");
+            });
+            
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void ExcelDataValidationCollection_AddDateTime_ShouldThrowWhenNewValidationCollidesWithExisting()
         {
-            // Act
-            _sheet.DataValidations.AddDateTimeValidation("A1");
-            _sheet.DataValidations.AddDateTimeValidation("A1");
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                // Act
+                _sheet.DataValidations.AddDateTimeValidation("A1");
+                _sheet.DataValidations.AddDateTimeValidation("A1");
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelDataValidationCollection_Index_ShouldReturnItemAtIndex()
         {
             // Arrange
@@ -73,10 +92,10 @@ namespace EPPlusTest.DataValidation
             var result = _sheet.DataValidations[1];
 
             // Assert
-            Assert.AreEqual("A2", result.Address.Address);
+            Assert.That("A2", Is.EqualTo(result.Address.Address));
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelDataValidationCollection_FindAll_ShouldReturnValidationInColumnAonly()
         {
             // Arrange
@@ -88,11 +107,11 @@ namespace EPPlusTest.DataValidation
             var result = _sheet.DataValidations.FindAll(x => x.Address.Address.StartsWith("A"));
 
             // Assert
-            Assert.AreEqual(2, result.Count());
+            Assert.That(2, Is.EqualTo(result.Count()));
 
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelDataValidationCollection_Find_ShouldReturnFirstMatchOnly()
         {
             // Arrange
@@ -103,11 +122,11 @@ namespace EPPlusTest.DataValidation
             var result = _sheet.DataValidations.Find(x => x.Address.Address.StartsWith("A"));
 
             // Assert
-            Assert.AreEqual("A1", result.Address.Address);
+            Assert.That("A1", Is.EqualTo(result.Address.Address));
 
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelDataValidationCollection_Clear_ShouldBeEmpty()
         {
             // Arrange
@@ -117,11 +136,11 @@ namespace EPPlusTest.DataValidation
             _sheet.DataValidations.Clear();
 
             // Assert
-            Assert.AreEqual(0, _sheet.DataValidations.Count);
+            Assert.That(0, Is.EqualTo(_sheet.DataValidations.Count));
 
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelDataValidationCollection_RemoveAll_ShouldRemoveMatchingEntries()
         {
             // Arrange
@@ -133,7 +152,7 @@ namespace EPPlusTest.DataValidation
             _sheet.DataValidations.RemoveAll(x => x.Address.Address.StartsWith("B"));
 
             // Assert
-            Assert.AreEqual(2, _sheet.DataValidations.Count);
+            Assert.That(2, Is.EqualTo(_sheet.DataValidations.Count));
         }
     }
 }

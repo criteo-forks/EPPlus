@@ -63,7 +63,8 @@
     <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
     <PackageReference Include="FakeItEasy" Version="8.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.4.3" />
+    <PackageReference Include="NUnit" Version="4.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.SDK" Version="17.10.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="WorkSheetTests.cs" />

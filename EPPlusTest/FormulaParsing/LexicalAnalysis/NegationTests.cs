@@ -2,88 +2,88 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using OfficeOpenXml.FormulaParsing;
 
 
 namespace EPPlusTest.FormulaParsing.LexicalAnalysis
 {
-    [TestClass]
+    [TestFixture]
     public class NegationTests
     {
         private SourceCodeTokenizer _tokenizer;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             var context = ParsingContext.Create();
             _tokenizer = new SourceCodeTokenizer(context.Configuration.FunctionRepository, null);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
 
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSetNegatorOnFirstTokenIfFirstCharIsMinus()
         {
             var input = "-1";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(2, tokens.Count());
-            Assert.AreEqual(TokenType.Negator, tokens.First().TokenType);
+            Assert.That(2, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.First().TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldChangePlusToMinusIfNegatorIsPresent()
         {
             var input = "1 + -1";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(3, tokens.Count());
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual("-", tokens.ElementAt(1).Value);
+            Assert.That(3, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That("-", Is.EqualTo(tokens.ElementAt(1).Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSetNegatorOnTokenInsideParenthethis()
         {
             var input = "1 + (-1 * 2)";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(8, tokens.Count());
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(3).TokenType);
+            Assert.That(8, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(3).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSetNegatorOnTokenInsideFunctionCall()
         {
             var input = "Ceiling(-1, -0.1)";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(8, tokens.Count());
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(5).TokenType, "Negator after comma was not identified");
+            Assert.That(8, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(5).TokenType), "Negator after comma was not identified");
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSetNegatorOnTokenInEnumerable()
         {
             var input = "{-1}";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(1).TokenType);
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(1).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldSetNegatorOnExcelAddress()
         {
             var input = "-A1";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.ExcelAddress, tokens.ElementAt(1).TokenType);
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.ExcelAddress, Is.EqualTo(tokens.ElementAt(1).TokenType));
         }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions
 {
-    [TestClass]
+    [TestFixture]
     public class FinanceFunctionTests
     {
-        [TestMethod]
+        [Test]
         public void PmtTest1()
         {
             using (var package = new ExcelPackage())
@@ -17,7 +17,7 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions
                 sheet.Calculate();
                 var value = sheet.Cells["A1"].Value;
                 var value2 = System.Math.Round(Convert.ToDouble(value), 2);
-                Assert.AreEqual(-943.56, value2);
+                Assert.That(-943.56, Is.EqualTo(value2));
             }
         }
     }

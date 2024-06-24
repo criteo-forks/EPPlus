@@ -1,18 +1,18 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using System.Reflection;
 
 namespace EPPlusTest
 {
-	[TestClass]
+	[TestFixture]
 	public class WorksheetsTests
 	{
 		private ExcelPackage package;
 		private ExcelWorkbook workbook;
 
-		[TestInitialize]
+		[SetUp]
 		public void TestInitialize()
 		{
 			package = new ExcelPackage();
@@ -20,14 +20,14 @@ namespace EPPlusTest
 			workbook.Worksheets.Add("NEW1");
 		}
 
-		[TestMethod]
+		[Test]
 		public void ConfirmFileStructure()
 		{
-			Assert.IsNotNull(package, "Package not created");
-			Assert.IsNotNull(workbook, "No workbook found");
+			Assert.That(package, Is.Not.Null, "Package not created");
+			Assert.That(workbook, Is.Not.Null, "No workbook found");
 		}
 
-		[TestMethod]
+		[Test]
 		public void ShouldBeAbleToDeleteAndThenAdd()
 		{
 			workbook.Worksheets.Add("NEW2");
@@ -35,21 +35,24 @@ namespace EPPlusTest
 			workbook.Worksheets.Add("NEW3");
 		}
 
-		[TestMethod]
+		[Test]
 		public void DeleteByNameWhereWorkSheetExists()
 		{
 		    workbook.Worksheets.Add("NEW2");
 			workbook.Worksheets.Delete("NEW2");
         }
 
-		[TestMethod, ExpectedException(typeof(ArgumentException))]
+		[Test]
 		public void DeleteByNameWhereWorkSheetDoesNotExist()
 		{
-			workbook.Worksheets.Add("NEW2");
-			workbook.Worksheets.Delete("NEW3");
+			Assert.Throws<ArgumentException>(() =>
+			{
+				workbook.Worksheets.Add("NEW2");
+				workbook.Worksheets.Delete("NEW3");
+			});
 		}
 
-		[TestMethod]
+		[Test]
 		public void MoveBeforeByNameWhereWorkSheetExists()
 		{
 			workbook.Worksheets.Add("NEW2");
@@ -62,7 +65,7 @@ namespace EPPlusTest
 			CompareOrderOfWorksheetsAfterSaving(package);
 		}
 
-		[TestMethod]
+		[Test]
 		public void MoveAfterByNameWhereWorkSheetExists()
 		{
 			workbook.Worksheets.Add("NEW2");
@@ -75,7 +78,7 @@ namespace EPPlusTest
 			CompareOrderOfWorksheetsAfterSaving(package);
 		}
 
-		[TestMethod]
+		[Test]
 		public void MoveBeforeByPositionWhereWorkSheetExists()
 		{
 			workbook.Worksheets.Add("NEW2");
@@ -88,7 +91,7 @@ namespace EPPlusTest
 			CompareOrderOfWorksheetsAfterSaving(package);
 		}
 
-		[TestMethod]
+		[Test]
 		public void MoveAfterByPositionWhereWorkSheetExists()
 		{
 			workbook.Worksheets.Add("NEW2");
@@ -104,7 +107,8 @@ namespace EPPlusTest
 
         private const string OutputDirectory = @"d:\temp\";
 
-        [TestMethod,Ignore]
+        [Explicit]
+        [Test]
         public void DeleteFirstColumnInRangeColumnShouldBeDeleted()
         {
             // Arrange
@@ -122,13 +126,13 @@ namespace EPPlusTest
             pck.SaveAs(new FileInfo(OutputDirectory + "AfterDeleteColumn.xlsx"));
 
             // Assert
-            Assert.AreEqual("Title", wsData.Cells["A1"].Text);
-            Assert.AreEqual("First Name", wsData.Cells["B1"].Text);
-            Assert.AreEqual("Family Name", wsData.Cells["C1"].Text);
+            Assert.That("Title", Is.EqualTo(wsData.Cells["A1"].Text));
+            Assert.That("First Name", Is.EqualTo(wsData.Cells["B1"].Text));
+            Assert.That("Family Name", Is.EqualTo(wsData.Cells["C1"].Text));
         }
 
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void DeleteLastColumnInRangeColumnShouldBeDeleted()
         {
             // Arrange
@@ -146,12 +150,12 @@ namespace EPPlusTest
             pck.SaveAs(new FileInfo(OutputDirectory + "AfterDeleteColumn.xlsx"));
 
             // Assert
-            Assert.AreEqual("Id", wsData.Cells["A1"].Text);
-            Assert.AreEqual("Title", wsData.Cells["B1"].Text);
-            Assert.AreEqual("First Name", wsData.Cells["C1"].Text);
+            Assert.That("Id", Is.EqualTo(wsData.Cells["A1"].Text));
+            Assert.That("Title", Is.EqualTo(wsData.Cells["B1"].Text));
+            Assert.That("First Name", Is.EqualTo(wsData.Cells["C1"].Text));
         }
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void DeleteColumnAfterNormalRangeSheetShouldRemainUnchanged()
         {
             // Arrange
@@ -169,58 +173,62 @@ namespace EPPlusTest
             pck.SaveAs(new FileInfo(OutputDirectory + "AfterDeleteColumn.xlsx"));
 
             // Assert
-            Assert.AreEqual("Id", wsData.Cells["A1"].Text);
-            Assert.AreEqual("Title", wsData.Cells["B1"].Text);
-            Assert.AreEqual("First Name", wsData.Cells["C1"].Text);
-            Assert.AreEqual("Family Name", wsData.Cells["D1"].Text);
+            Assert.That("Id", Is.EqualTo(wsData.Cells["A1"].Text));
+            Assert.That("Title", Is.EqualTo(wsData.Cells["B1"].Text));
+            Assert.That("First Name", Is.EqualTo(wsData.Cells["C1"].Text));
+            Assert.That("Family Name", Is.EqualTo(wsData.Cells["D1"].Text));
 
         }
 
-        [TestMethod, Ignore]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test] [Explicit]
         public void DeleteColumnBeforeRangeMimitThrowsArgumentException()
         {
-            // Arrange
-            ExcelPackage pck = new ExcelPackage();
-            using (
-                Stream file =
-              Assembly.GetExecutingAssembly().GetManifestResourceStream("EPPlusTest.TestWorkbooks.PreDeleteColumn.xls"))
-            {
-                pck.Load(file);
-            }
-            var wsData = pck.Workbook.Worksheets[1];
+	        Assert.Throws<ArgumentException>(() =>
+	        {
+		        // Arrange
+		        ExcelPackage pck = new ExcelPackage();
+		        using (
+			        Stream file =
+			        Assembly.GetExecutingAssembly()
+				        .GetManifestResourceStream("EPPlusTest.TestWorkbooks.PreDeleteColumn.xls"))
+		        {
+			        pck.Load(file);
+		        }
 
-            // Act
-            wsData.DeleteColumn(0);
+		        var wsData = pck.Workbook.Worksheets[1];
 
-            // Assert
-            Assert.Fail();
+		        // Act
+		        wsData.DeleteColumn(0);
 
+		        // Assert
+		        Assert.Fail();
+	        });
         }
 
-        [TestMethod, Ignore]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test] [Explicit]
         public void DeleteColumnAfterRangeLimitThrowsArgumentException()
         {
-            // Arrange
-            ExcelPackage pck = new ExcelPackage();
-            using (
-                Stream file =
-              Assembly.GetExecutingAssembly().GetManifestResourceStream("EPPlusTest.TestWorkbooks.PreDeleteColumn.xls"))
-            {
-                pck.Load(file);
-            }
-            var wsData = pck.Workbook.Worksheets[1];
+	        Assert.Throws<ArgumentException>(() =>
+		    {
+	            // Arrange
+	            ExcelPackage pck = new ExcelPackage();
+	            using (
+	                Stream file =
+	              Assembly.GetExecutingAssembly().GetManifestResourceStream("EPPlusTest.TestWorkbooks.PreDeleteColumn.xls"))
+	            {
+	                pck.Load(file);
+	            }
+	            var wsData = pck.Workbook.Worksheets[1];
 
-            // Act
-            wsData.DeleteColumn(16385);
+	            // Act
+	            wsData.DeleteColumn(16385);
 
-            // Assert
-            Assert.Fail();
-
+	            // Assert
+	            Assert.Fail();
+		    });
         }
 
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void DeleteFirstTwoColumnsFromRangeColumnsShouldBeDeleted()
         {
             // Arrange
@@ -238,13 +246,13 @@ namespace EPPlusTest
             pck.SaveAs(new FileInfo(OutputDirectory + "AfterDeleteColumn.xlsx"));
 
             // Assert
-            Assert.AreEqual("First Name", wsData.Cells["A1"].Text);
-            Assert.AreEqual("Family Name", wsData.Cells["B1"].Text);
+            Assert.That("First Name", Is.EqualTo(wsData.Cells["A1"].Text));
+            Assert.That("Family Name", Is.EqualTo(wsData.Cells["B1"].Text));
 
         }
         #endregion
 
-        [TestMethod]
+        [Test]
         public void RangeClearMethodShouldNotClearSurroundingCells()
         {
             var wks  = workbook.Worksheets.Add("test");
@@ -253,9 +261,9 @@ namespace EPPlusTest
 
             wks.Cells[2, 3].Clear();
 
-            Assert.IsNotNull(wks.Cells[2, 2].Value);
-            Assert.AreEqual("something", wks.Cells[2, 2].Value);
-            Assert.IsNull(wks.Cells[2, 3].Value);
+            Assert.That(wks.Cells[2, 2].Value, Is.Not.Null);
+            Assert.Equals("something", wks.Cells[2, 2].Value);
+            Assert.Equals(null, wks.Cells[2, 3].Value);
         }
 
         private static void CompareOrderOfWorksheetsAfterSaving(ExcelPackage editedPackage)
@@ -268,7 +276,7 @@ namespace EPPlusTest
             var positionId = 1;
 			foreach (var worksheet in editedPackage.Workbook.Worksheets)
 			{
-				Assert.AreEqual(worksheet.Name, newPackage.Workbook.Worksheets[positionId].Name, "Worksheets are not in the same order");
+				Assert.That(worksheet.Name, Is.EqualTo(newPackage.Workbook.Worksheets[positionId].Name));
 				positionId++;
 			}
 		}

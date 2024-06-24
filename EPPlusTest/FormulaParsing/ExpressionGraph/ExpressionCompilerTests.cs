@@ -2,27 +2,27 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 using ExpGraph = OfficeOpenXml.FormulaParsing.ExpressionGraph.ExpressionGraph;
 using OfficeOpenXml.FormulaParsing.Excel.Operators;
 
 namespace EPPlusTest.FormulaParsing.ExpressionGraph
 {
-    [TestClass]
+    [TestFixture]
     public class ExpressionCompilerTests
     {
         private IExpressionCompiler _expressionCompiler;
         private ExpGraph _graph;
         
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _expressionCompiler = new ExpressionCompiler();
             _graph = new ExpGraph();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldCompileTwoInterExpressionsToCorrectResult()
         {
             var exp1 = new IntegerExpression("2");
@@ -33,11 +33,11 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = _expressionCompiler.Compile(_graph.Expressions);
 
-            Assert.AreEqual(4d, result.Result);
+            Assert.That(4d, Is.EqualTo(result.Result));
         }
 
 
-        [TestMethod]
+        [Test]
         public void CompileShouldMultiplyGroupExpressionWithFollowingIntegerExpression()
         {
             var groupExpression = new GroupExpression(false);
@@ -51,10 +51,10 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = _expressionCompiler.Compile(_graph.Expressions);
 
-            Assert.AreEqual(10d, result.Result);
+            Assert.That(10d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void CompileShouldCalculateMultipleExpressionsAccordingToPrecedence()
         {
             var exp1 = new IntegerExpression("2");
@@ -71,7 +71,7 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = _expressionCompiler.Compile(_graph.Expressions);
 
-            Assert.AreEqual(8d, result.Result);
+            Assert.That(8d, Is.EqualTo(result.Result));
         }
     }
 }

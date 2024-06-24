@@ -2,38 +2,38 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.DataValidation;
 
 namespace EPPlusTest.DataValidation.Formulas
 {
-    [TestClass]
+    [TestFixture]
     public class IntegerFormulaTests : ValidationTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             SetupTestData();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             CleanupTestData();
             _dataValidationNode = null;
         }
 
-        [TestMethod]
+        [Test]
         public void IntegerFormula_FormulaValueIsSetFromXmlNodeInConstructor()
         {
             // Arrange
             LoadXmlTestData("A1", "decimal", "1");
             // Act
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
-            Assert.AreEqual(1, validation.Formula.Value);
+            Assert.That(1, Is.EqualTo(validation.Formula.Value));
         }
 
-        [TestMethod]
+        [Test]
         public void IntegerFormula_FormulasFormulaIsSetFromXmlNodeInConstructor()
         {
             // Arrange
@@ -43,7 +43,7 @@ namespace EPPlusTest.DataValidation.Formulas
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
 
             // Assert
-            Assert.AreEqual("A1", validation.Formula.ExcelFormula);
+            Assert.That("A1", Is.EqualTo(validation.Formula.ExcelFormula));
         }
     }
 }

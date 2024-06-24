@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph;
@@ -8,19 +8,19 @@ using OfficeOpenXml.FormulaParsing.ExpressionGraph.FunctionCompilers;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions
 {
-    [TestClass]
+    [TestFixture]
     public class FunctionRepositoryTests
     {
         #region LoadModule Tests
-        [TestMethod]
+        [Test]
         public void LoadModulePopulatesFunctionsAndCustomCompilers()
         {
             var functionRepository = FunctionRepository.Create();
-            Assert.IsFalse(functionRepository.IsFunctionName(MyFunction.Name));
-            Assert.IsFalse(functionRepository.CustomCompilers.ContainsKey(typeof(MyFunction)));
+            Assert.That(!functionRepository.IsFunctionName(MyFunction.Name));
+            Assert.That(!functionRepository.CustomCompilers.ContainsKey(typeof(MyFunction)));
             functionRepository.LoadModule(new TestFunctionModule());
-            Assert.IsTrue(functionRepository.IsFunctionName(MyFunction.Name));
-            Assert.IsTrue(functionRepository.CustomCompilers.ContainsKey(typeof(MyFunction)));
+            Assert.That(functionRepository.IsFunctionName(MyFunction.Name));
+            Assert.That(functionRepository.CustomCompilers.ContainsKey(typeof(MyFunction)));
             // Make sure reloading the module overwrites previous functions and compilers
             functionRepository.LoadModule(new TestFunctionModule());
         }

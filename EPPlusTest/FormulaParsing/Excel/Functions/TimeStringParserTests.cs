@@ -2,12 +2,12 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
 
 namespace EPPlusTest.Excel.Functions
 {
-    [TestClass]
+    [TestFixture]
     public class TimeStringParserTests
     {
         private double GetSerialNumber(int hour, int minute, int second)
@@ -16,62 +16,69 @@ namespace EPPlusTest.Excel.Functions
             return ((double)hour * 60 * 60 + (double)minute * 60 + (double)second) / secondsInADay;
         }
 
-        [TestMethod]
+        [Test]
         public void CanParseShouldHandleValid24HourPatterns()
         {
             var parser = new TimeStringParser();
-            Assert.IsTrue(parser.CanParse("10:12:55"), "Could not parse 10:12:55");
-            Assert.IsTrue(parser.CanParse("22:12:55"), "Could not parse 13:12:55");
-            Assert.IsTrue(parser.CanParse("13"), "Could not parse 13");
-            Assert.IsTrue(parser.CanParse("13:12"), "Could not parse 13:12");
+            Assert.That(parser.CanParse("10:12:55"), "Could not parse 10:12:55");
+            Assert.That(parser.CanParse("22:12:55"), "Could not parse 13:12:55");
+            Assert.That(parser.CanParse("13"), "Could not parse 13");
+            Assert.That(parser.CanParse("13:12"), "Could not parse 13:12");
         }
 
-        [TestMethod]
+        [Test]
         public void CanParseShouldHandleValid12HourPatterns()
         {
             var parser = new TimeStringParser();
-            Assert.IsTrue(parser.CanParse("10:12:55 AM"), "Could not parse 10:12:55 AM");
-            Assert.IsTrue(parser.CanParse("9:12:55 PM"), "Could not parse 9:12:55 PM");
-            Assert.IsTrue(parser.CanParse("7 AM"), "Could not parse 7 AM");
-            Assert.IsTrue(parser.CanParse("4:12 PM"), "Could not parse 4:12 PM");
+            Assert.That(parser.CanParse("10:12:55 AM"), "Could not parse 10:12:55 AM");
+            Assert.That(parser.CanParse("9:12:55 PM"), "Could not parse 9:12:55 PM");
+            Assert.That(parser.CanParse("7 AM"), "Could not parse 7 AM");
+            Assert.That(parser.CanParse("4:12 PM"), "Could not parse 4:12 PM");
         }
 
-        [TestMethod]
+        [Test]
         public void ParseShouldIdentifyPatternAndReturnCorrectResult()
         {
             var parser = new TimeStringParser();
             var result = parser.Parse("10:12:55");
-            Assert.AreEqual(GetSerialNumber(10, 12, 55), result);
+            Assert.That(GetSerialNumber(10, 12, 55), Is.EqualTo(result));
         }
 
-        [TestMethod, ExpectedException(typeof(FormatException))]
+        [Test]
         public void ParseShouldThrowExceptionIfSecondIsOutOfRange()
         {
-            var parser = new TimeStringParser();
-            var result = parser.Parse("10:12:60");
+            Assert.Throws<FormatException>(() =>
+            {
+                var parser = new TimeStringParser();
+                var result = parser.Parse("10:12:60");
+            });
+            
         }
 
-        [TestMethod, ExpectedException(typeof(FormatException))]
+        [Test]
         public void ParseShouldThrowExceptionIfMinuteIsOutOfRange()
         {
-            var parser = new TimeStringParser();
-            var result = parser.Parse("10:60:55");
+            Assert.Throws<FormatException>(() =>
+            {
+                var parser = new TimeStringParser();
+                var result = parser.Parse("10:60:55");
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void ParseShouldIdentify12HourAMPatternAndReturnCorrectResult()
         {
             var parser = new TimeStringParser();
             var result = parser.Parse("10:12:55 AM");
-            Assert.AreEqual(GetSerialNumber(10, 12, 55), result);
+            Assert.That(GetSerialNumber(10, 12, 55), Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ParseShouldIdentify12HourPMPatternAndReturnCorrectResult()
         {
             var parser = new TimeStringParser();
             var result = parser.Parse("10:12:55 PM");
-            Assert.AreEqual(GetSerialNumber(22, 12, 55), result);
+            Assert.That(GetSerialNumber(22, 12, 55), Is.EqualTo(result));
         }
     }
 }

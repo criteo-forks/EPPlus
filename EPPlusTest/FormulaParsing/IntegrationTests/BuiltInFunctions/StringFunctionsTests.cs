@@ -2,106 +2,106 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 {
-    [TestClass]
+    [TestFixture]
     public class StringFunctionsTests : FormulaParserTestBase
     {
         private ExcelDataProvider _provider;
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _provider = A.Fake<ExcelDataProvider>();
             _parser = new FormulaParser(_provider);
         }
 
-        [TestMethod]
+        [Test]
         public void TextShouldConcatenateWithNextExpression()
         {
             A.CallTo(() =>_provider.GetFormat(23.5, "$0.00")).Returns("$23.50");
             var result = _parser.Parse("TEXT(23.5,\"$0.00\") & \" per hour\"");
-            Assert.AreEqual("$23.50 per hour", result);
+            Assert.That("$23.50 per hour", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void LenShouldAddLengthUsingSuppliedOperator()
         {
             var result = _parser.Parse("Len(\"abc\") + 2");
-            Assert.AreEqual(5d, result);
+            Assert.That(5d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void LowerShouldReturnALowerCaseString()
         {
             var result = _parser.Parse("Lower(\"ABC\")");
-            Assert.AreEqual("abc", result);
+            Assert.That("abc", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void UpperShouldReturnAnUpperCaseString()
         {
             var result = _parser.Parse("Upper(\"abc\")");
-            Assert.AreEqual("ABC", result);
+            Assert.That("ABC", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void LeftShouldReturnSubstringFromLeft()
         {
             var result = _parser.Parse("Left(\"abacd\", 2)");
-            Assert.AreEqual("ab", result);
+            Assert.That("ab", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void RightShouldReturnSubstringFromRight()
         {
             var result = _parser.Parse("RIGHT(\"abacd\", 2)");
-            Assert.AreEqual("cd", result);
+            Assert.That("cd", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void MidShouldReturnSubstringAccordingToParams()
         {
             var result = _parser.Parse("Mid(\"abacd\", 2, 2)");
-            Assert.AreEqual("ba", result);
+            Assert.That("ba", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceShouldReturnSubstringAccordingToParams()
         {
             var result = _parser.Parse("Replace(\"testar\", 3, 3, \"hej\")");
-            Assert.AreEqual("tehejr", result);
+            Assert.That("tehejr", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubstituteShouldReturnSubstringAccordingToParams()
         {
             var result = _parser.Parse("Substitute(\"testar testar\", \"es\", \"xx\")");
-            Assert.AreEqual("txxtar txxtar", result);
+            Assert.That("txxtar txxtar", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ConcatenateShouldReturnAccordingToParams()
         {
             var result = _parser.Parse("CONCATENATE(\"One\", \"Two\", \"Three\")");
-            Assert.AreEqual("OneTwoThree", result);
+            Assert.That("OneTwoThree", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void TShouldReturnText()
         {
             var result = _parser.Parse("T(\"One\")");
-            Assert.AreEqual("One", result);
+            Assert.That("One", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void ReptShouldConcatenate()
         {
             var result = _parser.Parse("REPT(\"*\",3)");
-            Assert.AreEqual("***", result);
+            Assert.That("***", Is.EqualTo(result));
         }
     }
 }

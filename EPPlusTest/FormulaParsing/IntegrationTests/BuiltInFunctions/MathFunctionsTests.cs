@@ -2,19 +2,19 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml;
 using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 {
-    [TestClass]
+    [TestFixture]
     public class MathFunctionsTests : FormulaParserTestBase
     {
         private ExcelPackage _package;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _package = new ExcelPackage();
@@ -22,128 +22,128 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
             _parser = new FormulaParser(excelDataProvider);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _package.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void PowerShouldReturnCorrectResult()
         {
             var result = _parser.Parse("Power(3, 3)");
-            Assert.AreEqual(27d, result);
+            Assert.That(27d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SqrtShouldReturnCorrectResult()
         {
             var result = _parser.Parse("sqrt(9)");
-            Assert.AreEqual(3d, result);
+            Assert.That(3d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void PiShouldReturnCorrectResult()
         {
             var expectedValue = (double)Math.Round(Math.PI, 14);
             var result = _parser.Parse("Pi()");
-            Assert.AreEqual(expectedValue, result);
+            Assert.That(expectedValue, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void CeilingShouldReturnCorrectResult()
         {
             var expectedValue = 22.4d;
             var result = _parser.Parse("ceiling(22.35, 0.1)");
-            Assert.AreEqual(expectedValue, result);
+            Assert.That(expectedValue, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void FloorShouldReturnCorrectResult()
         {
             var expectedValue = 22.3d;
             var result = _parser.Parse("Floor(22.35, 0.1)");
-            Assert.AreEqual(expectedValue, result);
+            Assert.That(expectedValue, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SumShouldReturnCorrectResultWithInts()
         {
             var result = _parser.Parse("sum(1, 2)");
-            Assert.AreEqual(3d, result);
+            Assert.That(3d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SumShouldReturnCorrectResultWithDecimals()
         {
             var result = _parser.Parse("sum(1,2.5)");
-            Assert.AreEqual(3.5d, result);
+            Assert.That(3.5d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SumShouldReturnCorrectResultWithEnumerable()
         {
             var result = _parser.Parse("sum({1;2;3;-1}, 2.5)");
-            Assert.AreEqual(7.5d, result);
+            Assert.That(7.5d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SumsqShouldReturnCorrectResultWithEnumerable()
         {
             var result = _parser.Parse("sumsq({2;3})");
-            Assert.AreEqual(13d, result);
+            Assert.That(13d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldNegateExpression()
         {
             var result = _parser.Parse("-subtotal(2;{1;2})");
-            Assert.AreEqual(-2d, result);
+            Assert.That(-2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void StdevShouldReturnAResult()
         {
             var result = _parser.Parse("stdev(1;2;3;4)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void StdevPShouldReturnAResult()
         {
             var result = _parser.Parse("stdevp(2,3,4)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void ExpShouldReturnAResult()
         {
             var result = _parser.Parse("exp(4)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void MaxShouldReturnAResult()
         {
             var result = _parser.Parse("Max(4, 5)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void MaxaShouldReturnAResult()
         {
             var result = _parser.Parse("Maxa(4, 5)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void MinShouldReturnAResult()
         {
             var result = _parser.Parse("min(4, 5)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void MinaShouldCalculateStringAs0()
         {
             using (var pck = new ExcelPackage())
@@ -153,18 +153,18 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 sheet.Cells["B2"].Value = "a";
                 sheet.Cells["A5"].Formula = "MINA(A1:B4)";
                 sheet.Calculate();
-                Assert.AreEqual(0d, sheet.Cells["A5"].Value);
+                Assert.That(0d, Is.EqualTo(sheet.Cells["A5"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void AverageShouldReturnAResult()
         {
             var result = _parser.Parse("Average(2, 2, 2)");
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageShouldReturnDiv0IfEmptyCell()
         {
             using(var pck = new ExcelPackage())
@@ -172,221 +172,221 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 var ws = pck.Workbook.Worksheets.Add("test");
                 ws.Cells["A2"].Formula = "AVERAGE(A1)";
                 ws.Calculate();
-                Assert.AreEqual("#DIV/0!", ws.Cells["A2"].Value.ToString());
+                Assert.That("#DIV/0!", Is.EqualTo(ws.Cells["A2"].Value.ToString()));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void RoundShouldReturnAResult()
         {
             var result = _parser.Parse("Round(2.2, 0)");
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void RounddownShouldReturnAResult()
         {
             var result = _parser.Parse("Rounddown(2.99, 1)");
-            Assert.AreEqual(2.9d, result);
+            Assert.That(2.9d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void RoundupShouldReturnAResult()
         {
             var result = _parser.Parse("Roundup(2.99, 1)");
-            Assert.AreEqual(3d, result);
+            Assert.That(3d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SqrtPiShouldReturnAResult()
         {
             var result = _parser.Parse("SqrtPi(2.2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void IntShouldReturnAResult()
         {
             var result = _parser.Parse("Int(2.9)");
-            Assert.AreEqual(2, result);
+            Assert.That(2, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void RandShouldReturnAResult()
         {
             var result = _parser.Parse("Rand()");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void RandBetweenShouldReturnAResult()
         {
             var result = _parser.Parse("RandBetween(1,2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void CountShouldReturnAResult()
         {
             var result = _parser.Parse("Count(1,2,2,\"4\")");
-            Assert.AreEqual(4d, result);
+            Assert.That(4d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void CountAShouldReturnAResult()
         {
             var result = _parser.Parse("CountA(1,2,2,\"\", \"a\")");
-            Assert.AreEqual(4d, result);
+            Assert.That(4d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void CountIfShouldReturnAResult()
         {
             var result = _parser.Parse("CountIf({1;2;2;\"\"}, \"2\")");
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void VarShouldReturnAResult()
         {
             var result = _parser.Parse("Var(1,2,3)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void VarPShouldReturnAResult()
         {
             var result = _parser.Parse("VarP(1,2,3)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void ModShouldReturnAResult()
         {
             var result = _parser.Parse("Mod(5,2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void SubtotalShouldReturnAResult()
         {
             var result = _parser.Parse("Subtotal(1, 10, 20)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void TruncShouldReturnAResult()
         {
             var result = _parser.Parse("Trunc(1.2345)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void ProductShouldReturnAResult()
         {
             var result = _parser.Parse("Product(1,2,3)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void CosShouldReturnAResult()
         {
             var result = _parser.Parse("Cos(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void CoshShouldReturnAResult()
         {
             var result = _parser.Parse("Cosh(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void SinShouldReturnAResult()
         {
             var result = _parser.Parse("Sin(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void SinhShouldReturnAResult()
         {
             var result = _parser.Parse("Sinh(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void TanShouldReturnAResult()
         {
             var result = _parser.Parse("Tan(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void AtanShouldReturnAResult()
         {
             var result = _parser.Parse("Atan(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void Atan2ShouldReturnAResult()
         {
             var result = _parser.Parse("Atan2(2,1)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void TanhShouldReturnAResult()
         {
             var result = _parser.Parse("Tanh(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void LogShouldReturnAResult()
         {
             var result = _parser.Parse("Log(2, 2)");
-            Assert.AreEqual(1d, result);
+            Assert.That(1d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void Log10ShouldReturnAResult()
         {
             var result = _parser.Parse("Log10(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void LnShouldReturnAResult()
         {
             var result = _parser.Parse("Ln(2)");
-            Assert.IsInstanceOfType(result, typeof(double));
+            Assert.That(result, Is.InstanceOf<double>());
         }
 
-        [TestMethod]
+        [Test]
         public void FactShouldReturnAResult()
         {
             var result = _parser.Parse("Fact(0)");
-            Assert.AreEqual(1d, result);
+            Assert.That(1d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void QuotientShouldReturnAResult()
         {
             var result = _parser.Parse("Quotient(5;2)");
-            Assert.AreEqual(2, result);
+            Assert.That(2, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void MedianShouldReturnAResult()
         {
             var result = _parser.Parse("Median(1;2;3)");
-            Assert.AreEqual(2d, result);
+            Assert.That(2d, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void CountBlankShouldCalculateEmptyCells()
         {
             using (var pck = new ExcelPackage())
@@ -396,11 +396,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 sheet.Cells["B2"].Value = string.Empty;
                 sheet.Cells["A5"].Formula = "COUNTBLANK(A1:B4)";
                 sheet.Calculate();
-                Assert.AreEqual(7, sheet.Cells["A5"].Value);
+                Assert.That(7, Is.EqualTo(sheet.Cells["A5"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CountBlankShouldCalculateResultOfOffset()
         {
             using (var pck = new ExcelPackage())
@@ -410,19 +410,19 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 sheet.Cells["B2"].Value = string.Empty;
                 sheet.Cells["A5"].Formula = "COUNTBLANK(OFFSET(A1, 0, 1))";
                 sheet.Calculate();
-                Assert.AreEqual(1, sheet.Cells["A5"].Value);
+                Assert.That(1, Is.EqualTo(sheet.Cells["A5"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DegreesShouldReturnCorrectResult()
         {
             var result = _parser.Parse("DEGREES(0.5)");
             var rounded = Math.Round((double)result, 3);
-            Assert.AreEqual(28.648, rounded);
+            Assert.That(28.648, Is.EqualTo(rounded));
         }
 
-        [TestMethod]
+        [Test]
         public void AverateIfsShouldCaluclateResult()
         {
             using (var pck = new ExcelPackage())
@@ -448,11 +448,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Cells["H9"].Formula = "AVERAGEIFS(F4:F8;H4:H8;\">3\";I4:I8;\"<5\")";
                 sheet.Calculate();
-                Assert.AreEqual(4.5d, sheet.Cells["H9"].Value);
+                Assert.That(4.5d, Is.EqualTo(sheet.Cells["H9"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void AbsShouldHandleEmptyCell()
         {
             using (var package = new ExcelPackage())
@@ -461,7 +461,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
                 sheet.Cells["A1"].Formula = "ABS(B1)";
                 sheet.Calculate();
 
-                Assert.AreEqual(0d, sheet.Cells["A1"].Value);
+                Assert.That(0d, Is.EqualTo(sheet.Cells["A1"].Value));
             }
         }
     }

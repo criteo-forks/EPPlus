@@ -1,188 +1,199 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.Utils;
 using OfficeOpenXml.Compatibility;
 
 namespace EPPlusTest.Utils
 {
-	[TestClass]
+	[TestFixture]
 	public class ConvertUtilTest
 	{
-		[TestMethod]
+		[Test]
 		public void TryParseNumericString()
 		{
 			double result;
 			object numericString = null;
 			double expected = 0;
-			Assert.IsFalse(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(!ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			expected = 1442.0;
 			numericString = expected.ToString("e", CultureInfo.CurrentCulture); // 1.442E+003
-			Assert.IsTrue(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			numericString = expected.ToString("f0", CultureInfo.CurrentCulture); // 1442
-			Assert.IsTrue(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			numericString = expected.ToString("f2", CultureInfo.CurrentCulture); // 1442.00
-			Assert.IsTrue(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			numericString = expected.ToString("n", CultureInfo.CurrentCulture); // 1,442.0
-			Assert.IsTrue(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			expected = -0.00526;
 			numericString = expected.ToString("e", CultureInfo.CurrentCulture); // -5.26E-003
-			Assert.IsTrue(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			numericString = expected.ToString("f0", CultureInfo.CurrentCulture); // -0
-			Assert.IsTrue(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(0.0, result);
+			Assert.That(ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(0.0, Is.EqualTo(result));
 			numericString = expected.ToString("f3", CultureInfo.CurrentCulture); // -0.005
-			Assert.IsTrue(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(-0.005, result);
+			Assert.That(ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(-0.005, Is.EqualTo(result));
 			numericString = expected.ToString("n6", CultureInfo.CurrentCulture); // -0.005260
-			Assert.IsTrue(ConvertUtil.TryParseNumericString(numericString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseNumericString(numericString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 		}
 		
-		[TestMethod]
+		[Test]
 		public void TryParseDateString()
 		{
 			DateTime result;
 			object dateString = null;
 			DateTime expected = DateTime.MinValue;
-			Assert.IsFalse(ConvertUtil.TryParseDateString(dateString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(!ConvertUtil.TryParseDateString(dateString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			expected = new DateTime(2013, 1, 15);
 			dateString = expected.ToString("d", CultureInfo.CurrentCulture); // 1/15/2013
-			Assert.IsTrue(ConvertUtil.TryParseDateString(dateString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseDateString(dateString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			dateString = expected.ToString("D", CultureInfo.CurrentCulture); // Tuesday, January 15, 2013
-			Assert.IsTrue(ConvertUtil.TryParseDateString(dateString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseDateString(dateString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			dateString = expected.ToString("F", CultureInfo.CurrentCulture); // Tuesday, January 15, 2013 12:00:00 AM
-			Assert.IsTrue(ConvertUtil.TryParseDateString(dateString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseDateString(dateString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			dateString = expected.ToString("g", CultureInfo.CurrentCulture); // 1/15/2013 12:00 AM
-			Assert.IsTrue(ConvertUtil.TryParseDateString(dateString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseDateString(dateString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			expected = new DateTime(2013, 1, 15, 15, 26, 32);
 			dateString = expected.ToString("F", CultureInfo.CurrentCulture); // Tuesday, January 15, 2013 3:26:32 PM
-			Assert.IsTrue(ConvertUtil.TryParseDateString(dateString, out result));
-			Assert.AreEqual(expected, result);
+			Assert.That(ConvertUtil.TryParseDateString(dateString, out result));
+			Assert.That(expected, Is.EqualTo(result));
 			dateString = expected.ToString("g", CultureInfo.CurrentCulture); // 1/15/2013 3:26 PM
-			Assert.IsTrue(ConvertUtil.TryParseDateString(dateString, out result));
-			Assert.AreEqual(new DateTime(2013, 1, 15, 15, 26, 0), result);
+			Assert.That(ConvertUtil.TryParseDateString(dateString, out result));
+			Assert.That(new DateTime(2013, 1, 15, 15, 26, 0), Is.EqualTo(result));
 		}
 
-        [TestMethod]
+        [Test]
         public void TextToInt()
         {
             var result = ConvertUtil.GetTypedCellValue<int>("204");
 
-            Assert.AreEqual(204, result);
+            Assert.That(204, Is.EqualTo(result));
         }
         // This is just illustration of the bug in old implementation
-        //[TestMethod]
+        //[Test]
         public void TextToIntInOldImplementation()
         {
             var result = GetTypedValue<int>("204");
 
-            Assert.AreEqual(204, result);
+            Assert.That(204, Is.EqualTo(result));
         }
-        [TestMethod]
+        [Test]
         public void DoubleToNullableInt()
         {
             var result = ConvertUtil.GetTypedCellValue<int?>(2D);
 
-            Assert.AreEqual(2, result);
+            Assert.That(2, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void StringToDecimal()
         {
             var decimalSign=System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
             var result = ConvertUtil.GetTypedCellValue<decimal>($"1{decimalSign}4");
 
-            Assert.AreEqual((decimal)1.4, result);
+            Assert.That((decimal)1.4, Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void EmptyStringToNullableDecimal()
         {
             var result = ConvertUtil.GetTypedCellValue<decimal?>("");
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
-        [TestMethod]
+        [Test]
         public void BlankStringToNullableDecimal()
         {
             var result = ConvertUtil.GetTypedCellValue<decimal?>(" ");
 
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(FormatException))]
+        [Test]
         public void EmptyStringToDecimal()
         {
-            ConvertUtil.GetTypedCellValue<decimal>("");
+            Assert.Throws<FormatException>(() =>
+            {
+                ConvertUtil.GetTypedCellValue<decimal>("");
+            });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(FormatException))]
+        [Test]
         public void FloatingPointStringToInt()
         {
-            ConvertUtil.GetTypedCellValue<int>("1.4");
+            Assert.Throws<FormatException>(() =>
+            {
+                ConvertUtil.GetTypedCellValue<int>("1.4");
+            });
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidCastException))]
+        [Test]
         public void IntToDateTime()
         {
-            ConvertUtil.GetTypedCellValue<DateTime>(122);
+            Assert.Throws<InvalidCastException>(() =>
+            {
+                ConvertUtil.GetTypedCellValue<DateTime>(122);
+            });
+            
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidCastException))]
+        [Test]
         public void IntToTimeSpan()
         {
-            ConvertUtil.GetTypedCellValue<TimeSpan>(122);
+            Assert.Throws<InvalidCastException>(() =>
+            {
+                ConvertUtil.GetTypedCellValue<TimeSpan>(122);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void IntStringToTimeSpan()
         {
-            Assert.AreEqual(TimeSpan.FromDays(122), ConvertUtil.GetTypedCellValue<TimeSpan>("122"));
+            Assert.That(TimeSpan.FromDays(122), Is.EqualTo(ConvertUtil.GetTypedCellValue<TimeSpan>("122")));
         }
 
-        [TestMethod]
+        [Test]
         public void BoolToInt()
         {
-            Assert.AreEqual(1, ConvertUtil.GetTypedCellValue<int>(true));
-            Assert.AreEqual(0, ConvertUtil.GetTypedCellValue<int>(false));
+            Assert.That(1, Is.EqualTo(ConvertUtil.GetTypedCellValue<int>(true)));
+            Assert.That(0, Is.EqualTo(ConvertUtil.GetTypedCellValue<int>(false)));
         }
 
-        [TestMethod]
+        [Test]
         public void BoolToDecimal()
         {
-            Assert.AreEqual(1m, ConvertUtil.GetTypedCellValue<decimal>(true));
-            Assert.AreEqual(0m, ConvertUtil.GetTypedCellValue<decimal>(false));
+            Assert.That(1m, Is.EqualTo(ConvertUtil.GetTypedCellValue<decimal>(true)));
+            Assert.That(0m, Is.EqualTo(ConvertUtil.GetTypedCellValue<decimal>(false)));
         }
 
-        [TestMethod]
+        [Test]
         public void BoolToDouble()
         {
-            Assert.AreEqual(1d, ConvertUtil.GetTypedCellValue<double>(true));
-            Assert.AreEqual(0d, ConvertUtil.GetTypedCellValue<double>(false));
+            Assert.That(1d, Is.EqualTo(ConvertUtil.GetTypedCellValue<double>(true)));
+            Assert.That(0d, Is.EqualTo(ConvertUtil.GetTypedCellValue<double>(false)));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(FormatException))]
+        [Test]
         public void BadTextToInt()
         {
-            ConvertUtil.GetTypedCellValue<int>("text1");
+            Assert.Throws<FormatException>(() =>
+            {
+                ConvertUtil.GetTypedCellValue<int>("text1");
+            });
         }
 
         // previous implementation

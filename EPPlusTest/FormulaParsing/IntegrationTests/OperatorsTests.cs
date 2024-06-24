@@ -1,35 +1,35 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.Exceptions;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests
 {
-    [TestClass]
+    [TestFixture]
     public class OperatorsTests
     {
         private ExcelPackage _package;
         private ExcelWorksheet _ws;
         private readonly ExcelErrorValue DivByZero = ExcelErrorValue.Create(eErrorType.Div0);
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             _package = new ExcelPackage();
             _ws = _package.Workbook.Worksheets.Add("test");
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _package.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void DivByZeroShouldReturnError()
         {
             var result = _ws.Calculate("10/0 + 3");
-            Assert.AreEqual(DivByZero, result);
+            Assert.That(DivByZero, Is.EqualTo(result));
         }
     }
 }

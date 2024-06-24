@@ -1,13 +1,13 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 {
-    [TestClass]
+    [TestFixture]
     public class DatabaseTests
     {
-        [TestMethod]
+        [Test]
         public void DgetShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -33,11 +33,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual("output", sheet.Cells["F1"].Value);
+                Assert.That("output", Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DcountShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -63,11 +63,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(1, sheet.Cells["F1"].Value);
+                Assert.That(1, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DcountaShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -93,11 +93,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(2, sheet.Cells["F1"].Value);
+                Assert.That(2, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DMaxShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -121,11 +121,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(2d, sheet.Cells["F1"].Value);
+                Assert.That(2d, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DMinShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -149,11 +149,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(1d, sheet.Cells["F1"].Value);
+                Assert.That(1d, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DSumShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -177,11 +177,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(3d, sheet.Cells["F1"].Value);
+                Assert.That(3d, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DAverageShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -205,11 +205,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(1.5d, sheet.Cells["F1"].Value);
+                Assert.That(1.5d, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DVarShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -233,11 +233,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(0.5d, sheet.Cells["F1"].Value);
+                Assert.That(0.5d, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DVarpShouldReturnCorrectResult()
         {
             using (var package = new ExcelPackage())
@@ -261,11 +261,11 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(0.25d, sheet.Cells["F1"].Value);
+                Assert.That(0.25d, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DVarpShouldReturnByFieldIndex()
         {
             using (var package = new ExcelPackage())
@@ -289,7 +289,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions
 
                 sheet.Workbook.Calculate();
 
-                Assert.AreEqual(0.25d, sheet.Cells["F1"].Value);
+                Assert.That(0.25d, Is.EqualTo(sheet.Cells["F1"].Value));
             }
         }
     }

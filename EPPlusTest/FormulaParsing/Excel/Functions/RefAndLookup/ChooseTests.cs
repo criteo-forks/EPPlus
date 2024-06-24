@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using EPPlusTest.FormulaParsing.TestHelpers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
@@ -9,14 +9,14 @@ using OfficeOpenXml.FormulaParsing.Exceptions;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions.RefAndLookup
 {
-    [TestClass]
+    [TestFixture]
     public class ChooseTests
     {
         private ParsingContext _parsingContext;
         private ExcelPackage _package;
         private ExcelWorksheet _worksheet;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             _parsingContext = ParsingContext.Create();
@@ -24,50 +24,50 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.RefAndLookup
             _worksheet = _package.Workbook.Worksheets.Add("test");
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _package.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void ChooseSingleValue()
         {
             fillChooseOptions();
             _worksheet.Cells["B1"].Formula = "CHOOSE(4, A1, A2, A3, A4, A5)";
             _worksheet.Calculate();
 
-            Assert.AreEqual("5", _worksheet.Cells["B1"].Value);
+            Assert.That("5", Is.EqualTo(_worksheet.Cells["B1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ChooseSingleFormula()
         {
             fillChooseOptions();
             _worksheet.Cells["B1"].Formula = "CHOOSE(6, A1, A2, A3, A4, A5, A6)";
             _worksheet.Calculate();
 
-            Assert.AreEqual("12", _worksheet.Cells["B1"].Value);
+            Assert.That("12", Is.EqualTo(_worksheet.Cells["B1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ChooseMultipleValues()
         {
             fillChooseOptions();
             _worksheet.Cells["B1"].Formula = "SUM(CHOOSE({1,3,4}, A1, A2, A3, A4, A5))";
             _worksheet.Calculate();
 
-            Assert.AreEqual(9D, _worksheet.Cells["B1"].Value);
+            Assert.That(9D, Is.EqualTo(_worksheet.Cells["B1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ChooseValueAndFormula()
         {
             fillChooseOptions();
             _worksheet.Cells["B1"].Formula = "SUM(CHOOSE({2,6}, A1, A2, A3, A4, A5, A6))";
             _worksheet.Calculate();
 
-            Assert.AreEqual(14D, _worksheet.Cells["B1"].Value);
+            Assert.That(14D, Is.EqualTo(_worksheet.Cells["B1"].Value));
         }
 
         private void fillChooseOptions()

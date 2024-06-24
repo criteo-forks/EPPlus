@@ -2,47 +2,47 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using FakeItEasy;
 using OfficeOpenXml.FormulaParsing.ExcelUtilities;
 using OfficeOpenXml.FormulaParsing;
 
 namespace EPPlusTest.ExcelUtilities
 {
-    [TestClass]
+    [TestFixture]
     public class RangeAddressTests
     {
         private RangeAddressFactory _factory;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             var provider = A.Fake<ExcelDataProvider>();
             _factory = new RangeAddressFactory(provider);
         }
 
-        [TestMethod]
+        [Test]
         public void CollideShouldReturnTrueIfRangesCollides()
         {
             var address1 = _factory.Create("A1:A6");
             var address2 = _factory.Create("A5");
-            Assert.IsTrue(address1.CollidesWith(address2));
+            Assert.That(address1.CollidesWith(address2));
         }
 
-        [TestMethod]
+        [Test]
         public void CollideShouldReturnFalseIfRangesDoesNotCollide()
         {
             var address1 = _factory.Create("A1:A6");
             var address2 = _factory.Create("A8");
-            Assert.IsFalse(address1.CollidesWith(address2));
+            Assert.That(!address1.CollidesWith(address2));
         }
 
-        [TestMethod]
+        [Test]
         public void CollideShouldReturnFalseIfRangesCollidesButWorksheetNameDiffers()
         {
             var address1 = _factory.Create("Ws!A1:A6");
             var address2 = _factory.Create("A5");
-            Assert.IsFalse(address1.CollidesWith(address2));
+            Assert.That(!address1.CollidesWith(address2));
         }
     }
 }

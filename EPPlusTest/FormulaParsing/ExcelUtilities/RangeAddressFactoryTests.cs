@@ -2,20 +2,20 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using FakeItEasy;
 using OfficeOpenXml.FormulaParsing.ExcelUtilities;
 using OfficeOpenXml.FormulaParsing;
 
 namespace EPPlusTest.ExcelUtilities
 {
-    [TestClass]
+    [TestFixture]
     public class RangeAddressFactoryTests
     {
         private RangeAddressFactory _factory;
         private const int ExcelMaxRows = 1048576;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             var provider = A.Fake<ExcelDataProvider>();
@@ -23,89 +23,92 @@ namespace EPPlusTest.ExcelUtilities
             _factory = new RangeAddressFactory(provider);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void CreateShouldThrowIfSuppliedAddressIsNull()
         {
-            _factory.Create(null);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                _factory.Create(null);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnAndInstanceWithColPropertiesSet()
         {
             var address = _factory.Create("A2");
-            Assert.AreEqual(1, address.FromCol, "FromCol was not 1");
-            Assert.AreEqual(1, address.ToCol, "ToCol was not 1");
+            Assert.That(1, Is.EqualTo(address.FromCol), "FromCol was not 1");
+            Assert.That(1, Is.EqualTo(address.ToCol), "ToCol was not 1");
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnAndInstanceWithRowPropertiesSet()
         {
             var address = _factory.Create("A2");
-            Assert.AreEqual(2, address.FromRow, "FromRow was not 2");
-            Assert.AreEqual(2, address.ToRow, "ToRow was not 2");
+            Assert.That(2, Is.EqualTo(address.FromRow), "FromRow was not 2");
+            Assert.That(2, Is.EqualTo(address.ToRow), "ToRow was not 2");
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnAnInstanceWithFromAndToColSetWhenARangeAddressIsSupplied()
         {
             var address = _factory.Create("A1:B2");
-            Assert.AreEqual(1, address.FromCol);
-            Assert.AreEqual(2, address.ToCol);
+            Assert.That(1, Is.EqualTo(address.FromCol));
+            Assert.That(2, Is.EqualTo(address.ToCol));
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnAnInstanceWithFromAndToRowSetWhenARangeAddressIsSupplied()
         {
             var address = _factory.Create("A1:B3");
-            Assert.AreEqual(1, address.FromRow);
-            Assert.AreEqual(3, address.ToRow);
+            Assert.That(1, Is.EqualTo(address.FromRow));
+            Assert.That(3, Is.EqualTo(address.ToRow));
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldSetWorksheetNameIfSuppliedInAddress()
         {
             var address = _factory.Create("Ws!A1");
-            Assert.AreEqual("Ws", address.Worksheet);
+            Assert.That("Ws", Is.EqualTo(address.Worksheet));
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnAnInstanceWithStringAddressSet()
         {
             var address = _factory.Create(1, 1);
-            Assert.AreEqual("A1", address.ToString());
+            Assert.That("A1", Is.EqualTo(address.ToString()));
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnAnInstanceWithFromAndToColSet()
         {
             var address = _factory.Create(1, 0);
-            Assert.AreEqual(1, address.FromCol);
-            Assert.AreEqual(1, address.ToCol);
+            Assert.That(1, Is.EqualTo(address.FromCol));
+            Assert.That(1, Is.EqualTo(address.ToCol));
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnAnInstanceWithFromAndToRowSet()
         {
             var address = _factory.Create(0, 1);
-            Assert.AreEqual(1, address.FromRow);
-            Assert.AreEqual(1, address.ToRow);
+            Assert.That(1, Is.EqualTo(address.FromRow));
+            Assert.That(1, Is.EqualTo(address.ToRow));
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnAnInstanceWithWorksheetSetToEmptyString()
         {
             var address = _factory.Create(0, 1);
-            Assert.AreEqual(string.Empty, address.Worksheet);
+            Assert.That(string.Empty, Is.EqualTo(address.Worksheet));
         }
 
-        [TestMethod]
+        [Test]
         public void CreateShouldReturnEntireColumnRangeWhenNoRowsAreSpecified()
         {
             var address = _factory.Create("A:B");
-            Assert.AreEqual(1, address.FromCol);
-            Assert.AreEqual(2, address.ToCol);
-            Assert.AreEqual(1, address.FromRow);
-            Assert.AreEqual(ExcelMaxRows, address.ToRow);
+            Assert.That(1, Is.EqualTo(address.FromCol));
+            Assert.That(2, Is.EqualTo(address.ToCol));
+            Assert.That(1, Is.EqualTo(address.FromRow));
+            Assert.That(ExcelMaxRows, Is.EqualTo(address.ToRow));
         }
     }
 }

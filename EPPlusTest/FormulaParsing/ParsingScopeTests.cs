@@ -2,21 +2,21 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.ExcelUtilities;
 using OfficeOpenXml.FormulaParsing;
 using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing
 {
-    [TestClass]
+    [TestFixture]
     public class ParsingScopeTests
     {
         private IParsingLifetimeEventHandler _lifeTimeEventHandler;
         private ParsingScopes _parsingScopes;
         private RangeAddressFactory _factory;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             var provider = A.Fake<ExcelDataProvider>();
@@ -25,23 +25,23 @@ namespace EPPlusTest.FormulaParsing
             _parsingScopes = A.Fake<ParsingScopes>();
         }
 
-        [TestMethod]
+        [Test]
         public void ConstructorShouldSetAddress()
         {
             var expectedAddress =  _factory.Create("A1");
             var scope = new ParsingScope(_parsingScopes, expectedAddress);
-            Assert.AreEqual(expectedAddress, scope.Address);
+            Assert.That(expectedAddress, Is.EqualTo(scope.Address));
         }
 
-        [TestMethod]
+        [Test]
         public void ConstructorShouldSetParent()
         {
             var parent = new ParsingScope(_parsingScopes, _factory.Create("A1"));
             var scope = new ParsingScope(_parsingScopes, parent, _factory.Create("A2"));
-            Assert.AreEqual(parent, scope.Parent);
+            Assert.That(parent, Is.EqualTo(scope.Parent));
         }
 
-        [TestMethod]
+        [Test]
         public void ScopeShouldCallKillScopeOnDispose()
         {
             var scope = new ParsingScope(_parsingScopes, _factory.Create("A1"));

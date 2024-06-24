@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using FakeItEasy;
 using EPPlusTest.FormulaParsing.TestHelpers;
@@ -17,51 +17,51 @@ using static OfficeOpenXml.FormulaParsing.EpplusExcelDataProvider;
 
 namespace EPPlusTest.Excel.Functions
 {
-    [TestClass]
+    [TestFixture]
     public class RefAndLookupTests
     {
         const string WorksheetName = null;
-        [TestMethod]
+        [Test]
         public void LookupArgumentsShouldSetSearchedValue()
         {
             var args = FunctionsHelper.CreateArgs(1, "A:B", 2);
             var lookupArgs = new LookupArguments(args, ParsingContext.Create());
-            Assert.AreEqual(1, lookupArgs.SearchedValue);
+            Assert.That(1, Is.EqualTo(lookupArgs.SearchedValue));
         }
 
-        [TestMethod]
+        [Test]
         public void LookupArgumentsShouldSetRangeAddress()
         {
             var args = FunctionsHelper.CreateArgs(1, "A:B", 2);
             var lookupArgs = new LookupArguments(args, ParsingContext.Create());
-            Assert.AreEqual("A:B", lookupArgs.RangeAddress);
+            Assert.That("A:B", Is.EqualTo(lookupArgs.RangeAddress));
         }
 
-        [TestMethod]
+        [Test]
         public void LookupArgumentsShouldSetColIndex()
         {
             var args = FunctionsHelper.CreateArgs(1, "A:B", 2);
             var lookupArgs = new LookupArguments(args, ParsingContext.Create());
-            Assert.AreEqual(2, lookupArgs.LookupIndex);
+            Assert.That(2, Is.EqualTo(lookupArgs.LookupIndex));
         }
 
-        [TestMethod]
+        [Test]
         public void LookupArgumentsShouldSetRangeLookupToTrueAsDefaultValue()
         {
             var args = FunctionsHelper.CreateArgs(1, "A:B", 2);
             var lookupArgs = new LookupArguments(args, ParsingContext.Create());
-            Assert.IsTrue(lookupArgs.RangeLookup);
+            Assert.That(lookupArgs.RangeLookup);
         }
 
-        [TestMethod]
+        [Test]
         public void LookupArgumentsShouldSetRangeLookupToTrueWhenTrueIsSupplied()
         {
             var args = FunctionsHelper.CreateArgs(1, "A:B", 2, true);
             var lookupArgs = new LookupArguments(args, ParsingContext.Create());
-            Assert.IsTrue(lookupArgs.RangeLookup);
+            Assert.That(lookupArgs.RangeLookup);
         }
 
-        [TestMethod]
+        [Test]
         public void VLookupShouldReturnResultFromMatchingRow()
         {
             var func = new VLookup();
@@ -78,10 +78,10 @@ namespace EPPlusTest.Excel.Functions
 
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(5, result.Result);
+            Assert.That(5, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void VLookupShouldReturnClosestValueBelowWhenRangeLookupIsTrue()
         {
             var func = new VLookup();
@@ -97,10 +97,10 @@ namespace EPPlusTest.Excel.Functions
 
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(1, result.Result);
+            Assert.That(1, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void VLookupShouldReturnClosestStringValueBelowWhenRangeLookupIsTrue()
         {
             var func = new VLookup();
@@ -117,10 +117,10 @@ namespace EPPlusTest.Excel.Functions
 
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(1, result.Result);
+            Assert.That(1, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void HLookupShouldReturnResultFromMatchingRow()
         {
             var func = new HLookup();
@@ -137,10 +137,10 @@ namespace EPPlusTest.Excel.Functions
 
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(5, result.Result);
+            Assert.That(5, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void HLookupShouldReturnNaErrorIfNoMatchingRecordIsFoundWhenRangeLookupIsFalse()
         {
             var func = new HLookup();
@@ -158,10 +158,10 @@ namespace EPPlusTest.Excel.Functions
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
             var expectedResult = ExcelErrorValue.Create(eErrorType.NA);
-            Assert.AreEqual(expectedResult, result.Result);
+            Assert.That(expectedResult, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void HLookupShouldReturnErrorIfNoMatchingRecordIsFoundWhenRangeLookupIsTrue()
         {
             var func = new HLookup();
@@ -178,10 +178,10 @@ namespace EPPlusTest.Excel.Functions
 
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(result.DataType, DataType.ExcelError);
+            Assert.That(result.DataType, Is.EqualTo(DataType.ExcelError));
         }
 
-        [TestMethod]
+        [Test]
         public void LookupShouldReturnResultFromMatchingRowArrayVertical()
         {
             var func = new Lookup();
@@ -200,10 +200,10 @@ namespace EPPlusTest.Excel.Functions
 
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual("B", result.Result);
+            Assert.That("B", Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void LookupShouldReturnResultFromMatchingRowArrayHorizontal()
         {
             var func = new Lookup();
@@ -221,10 +221,10 @@ namespace EPPlusTest.Excel.Functions
 
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual("B", result.Result);
+            Assert.That("B", Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void LookupShouldReturnResultFromMatchingSecondArrayHorizontal()
         {
             using (var package = new ExcelPackage())
@@ -240,12 +240,12 @@ namespace EPPlusTest.Excel.Functions
                 sheet.Cells["D1"].Formula = "LOOKUP(4, A1:C1, A3:C3)";
                 sheet.Calculate();
                 var result = sheet.Cells["D1"].Value;
-                Assert.AreEqual("B", result);
+                Assert.That("B", Is.EqualTo(result));
 
             }
         }
 
-        [TestMethod]
+        [Test]
         public void LookupShouldReturnResultFromMatchingSecondArrayHorizontalWithOffset()
         {
             using (var package = new ExcelPackage())
@@ -261,12 +261,12 @@ namespace EPPlusTest.Excel.Functions
                 sheet.Cells["D1"].Formula = "LOOKUP(4, A1:C1, B3:D3)";
                 sheet.Calculate();
                 var result = sheet.Cells["D1"].Value;
-                Assert.AreEqual("B", result);
+                Assert.That("B", Is.EqualTo(result));
 
             } 
         }
 
-        [TestMethod]
+        [Test]
         public void MatchShouldReturnIndexOfMatchingValHorizontal_MatchTypeExact()
         {
             var func = new Match();
@@ -280,10 +280,10 @@ namespace EPPlusTest.Excel.Functions
             A.CallTo(() => provider.GetCellValue(WorksheetName,1, 3)).Returns(5);
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(2, result.Result);
+            Assert.That(2, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MatchShouldReturnIndexOfMatchingValVertical_MatchTypeExact()
         {
             var func = new Match();
@@ -298,10 +298,10 @@ namespace EPPlusTest.Excel.Functions
             A.CallTo(() => provider.GetDimensionEnd(A<string>.Ignored)).Returns(new ExcelCellAddress(100, 10));
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(2, result.Result);
+            Assert.That(2, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MatchShouldReturnIndexOfMatchingValHorizontal_MatchTypeClosestBelow()
         {
             var func = new Match();
@@ -315,10 +315,10 @@ namespace EPPlusTest.Excel.Functions
             A.CallTo(() => provider.GetCellValue(WorksheetName,1, 3)).Returns(5);
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(2, result.Result);
+            Assert.That(2, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MatchShouldReturnIndexOfMatchingValHorizontal_MatchTypeClosestAbove()
         {
             var func = new Match();
@@ -332,10 +332,10 @@ namespace EPPlusTest.Excel.Functions
             A.CallTo(() => provider.GetCellValue(WorksheetName,1, 3)).Returns(5);
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(2, result.Result);
+            Assert.That(2, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MatchShouldReturnFirstItemWhenExactMatch_MatchTypeClosestAbove()
         {
             var func = new Match();
@@ -349,10 +349,10 @@ namespace EPPlusTest.Excel.Functions
             A.CallTo(() => provider.GetCellValue(WorksheetName,1, 3)).Returns(5);
             parsingContext.ExcelDataProvider = provider;
             var result = func.Execute(args, parsingContext);
-            Assert.AreEqual(1, result.Result);
+            Assert.That(1, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MatchShouldHandleAddressOnOtherSheet()
         {
             using (var package = new ExcelPackage())
@@ -364,11 +364,11 @@ namespace EPPlusTest.Excel.Functions
                 sheet2.Cells["A2"].Value = 10;
                 sheet2.Cells["A3"].Value = 11;
                 sheet1.Calculate();
-                Assert.AreEqual(2, sheet1.Cells["A1"].Value);
+                Assert.That(2, Is.EqualTo(sheet1.Cells["A1"].Value));
             }    
         }
 
-        [TestMethod]
+        [Test]
         public void RowShouldReturnRowFromCurrentScopeIfNoAddressIsSupplied()
         {
             var func = new Row();
@@ -376,20 +376,20 @@ namespace EPPlusTest.Excel.Functions
             var rangeAddressFactory = new RangeAddressFactory(A.Fake<ExcelDataProvider>());
             parsingContext.Scopes.NewScope(rangeAddressFactory.Create("A2"));
             var result = func.Execute(Enumerable.Empty<FunctionArgument>(), parsingContext);
-            Assert.AreEqual(2, result.Result);
+            Assert.That(2, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void RowShouldReturnRowSuppliedAddress()
         {
             var func = new Row();
             var parsingContext = ParsingContext.Create();
             parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
             var result = func.Execute(FunctionsHelper.CreateArgs("A3"), parsingContext);
-            Assert.AreEqual(3, result.Result);
+            Assert.That(3, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void ColumnShouldReturnRowFromCurrentScopeIfNoAddressIsSupplied()
         {
             var func = new Column();
@@ -397,59 +397,59 @@ namespace EPPlusTest.Excel.Functions
             var rangeAddressFactory = new RangeAddressFactory(A.Fake<ExcelDataProvider>());
             parsingContext.Scopes.NewScope(rangeAddressFactory.Create("B2"));
             var result = func.Execute(Enumerable.Empty<FunctionArgument>(), parsingContext);
-            Assert.AreEqual(2, result.Result);
+            Assert.That(2, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void ColumnShouldReturnRowSuppliedAddress()
         {
             var func = new Column();
             var parsingContext = ParsingContext.Create();
             parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
             var result = func.Execute(FunctionsHelper.CreateArgs("E3"), parsingContext);
-            Assert.AreEqual(5, result.Result);
+            Assert.That(5, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void RowsShouldReturnNbrOfRowsSuppliedRange()
         {
             var func = new Rows();
             var parsingContext = ParsingContext.Create();
             parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
             var result = func.Execute(FunctionsHelper.CreateArgs("A1:B3"), parsingContext);
-            Assert.AreEqual(3, result.Result);
+            Assert.That(3, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void RowsShouldReturnNbrOfRowsForEntireColumn()
         {
             var func = new Rows();
             var parsingContext = ParsingContext.Create();
             parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
             var result = func.Execute(FunctionsHelper.CreateArgs("A:B"), parsingContext);
-            Assert.AreEqual(1048576, result.Result);
+            Assert.That(1048576, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void ColumnssShouldReturnNbrOfRowsSuppliedRange()
         {
             var func = new Columns();
             var parsingContext = ParsingContext.Create();
             parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
             var result = func.Execute(FunctionsHelper.CreateArgs("A1:E3"), parsingContext);
-            Assert.AreEqual(5, result.Result);
+            Assert.That(5, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void ChooseShouldReturnItemByIndex()
         {
             var func = new Choose();
             var parsingContext = ParsingContext.Create();
             var result = func.Execute(FunctionsHelper.CreateArgs(1, "A", "B"), parsingContext);
-            Assert.AreEqual("A", result.Result);
+            Assert.That("A", Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AddressShouldReturnAddressByIndexWithDefaultRefType()
         {
             var func = new AddressFunction();
@@ -457,10 +457,10 @@ namespace EPPlusTest.Excel.Functions
             parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
             A.CallTo(() => parsingContext.ExcelDataProvider.ExcelMaxRows).Returns(10);
             var result = func.Execute(FunctionsHelper.CreateArgs(1, 2), parsingContext);
-            Assert.AreEqual("$B$1", result.Result);
+            Assert.That("$B$1", Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AddressShouldReturnAddressByIndexWithRelativeType()
         {
             var func = new AddressFunction();
@@ -468,10 +468,10 @@ namespace EPPlusTest.Excel.Functions
             parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
             A.CallTo(() => parsingContext.ExcelDataProvider.ExcelMaxRows).Returns(10);
             var result = func.Execute(FunctionsHelper.CreateArgs(1, 2, (int)ExcelReferenceType.RelativeRowAndColumn), parsingContext);
-            Assert.AreEqual("B1", result.Result);
+            Assert.That("B1", Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AddressShouldReturnAddressByWithSpecifiedWorksheet()
         {
             var func = new AddressFunction();
@@ -479,17 +479,20 @@ namespace EPPlusTest.Excel.Functions
             parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
             A.CallTo(() => parsingContext.ExcelDataProvider.ExcelMaxRows).Returns(10);
             var result = func.Execute(FunctionsHelper.CreateArgs(1, 2, (int)ExcelReferenceType.RelativeRowAndColumn, true, "Worksheet1"), parsingContext);
-            Assert.AreEqual("Worksheet1!B1", result.Result);
+            Assert.That("Worksheet1!B1", Is.EqualTo(result.Result));
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void AddressShouldThrowIfR1C1FormatIsSpecified()
         {
-            var func = new AddressFunction();
-            var parsingContext = ParsingContext.Create();
-            parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
-            A.CallTo(() => parsingContext.ExcelDataProvider.ExcelMaxRows).Returns(10);
-            var result = func.Execute(FunctionsHelper.CreateArgs(1, 2, (int)ExcelReferenceType.RelativeRowAndColumn, false), parsingContext);
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var func = new AddressFunction();
+                var parsingContext = ParsingContext.Create();
+                parsingContext.ExcelDataProvider = A.Fake<ExcelDataProvider>();
+                A.CallTo(() => parsingContext.ExcelDataProvider.ExcelMaxRows).Returns(10);
+                var result = func.Execute(FunctionsHelper.CreateArgs(1, 2, (int)ExcelReferenceType.RelativeRowAndColumn, false), parsingContext); 
+            });
         }
     }
 }

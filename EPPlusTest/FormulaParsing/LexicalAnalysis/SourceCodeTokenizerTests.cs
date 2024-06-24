@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
@@ -11,117 +11,117 @@ using OfficeOpenXml.FormulaParsing;
 
 namespace EPPlusTest.FormulaParsing.LexicalAnalysis
 {
-    [TestClass]
+    [TestFixture]
     public class SourceCodeTokenizerTests
     {
         private SourceCodeTokenizer _tokenizer;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             var context = ParsingContext.Create();
             _tokenizer = new SourceCodeTokenizer(context.Configuration.FunctionRepository, null);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldCreateTokensForStringCorrectly()
         {
             var input = "\"abc123\"";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(3, tokens.Count());
-            Assert.AreEqual(TokenType.String, tokens.First().TokenType);
-            Assert.AreEqual(TokenType.StringContent, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.String, tokens.Last().TokenType);
+            Assert.That(3, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.String, Is.EqualTo(tokens.First().TokenType));
+            Assert.That(TokenType.StringContent, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.String, Is.EqualTo(tokens.Last().TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldTokenizeStringCorrectly()
         {
             var input = "\"ab(c)d\"";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(3, tokens.Count());
+            Assert.That(3, Is.EqualTo(tokens.Count()));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldHandleWhitespaceCorrectly()
         {
             var input = @"""          """;
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(3, tokens.Count());
-            Assert.AreEqual(TokenType.StringContent, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(10, tokens.ElementAt(1).Value.Length);
+            Assert.That(3, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.StringContent, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(10, Is.EqualTo(tokens.ElementAt(1).Value.Length));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldCreateTokensForFunctionCorrectly()
         {
             var input = "Text(2)";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(4, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.First().TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual("2", tokens.ElementAt(2).Value);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.Last().TokenType);
+            Assert.That(4, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.First().TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That("2", Is.EqualTo(tokens.ElementAt(2).Value));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.Last().TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldHandleMultipleCharOperatorCorrectly()
         {
             var input = "1 <= 2";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(3, tokens.Count());
-            Assert.AreEqual("<=", tokens.ElementAt(1).Value);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(1).TokenType);
+            Assert.That(3, Is.EqualTo(tokens.Count()));
+            Assert.That("<=", Is.EqualTo(tokens.ElementAt(1).Value));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(1).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldCreateTokensForEnumerableCorrectly()
         {
             var input = "Text({1;2})";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(8, tokens.Count());
-            Assert.AreEqual(TokenType.OpeningEnumerable, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.ClosingEnumerable, tokens.ElementAt(6).TokenType);
+            Assert.That(8, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.OpeningEnumerable, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.ClosingEnumerable, Is.EqualTo(tokens.ElementAt(6).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldCreateTokensForExcelAddressCorrectly()
         {
             var input = "Text(A1)";
             var tokens = _tokenizer.Tokenize(input);
 
-            Assert.AreEqual(TokenType.ExcelAddress, tokens.ElementAt(2).TokenType);
+            Assert.That(TokenType.ExcelAddress, Is.EqualTo(tokens.ElementAt(2).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldCreateTokenForPercentAfterDecimal()
         {
             var input = "1,23%";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(TokenType.Percent, tokens.Last().TokenType);
+            Assert.That(TokenType.Percent, Is.EqualTo(tokens.Last().TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldIgnoreTwoSubsequentStringIdentifyers()
         {
             var input = "\"hello\"\"world\"";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(3, tokens.Count());
-            Assert.AreEqual("hello\"world", tokens.ElementAt(1).Value);
+            Assert.That(3, Is.EqualTo(tokens.Count()));
+            Assert.That("hello\"world", Is.EqualTo(tokens.ElementAt(1).Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldIgnoreTwoSubsequentStringIdentifyers2()
         {
             //using (var pck = new ExcelPackage(new FileInfo("c:\\temp\\QuoteIssue2.xlsx")))
@@ -130,27 +130,27 @@ namespace EPPlusTest.FormulaParsing.LexicalAnalysis
             //}
             var input = "\"\"\"\"\"\"";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(TokenType.StringContent, tokens.ElementAt(1).TokenType);
+            Assert.That(TokenType.StringContent, Is.EqualTo(tokens.ElementAt(1).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizerShouldIgnoreOperatorInString()
         {
             var input = "\"*\"";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(TokenType.StringContent, tokens.ElementAt(1).TokenType);
+            Assert.That(TokenType.StringContent, Is.EqualTo(tokens.ElementAt(1).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizerShouldHandleWorksheetNameWithMinus()
         {
             var input = "'A-B'!A1";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(1, tokens.Count());
-            Assert.AreEqual(TokenType.ExcelAddress, tokens.ElementAt(0).TokenType);
+            Assert.That(1, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.ExcelAddress, Is.EqualTo(tokens.ElementAt(0).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TestBug9_12_14()
         {
             //(( W60 -(- W63 )-( W29 + W30 + W31 ))/( W23 + W28 + W42 - W51 )* W4 )
@@ -166,186 +166,186 @@ namespace EPPlusTest.FormulaParsing.LexicalAnalysis
                 //ws1.Cells["A11"].Formula = "(-A2 + 1 )";
                 ws1.Calculate();
                 var result = ws1.Cells["A11"].Value;
-                Assert.AreEqual(-3.75, result);
+                Assert.That(-3.75, Is.EqualTo(result));
             }
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeStripsLeadingPlusSign()
         {
             var input = @"+3-3";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(3, tokens.Count());
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
+            Assert.That(3, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeStripsLeadingDoubleNegator()
         {
             var input = @"--3-3";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(3, tokens.Count());
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
+            Assert.That(3, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeHandlesPositiveNegator()
         {
             var input = @"+-3-3";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(4, tokens.Count());
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(3).TokenType);
+            Assert.That(4, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(3).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeHandlesNegatorPositive()
         {
             var input = @"-+3-3";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(4, tokens.Count());
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(3).TokenType);
+            Assert.That(4, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(3).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeStripsLeadingPlusSignFromFirstFunctionArgument()
         {
             var input = @"SUM(+3-3,5)";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(8, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(3).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(4).TokenType);
-            Assert.AreEqual(TokenType.Comma, tokens.ElementAt(5).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(6).TokenType);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.ElementAt(7).TokenType);
+            Assert.That(8, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(3).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(4).TokenType));
+            Assert.That(TokenType.Comma, Is.EqualTo(tokens.ElementAt(5).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(6).TokenType));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.ElementAt(7).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeStripsLeadingPlusSignFromSecondFunctionArgument()
         {
             var input = @"SUM(5,+3-3)";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(8, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Comma, tokens.ElementAt(3).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(4).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(5).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(6).TokenType);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.ElementAt(7).TokenType);
+            Assert.That(8, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Comma, Is.EqualTo(tokens.ElementAt(3).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(4).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(5).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(6).TokenType));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.ElementAt(7).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeStripsLeadingDoubleNegatorFromFirstFunctionArgument()
         {
             var input = @"SUM(--3-3,5)";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(8, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(3).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(4).TokenType);
-            Assert.AreEqual(TokenType.Comma, tokens.ElementAt(5).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(6).TokenType);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.ElementAt(7).TokenType);
+            Assert.That(8, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(3).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(4).TokenType));
+            Assert.That(TokenType.Comma, Is.EqualTo(tokens.ElementAt(5).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(6).TokenType));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.ElementAt(7).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeStripsLeadingDoubleNegatorFromSecondFunctionArgument()
         {
             var input = @"SUM(5,--3-3)";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(8, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Comma, tokens.ElementAt(3).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(4).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(5).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(6).TokenType);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.ElementAt(7).TokenType);
+            Assert.That(8, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Comma, Is.EqualTo(tokens.ElementAt(3).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(4).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(5).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(6).TokenType));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.ElementAt(7).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeHandlesPositiveNegatorAsFirstFunctionArgument()
         {
             var input = @"SUM(+-3-3,5)";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(9, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(3).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(4).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(5).TokenType);
-            Assert.AreEqual(TokenType.Comma, tokens.ElementAt(6).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(7).TokenType);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.ElementAt(8).TokenType);
+            Assert.That(9, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(3).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(4).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(5).TokenType));
+            Assert.That(TokenType.Comma, Is.EqualTo(tokens.ElementAt(6).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(7).TokenType));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.ElementAt(8).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeHandlesNegatorPositiveAsFirstFunctionArgument()
         {
             var input = @"SUM(-+3-3,5)";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(9, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(3).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(4).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(5).TokenType);
-            Assert.AreEqual(TokenType.Comma, tokens.ElementAt(6).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(7).TokenType);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.ElementAt(8).TokenType);
+            Assert.That(9, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(3).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(4).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(5).TokenType));
+            Assert.That(TokenType.Comma, Is.EqualTo(tokens.ElementAt(6).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(7).TokenType));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.ElementAt(8).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeHandlesPositiveNegatorAsSecondFunctionArgument()
         {
             var input = @"SUM(5,+-3-3)";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(9, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Comma, tokens.ElementAt(3).TokenType);
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(4).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(5).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(6).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(7).TokenType);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.ElementAt(8).TokenType);
+            Assert.That(9, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Comma, Is.EqualTo(tokens.ElementAt(3).TokenType));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(4).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(5).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(6).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(7).TokenType));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.ElementAt(8).TokenType));
         }
 
-        [TestMethod]
+        [Test]
         public void TokenizeHandlesNegatorPositiveAsSecondFunctionArgument()
         {
             var input = @"SUM(5,-+3-3)";
             var tokens = _tokenizer.Tokenize(input);
-            Assert.AreEqual(9, tokens.Count());
-            Assert.AreEqual(TokenType.Function, tokens.ElementAt(0).TokenType);
-            Assert.AreEqual(TokenType.OpeningParenthesis, tokens.ElementAt(1).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(2).TokenType);
-            Assert.AreEqual(TokenType.Comma, tokens.ElementAt(3).TokenType);
-            Assert.AreEqual(TokenType.Negator, tokens.ElementAt(4).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(5).TokenType);
-            Assert.AreEqual(TokenType.Operator, tokens.ElementAt(6).TokenType);
-            Assert.AreEqual(TokenType.Integer, tokens.ElementAt(7).TokenType);
-            Assert.AreEqual(TokenType.ClosingParenthesis, tokens.ElementAt(8).TokenType);
+            Assert.That(9, Is.EqualTo(tokens.Count()));
+            Assert.That(TokenType.Function, Is.EqualTo(tokens.ElementAt(0).TokenType));
+            Assert.That(TokenType.OpeningParenthesis, Is.EqualTo(tokens.ElementAt(1).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(2).TokenType));
+            Assert.That(TokenType.Comma, Is.EqualTo(tokens.ElementAt(3).TokenType));
+            Assert.That(TokenType.Negator, Is.EqualTo(tokens.ElementAt(4).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(5).TokenType));
+            Assert.That(TokenType.Operator, Is.EqualTo(tokens.ElementAt(6).TokenType));
+            Assert.That(TokenType.Integer, Is.EqualTo(tokens.ElementAt(7).TokenType));
+            Assert.That(TokenType.ClosingParenthesis, Is.EqualTo(tokens.ElementAt(8).TokenType));
         }
     }
 }

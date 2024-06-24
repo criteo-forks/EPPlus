@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.ExcelUtilities;
@@ -10,7 +10,7 @@ using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing.ExpressionGraph
 {
-    [TestClass]
+    [TestFixture]
     public class ExcelAddressExpressionTests
     {
         private ParsingContext _parsingContext;
@@ -21,33 +21,40 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
             return new ExcelCell(val, null, 0, 0);
         }
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _parsingContext = ParsingContext.Create();
             _scope = _parsingContext.Scopes.NewScope(RangeAddress.Empty);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _scope.Dispose();
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ConstructorShouldThrowIfExcelDataProviderIsNull()
         {
-            new ExcelAddressExpression("A1", null, _parsingContext);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                new ExcelAddressExpression("A1", null, _parsingContext);
+            });
+            
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ConstructorShouldThrowIfParsingContextIsNull()
         {
-            new ExcelAddressExpression("A1", A.Fake<ExcelDataProvider>(), null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                new ExcelAddressExpression("A1", A.Fake<ExcelDataProvider>(), null);
+            });
         }
 
         //TODO:Fix Test /Janne
-        //[TestMethod]
+        //[Test]
         //public void ShouldCallReturnResultFromProvider()
         //{
         //    var expectedAddress = "A1";
@@ -58,11 +65,11 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
         //    var expression = new ExcelAddressExpression(expectedAddress, provider, _parsingContext);
         //    var result = expression.Compile();
-        //    Assert.AreEqual(1, result.Result);
+        //    Assert.That(1, Is.EqualTo(result.Result));
         //}
 
         //TODO:Fix Test /Janne
-        //[TestMethod]
+        //[Test]
         //public void CompileShouldReturnAddress()
         //{
         //    var expectedAddress = "A1";
@@ -74,12 +81,12 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
         //    var expression = new ExcelAddressExpression(expectedAddress, provider, _parsingContext);
         //    expression.ParentIsLookupFunction = true;
         //    var result = expression.Compile();
-        //    Assert.AreEqual(expectedAddress, result.Result);
+        //    Assert.That(expectedAddress, Is.EqualTo(result.Result));
 
         //}
 
         #region Compile Tests
-        [TestMethod]
+        [Test]
         public void CompileSingleCellReference()
         {
             var parsingContext = ParsingContext.Create();
@@ -93,12 +100,12 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                 {
                     var expression = new ExcelAddressExpression("A1", excelDataProvider, parsingContext);
                     var result = expression.Compile();
-                    Assert.IsNull(result.Result);
+                    Assert.That(result.Result, Is.Null);
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileSingleCellReferenceWithValue()
         {
             var parsingContext = ParsingContext.Create();
@@ -113,12 +120,12 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                 {
                     var expression = new ExcelAddressExpression("A1", excelDataProvider, parsingContext);
                     var result = expression.Compile();
-                    Assert.AreEqual("Value", result.Result);
+                    Assert.That("Value", Is.EqualTo(result.Result));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileSingleCellReferenceResolveToRange()
         {
             var parsingContext = ParsingContext.Create();
@@ -134,13 +141,13 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     expression.ResolveAsRange = true;
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("A1", rangeInfo.Address.Address);
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("A1", Is.EqualTo(rangeInfo.Address.Address));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileSingleCellReferenceResolveToRangeColumnAbsolute()
         {
             var parsingContext = ParsingContext.Create();
@@ -156,13 +163,13 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     expression.ResolveAsRange = true;
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("$A1", rangeInfo.Address.Address);
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("$A1", Is.EqualTo(rangeInfo.Address.Address));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileSingleCellReferenceResolveToRangeRowAbsolute()
         {
             var parsingContext = ParsingContext.Create();
@@ -178,13 +185,13 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     expression.ResolveAsRange = true;
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("$A1", rangeInfo.Address.Address);
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("$A1", Is.EqualTo(rangeInfo.Address.Address));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileSingleCellReferenceResolveToRangeAbsolute()
         {
             var parsingContext = ParsingContext.Create();
@@ -200,13 +207,13 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     expression.ResolveAsRange = true;
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("$A$1", rangeInfo.Address.Address);
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("$A$1", Is.EqualTo(rangeInfo.Address.Address));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileMultiCellReference()
         {
             var parsingContext = ParsingContext.Create();
@@ -221,15 +228,15 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     var expression = new ExcelAddressExpression("A1:A5", excelDataProvider, parsingContext);
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("A1:A5", rangeInfo.Address.Address);
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("A1:A5", Is.EqualTo(rangeInfo.Address.Address));
                     // Enumerating the range still yields no results.
-                    Assert.AreEqual(0, rangeInfo.Count());
+                    Assert.That(0, Is.EqualTo(rangeInfo.Count()));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileMultiCellReferenceWithValues()
         {
             var parsingContext = ParsingContext.Create();
@@ -249,19 +256,19 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     var expression = new ExcelAddressExpression("A1:A5", excelDataProvider, parsingContext);
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("A1:A5", rangeInfo.Address.Address);
-                    Assert.AreEqual(5, rangeInfo.Count());
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("A1:A5", Is.EqualTo(rangeInfo.Address.Address));
+                    Assert.That(5, Is.EqualTo(rangeInfo.Count()));
                     for (int i = 1; i <= 5; i++)
                     {
                         var rangeItem = rangeInfo.ElementAt(i - 1);
-                        Assert.AreEqual("Value" + i, rangeItem.Value);
+                        Assert.That("Value" + i, Is.EqualTo(rangeItem.Value));
                     }
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileMultiCellReferenceColumnAbsolute()
         {
             var parsingContext = ParsingContext.Create();
@@ -276,15 +283,15 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     var expression = new ExcelAddressExpression("$A1:$A5", excelDataProvider, parsingContext);
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("$A1:$A5", rangeInfo.Address.Address);
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("$A1:$A5", Is.EqualTo(rangeInfo.Address.Address));
                     // Enumerating the range still yields no results.
-                    Assert.AreEqual(0, rangeInfo.Count());
+                    Assert.That(0, Is.EqualTo(rangeInfo.Count()));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileMultiCellReferenceRowAbsolute()
         {
             var parsingContext = ParsingContext.Create();
@@ -299,15 +306,15 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     var expression = new ExcelAddressExpression("A$1:A$5", excelDataProvider, parsingContext);
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("A$1:A$5", rangeInfo.Address.Address);
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("A$1:A$5", Is.EqualTo(rangeInfo.Address.Address));
                     // Enumerating the range still yields no results.
-                    Assert.AreEqual(0, rangeInfo.Count());
+                    Assert.That(0, Is.EqualTo(rangeInfo.Count()));
                 }
             }
         }
 
-        [TestMethod]
+        [Test]
         public void CompileMultiCellReferenceAbsolute()
         {
             var parsingContext = ParsingContext.Create();
@@ -322,10 +329,10 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
                     var expression = new ExcelAddressExpression("$A$1:$A$5", excelDataProvider, parsingContext);
                     var result = expression.Compile();
                     var rangeInfo = result.Result as ExcelDataProvider.IRangeInfo;
-                    Assert.IsNotNull(rangeInfo);
-                    Assert.AreEqual("$A$1:$A$5", rangeInfo.Address.Address);
+                    Assert.That(rangeInfo, Is.Not.Null);
+                    Assert.That("$A$1:$A$5", Is.EqualTo(rangeInfo.Address.Address));
                     // Enumerating the range still yields no results.
-                    Assert.AreEqual(0, rangeInfo.Count());
+                    Assert.That(0, Is.EqualTo(rangeInfo.Count()));
                 }
             }
         }

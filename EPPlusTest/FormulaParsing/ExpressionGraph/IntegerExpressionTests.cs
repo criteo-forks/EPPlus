@@ -2,16 +2,16 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 using OfficeOpenXml.FormulaParsing.Excel.Operators;
 
 namespace EPPlusTest.FormulaParsing.ExpressionGraph
 {
-    [TestClass]
+    [TestFixture]
     public class IntegerExpressionTests
     {
-        [TestMethod]
+        [Test]
         public void MergeWithNextWithPlusOperatorShouldCalulateSumCorrectly()
         {
             var exp1 = new IntegerExpression("1");
@@ -21,10 +21,10 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = exp1.MergeWithNext();
 
-            Assert.AreEqual(3d, result.Compile().Result);
+            Assert.That(3d, Is.EqualTo(result.Compile().Result));
         }
 
-        [TestMethod]
+        [Test]
         public void MergeWithNextWithPlusOperatorShouldSetNextPointer()
         {
             var exp1 = new IntegerExpression("1");
@@ -34,18 +34,18 @@ namespace EPPlusTest.FormulaParsing.ExpressionGraph
 
             var result = exp1.MergeWithNext();
 
-            Assert.IsNull(result.Next);
+            Assert.That(result.Next, Is.Null);
         }
 
-        //[TestMethod]
+        //[Test]
         //public void CompileShouldHandlePercent()
         //{
         //    var exp1 = new IntegerExpression("1");
         //    exp1.Operator = Operator.Percent;
         //    exp1.Next = ConstantExpressions.Percent;
         //    var result = exp1.Compile();
-        //    Assert.AreEqual(0.01, result.Result);
-        //    Assert.AreEqual(DataType.Decimal, result.DataType);
+        //    Assert.That(0.01, Is.EqualTo(result.Result));
+        //    Assert.That(DataType.Decimal, Is.EqualTo(result.DataType));
         //}
     }
 }

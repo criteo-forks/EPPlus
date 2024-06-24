@@ -2,23 +2,24 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.ErrorHandling
 {
     /// <summary>
     /// Summary description for SumTests
     /// </summary>
-    [TestClass, Ignore]
+    [TestFixture]
+    [Explicit]
     public class SumTests : FormulaErrorHandlingTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void ClassInitialize()
         {
             BaseInitialize();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void ClassCleanup()
         {
             BaseCleanup();
@@ -41,52 +42,52 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.ErrorHandling
                 testContextInstance = value;
             }
         }
-        [TestMethod]
+        [Test]
         public void SingleCell()
         {
-            Assert.AreEqual(3d, Worksheet.Cells["B9"].Value);
+            Assert.That(3d, Is.EqualTo(Worksheet.Cells["B9"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void MultiCell()
         {
-            Assert.AreEqual(40d, Worksheet.Cells["C9"].Value);
+            Assert.That(40d, Is.EqualTo(Worksheet.Cells["C9"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void Name()
         {
-            Assert.AreEqual(10d, Worksheet.Cells["E9"].Value);
+            Assert.That(10d, Is.EqualTo(Worksheet.Cells["E9"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ReferenceError()
         {
-            Assert.AreEqual("#REF!", Worksheet.Cells["H9"].Value.ToString());
+            Assert.That("#REF!", Is.EqualTo(Worksheet.Cells["H9"].Value.ToString()));
         }
 
-        [TestMethod]
+        [Test]
         public void NameOnOtherSheet()
         {
-            Assert.AreEqual(130d, Worksheet.Cells["I9"].Value);
+            Assert.That(130d, Is.EqualTo(Worksheet.Cells["I9"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ArrayInclText()
         {
-            Assert.AreEqual(7d, Worksheet.Cells["J9"].Value);
+            Assert.That(7d, Is.EqualTo(Worksheet.Cells["J9"].Value));
         }
 
-        //[TestMethod]
+        //[Test]
         //public void NameError()
         //{
-        //    Assert.AreEqual("#NAME?", Worksheet.Cells["L9"].Value);
+        //    Assert.That("#NAME?", Is.EqualTo(Worksheet.Cells["L9"].Value));
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void DivByZeroError()
         //{
-        //    Assert.AreEqual("#DIV/0!", Worksheet.Cells["M9"].Value);
+        //    Assert.That("#DIV/0!", Is.EqualTo(Worksheet.Cells["M9"].Value));
         //}
     }
 }

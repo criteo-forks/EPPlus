@@ -1,12 +1,12 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using System.IO;
 using System.Reflection;
 
 namespace EPPlusTest
 {
-    [TestClass]
+    [TestFixture]
     public abstract class TestBase
     {
         protected ExcelPackage _pck;
@@ -15,7 +15,7 @@ namespace EPPlusTest
         protected string _testInputPath = @"c:\epplusTest\workbooks\";
         public TestContext TestContext { get; set; }
         
-        [TestInitialize]
+        [SetUp]
         public void InitBase()
         {
             _clipartPath = Path.Combine(Path.GetTempPath(), @"EPPlus clipart");

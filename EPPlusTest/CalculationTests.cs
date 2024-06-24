@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using System.IO;
 using System.Diagnostics;
@@ -11,32 +11,31 @@ using OfficeOpenXml.FormulaParsing;
 
 namespace EPPlusTest
 {
-    [DeploymentItem("Workbooks", "targetFolder")]
-    [TestClass]
+    [TestFixture]
     public class CalculationTests
     {
-        //[TestMethod]
+        //[Test]
         //public void Calulation()
         //{
         //    var pck = new ExcelPackage(new FileInfo("c:\\temp\\chain.xlsx"));
         //    pck.Workbook.Calculate();
-        //    Assert.AreEqual(50D, pck.Workbook.Worksheets[1].Cells["C1"].Value);
+        //    Assert.That(50D, Is.EqualTo(pck.Workbook.Worksheets[1].Cells["C1"].Value));
         //}
-        //[TestMethod]
+        //[Test]
         //public void Calulation2()
         //{
         //    var pck = new ExcelPackage(new FileInfo("c:\\temp\\chainTest.xlsx"));
         //    pck.Workbook.Calculate();
-        //    Assert.AreEqual(1124999960382D, pck.Workbook.Worksheets[1].Cells["C1"].Value);
+        //    Assert.That(1124999960382D, Is.EqualTo(pck.Workbook.Worksheets[1].Cells["C1"].Value));
         //}
-        //[TestMethod]
+        //[Test]
         //public void Calulation3()
         //{
         //    var pck = new ExcelPackage(new FileInfo("c:\\temp\\names.xlsx"));
         //    pck.Workbook.Calculate();
-        //    //Assert.AreEqual(1124999960382D, pck.Workbook.Worksheets[1].Cells["C1"].Value);
+        //    //Assert.That(1124999960382D, Is.EqualTo(pck.Workbook.Worksheets[1].Cells["C1"].Value));
         //}
-        [TestMethod]
+        [Test]
         public void CalulationTestDatatypes()
         {
             var pck = new ExcelPackage();
@@ -53,11 +52,11 @@ namespace EPPlusTest
             ws.Cells["A12"].Formula = "Average(A1:A8)";
 
             ws.Calculate();
-            Assert.AreEqual(21D, ws.Cells["a10"].Value);
-            Assert.AreEqual(21D, ws.Cells["a11"].Value);
-            Assert.AreEqual(21D/6, ws.Cells["a12"].Value);
+            Assert.That(21D, Is.EqualTo(ws.Cells["a10"].Value));
+            Assert.That(21D, Is.EqualTo(ws.Cells["a11"].Value));
+            Assert.That(21D/6, Is.EqualTo(ws.Cells["a12"].Value));
         }
-        [TestMethod]
+        [Test]
         public void CalculateTest()
         {
             var pck = new ExcelPackage();
@@ -65,16 +64,16 @@ namespace EPPlusTest
 
             ws.SetValue("A1",( short)1);
             var v=ws.Calculate("2.5-A1+ABS(-3.0)-SIN(3)");
-            Assert.AreEqual(4.3589, Math.Round((double)v, 4));
+            Assert.Equals(4.3589, Math.Round((double)v, 4));
                         
             ws.Row(1).Hidden = true;
             v = ws.Calculate("subtotal(109,a1:a10)");
-            Assert.AreEqual(0D, v);
+            Assert.That(0D, Is.EqualTo(v));
 
             v = ws.Calculate("-subtotal(9,a1:a3)");
-            Assert.AreEqual(-1D, v);
+            Assert.That(-1D, Is.EqualTo(v));
         }
-        [TestMethod]
+        [Test]
         public void CalculateTestIsFunctions()
         {
             var pck = new ExcelPackage();
@@ -87,7 +86,7 @@ namespace EPPlusTest
             ws.SetFormula(1, 5, "Row(a3)");
             ws.Calculate();
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void Calulation4()
         {
 #if Core
@@ -98,9 +97,9 @@ namespace EPPlusTest
 #endif
             var pck = new ExcelPackage(new FileInfo(Path.Combine(dir, "Workbooks", "FormulaTest.xlsx")));
             pck.Workbook.Calculate();
-            Assert.AreEqual(490D, pck.Workbook.Worksheets[1].Cells["D5"].Value);
+            Assert.That(490D, Is.EqualTo(pck.Workbook.Worksheets[1].Cells["D5"].Value));
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void CalulationValidationExcel()
         {
 #if Core
@@ -137,12 +136,12 @@ namespace EPPlusTest
                         }
                         else
                         {
-                            Assert.AreEqual(fr[adr], ws.Cells[adr].Value);
+                            Assert.That(fr[adr], Is.EqualTo(ws.Cells[adr].Value));
                         }
                     }
                     else
                     {
-                        Assert.AreEqual(fr[adr], ws.Cells[adr].Value);
+                        Assert.That(fr[adr], Is.EqualTo(ws.Cells[adr].Value));
                     }
                 }
                 catch
@@ -152,26 +151,26 @@ namespace EPPlusTest
                 }
             }
 		}
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void TestOneCell()
         {
             var pck = new ExcelPackage(new FileInfo(@"C:\temp\EPPlusTestark\Test4.xlsm"));
             var ws = pck.Workbook.Worksheets.First(); 
             pck.Workbook.Worksheets["Räntebärande formaterat utland"].Cells["M13"].Calculate();
-            Assert.AreEqual(0d, pck.Workbook.Worksheets["Räntebärande formaterat utland"].Cells["M13"].Value);  
+            Assert.That(0d, Is.EqualTo(pck.Workbook.Worksheets["Räntebärande formaterat utland"].Cells["M13"].Value));  
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void TestPrecedence()
         {
             var pck = new ExcelPackage(new FileInfo(@"C:\temp\EPPlusTestark\Precedence.xlsx"));
             var ws = pck.Workbook.Worksheets.Last();
             pck.Workbook.Calculate();
-            Assert.AreEqual(150d, ws.Cells["A1"].Value);
+            Assert.That(150d, Is.EqualTo(ws.Cells["A1"].Value));
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void TestDataType()
         {
             var pck = new ExcelPackage(new FileInfo(@"c:\temp\EPPlusTestark\calc_amount.xlsx"));
@@ -188,7 +187,7 @@ namespace EPPlusTest
 
             ws.Calculate();
         }
-        [TestMethod]
+        [Test]
         public void CalcTwiceError()
         {
             var pck = new ExcelPackage();
@@ -202,16 +201,16 @@ namespace EPPlusTest
             ws.Names["QUANTITY"].Value = 10;
 
             ws.Calculate();
-            Assert.AreEqual(300D, ws.Cells["A1"].Value);
-            Assert.AreEqual(300D, ws.Names["AMOUNT"].Value);
+            Assert.That(300D, Is.EqualTo(ws.Cells["A1"].Value));
+            Assert.That(300D, Is.EqualTo(ws.Names["AMOUNT"].Value));
             ws.Names["PRICE"].Value = 40;
             ws.Names["QUANTITY"].Value = 20;
 
             ws.Calculate();
-            Assert.AreEqual(800D, ws.Cells["A1"].Value);
-            Assert.AreEqual(800D, ws.Names["AMOUNT"].Value);
+            Assert.That(800D, Is.EqualTo(ws.Cells["A1"].Value));
+            Assert.That(800D, Is.EqualTo(ws.Names["AMOUNT"].Value));
         }
-        [TestMethod]
+        [Test]
         public void IfError()
         {
             var pck = new ExcelPackage();
@@ -229,7 +228,7 @@ namespace EPPlusTest
 
             ws.Calculate();
         }
-        [TestMethod]
+        [Test]
         public void LeftRightFunctionTest()
         {
             var pck = new ExcelPackage();
@@ -241,12 +240,12 @@ namespace EPPlusTest
             ws.Cells["A5"].Formula = "Right(A1, 10)";
 
             ws.Calculate();
-            Assert.AreEqual("asd", ws.Cells["A2"].Value);
-            Assert.AreEqual("asdf", ws.Cells["A3"].Value);
-            Assert.AreEqual("sdf", ws.Cells["A4"].Value);
-            Assert.AreEqual("asdf", ws.Cells["A5"].Value);
+            Assert.That("asd", Is.EqualTo(ws.Cells["A2"].Value));
+            Assert.That("asdf", Is.EqualTo(ws.Cells["A3"].Value));
+            Assert.That("sdf", Is.EqualTo(ws.Cells["A4"].Value));
+            Assert.That("asdf", Is.EqualTo(ws.Cells["A5"].Value));
         }
-        [TestMethod]
+        [Test]
         public void IfFunctionTest()
         {
             var pck = new ExcelPackage();
@@ -258,12 +257,12 @@ namespace EPPlusTest
             ws.Cells["A5"].Formula = "IF(A1 = 123, 5)";
 
             ws.Calculate();
-            Assert.AreEqual(1d, ws.Cells["A2"].Value);
-            Assert.AreEqual(false, ws.Cells["A3"].Value);
-            Assert.AreEqual(-1d, ws.Cells["A4"].Value);
-            Assert.AreEqual(5d, ws.Cells["A5"].Value);
+            Assert.That(1d, Is.EqualTo(ws.Cells["A2"].Value));
+            Assert.That(false, Is.EqualTo(ws.Cells["A3"].Value));
+            Assert.That(-1d, Is.EqualTo(ws.Cells["A4"].Value));
+            Assert.That(5d, Is.EqualTo(ws.Cells["A5"].Value));
         }
-        [TestMethod]
+        [Test]
         public void INTFunctionTest()
         {
             var pck = new ExcelPackage();
@@ -279,10 +278,10 @@ namespace EPPlusTest
             ws.Cells["A8"].Formula = "INT(A4)";
 
             ws.Calculate();
-            Assert.AreEqual((int)currentDate.ToOADate(), ws.Cells["A5"].Value);
-            Assert.AreEqual((int)currentDate.ToOADate(), ws.Cells["A6"].Value);
-            Assert.AreEqual(31, ws.Cells["A7"].Value);
-            Assert.AreEqual(31, ws.Cells["A8"].Value);
+            Assert.That((int)currentDate.ToOADate(), Is.EqualTo(ws.Cells["A5"].Value));
+            Assert.That((int)currentDate.ToOADate(), Is.EqualTo(ws.Cells["A6"].Value));
+            Assert.That(31, Is.EqualTo(ws.Cells["A7"].Value));
+            Assert.That(31, Is.EqualTo(ws.Cells["A8"].Value));
         }
 
 
@@ -306,7 +305,7 @@ namespace EPPlusTest
 
             }
         }
-		[TestMethod]
+		[Test]
 		public void CalculateDateMath()
 		{
 			using (ExcelPackage package = new ExcelPackage())
@@ -323,17 +322,17 @@ namespace EPPlusTest
 				var quotedDateReferenceFormulaWithMath = "C2+1";
 				var expectedDate = 41275.0; // January 1, 2013
 				var expectedDateWithMath = 41276.0; // January 2, 2013
-				Assert.AreEqual(expectedDate, worksheet.Calculate(dateFormula));
-				Assert.AreEqual(expectedDateWithMath, worksheet.Calculate(dateFormulaWithMath));
-				Assert.AreEqual(expectedDateWithMath, worksheet.Calculate(quotedDateFormulaWithMath));
-				Assert.AreEqual(expectedDateWithMath, worksheet.Calculate(quotedDateReferenceFormulaWithMath));
+				Assert.That(expectedDate, Is.EqualTo(worksheet.Calculate(dateFormula)));
+				Assert.That(expectedDateWithMath, Is.EqualTo(worksheet.Calculate(dateFormulaWithMath)));
+				Assert.That(expectedDateWithMath, Is.EqualTo(worksheet.Calculate(quotedDateFormulaWithMath)));
+				Assert.That(expectedDateWithMath, Is.EqualTo(worksheet.Calculate(quotedDateReferenceFormulaWithMath)));
 				var formulaCell = worksheet.Cells[2, 4];
 				formulaCell.Formula = dateFormulaWithMath;
 				formulaCell.Calculate();
-				Assert.AreEqual(expectedDateWithMath, formulaCell.Value);
+				Assert.That(expectedDateWithMath, Is.EqualTo(formulaCell.Value));
 				formulaCell.Formula = quotedDateReferenceFormulaWithMath;
 				formulaCell.Calculate();
-				Assert.AreEqual(expectedDateWithMath, formulaCell.Value);
+				Assert.That(expectedDateWithMath, Is.EqualTo(formulaCell.Value));
 			}
 		}
 		private string GetOutput(string file)

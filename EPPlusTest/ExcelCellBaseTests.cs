@@ -1,90 +1,86 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 
 namespace EPPlusTest
 {
-    [TestClass]
+    [TestFixture]
     public class ExcelCellBaseTest
     {
         #region UpdateFormulaReferences Tests
-        [TestMethod]
+        [Test]
         public void UpdateFormulaReferencesOnTheSameSheet()
         {
             var result = ExcelCellBase.UpdateFormulaReferences("C3", 3, 3, 2, 2, "sheet", "sheet");
-            Assert.AreEqual("F6", result);
+            Assert.That("F6", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void UpdateFormulaReferencesIgnoresIncorrectSheet()
         {
             var result = ExcelCellBase.UpdateFormulaReferences("C3", 3, 3, 2, 2, "sheet", "other sheet");
-            Assert.AreEqual("C3", result);
+            Assert.That("C3", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void UpdateFormulaReferencesFullyQualifiedReferenceOnTheSameSheet()
         {
             var result = ExcelCellBase.UpdateFormulaReferences("'sheet name here'!C3", 3, 3, 2, 2, "sheet name here", "sheet name here");
-            Assert.AreEqual("'sheet name here'!F6", result);
+            Assert.That("'sheet name here'!F6", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void UpdateFormulaReferencesFullyQualifiedCrossSheetReferenceArray()
         {
             var result = ExcelCellBase.UpdateFormulaReferences("SUM('sheet name here'!B2:D4)", 3, 3, 3, 3, "cross sheet", "sheet name here");
-            Assert.AreEqual("SUM('sheet name here'!B2:G7)", result);
+            Assert.That("SUM('sheet name here'!B2:G7)", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void UpdateFormulaReferencesFullyQualifiedReferenceOnADifferentSheet()
         {
             var result = ExcelCellBase.UpdateFormulaReferences("'updated sheet'!C3", 3, 3, 2, 2, "boring sheet", "updated sheet");
-            Assert.AreEqual("'updated sheet'!F6", result);
+            Assert.That("'updated sheet'!F6", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void UpdateFormulaReferencesReferencingADifferentSheetIsNotUpdated()
         {
             var result = ExcelCellBase.UpdateFormulaReferences("'boring sheet'!C3", 3, 3, 2, 2, "boring sheet", "updated sheet");
-            Assert.AreEqual("'boring sheet'!C3", result);
+            Assert.That("'boring sheet'!C3", Is.EqualTo(result));
         }
         #endregion
 
         #region UpdateCrossSheetReferenceNames Tests
-        [TestMethod]
+        [Test]
         public void UpdateFormulaSheetReferences()
         {
           var result = ExcelCellBase.UpdateFormulaSheetReferences("5+'OldSheet'!$G3+'Some Other Sheet'!C3+SUM(1,2,3)", "OldSheet", "NewSheet");
-          Assert.AreEqual("5+'NewSheet'!$G3+'Some Other Sheet'!C3+SUM(1,2,3)", result);
+          Assert.Equals("5+'NewSheet'!$G3+'Some Other Sheet'!C3+SUM(1,2,3)", result);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void UpdateFormulaSheetReferencesNullOldSheetThrowsException()
         {
-          ExcelCellBase.UpdateFormulaSheetReferences("formula", null, "sheet2");
+           Assert.Throws<ArgumentNullException>(() => ExcelCellBase.UpdateFormulaSheetReferences("formula", null, "sheet2"));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void UpdateFormulaSheetReferencesEmptyOldSheetThrowsException()
         {
-          ExcelCellBase.UpdateFormulaSheetReferences("formula", string.Empty, "sheet2");
+            Assert.Throws<ArgumentNullException>(() => ExcelCellBase.UpdateFormulaSheetReferences("formula", string.Empty, "sheet2"));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void UpdateFormulaSheetReferencesNullNewSheetThrowsException()
         {
-          ExcelCellBase.UpdateFormulaSheetReferences("formula", "sheet1", null);
+            Assert.Throws<ArgumentNullException>(() => ExcelCellBase.UpdateFormulaSheetReferences("formula", "sheet1", null));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void UpdateFormulaSheetReferencesEmptyNewSheetThrowsException()
         {
-          ExcelCellBase.UpdateFormulaSheetReferences("formula", "sheet1", string.Empty);
+            Assert.Throws<ArgumentNullException>(() => ExcelCellBase.UpdateFormulaSheetReferences("formula", "sheet1", string.Empty));
         }
         #endregion
   }

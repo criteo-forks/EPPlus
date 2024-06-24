@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.ConditionalFormatting;
 using System.IO;
@@ -14,33 +14,17 @@ namespace EPPlusTest
   /// <summary>
   /// Test the Conditional Formatting feature
   /// </summary>
-  [TestClass]
+  [TestFixture]
   public class ConditionalFormatting
   {
-    private TestContext testContextInstance;
     private static ExcelPackage _pck;
-
-    /// <summary>
-    ///Gets or sets the test context which provides
-    ///information about and functionality for the current test run.
-    ///</summary>
-    public TestContext TestContext
-    {
-      get
-      {
-        return testContextInstance;
-      }
-      set
-      {
-        testContextInstance = value;
-      }
-    }
+    
 
     #region Additional test attributes
     // You can use the following additional attributes as you write your tests:
     // Use ClassInitialize to run code before running the first test in the class
-    [ClassInitialize()]
-    public static void MyClassInitialize(TestContext testContext)
+    [OneTimeSetUp]
+    public static void MyClassInitialize()
     {
       if (!Directory.Exists("Test"))
       {
@@ -51,7 +35,7 @@ namespace EPPlusTest
     }
 
     // Use ClassCleanup to run code after all tests in a class have run
-    [ClassCleanup()]
+    [OneTimeTearDown]
     public static void MyClassCleanup()
     {
         _pck = null;
@@ -73,7 +57,7 @@ namespace EPPlusTest
     /// <summary>
     /// 
     /// </summary>
-    [TestMethod]
+    [Test]
     public void TwoColorScale()
     {
       var ws = _pck.Workbook.Worksheets.Add("ColorScale");
@@ -88,15 +72,15 @@ namespace EPPlusTest
     /// <summary>
     /// 
     /// </summary>
-    [TestMethod]
-    [Ignore]
+    [Test]
+    [Explicit]
     public void ReadConditionalFormatting()
     {
       var pck = new ExcelPackage(new FileInfo(@"c:\temp\cf.xlsx"));
 
       var ws = pck.Workbook.Worksheets[1];
-      Assert.IsTrue(ws.ConditionalFormatting.Count == 6);
-      Assert.IsTrue(ws.ConditionalFormatting[0].Type==eExcelConditionalFormattingRuleType.DataBar);
+      Assert.That(ws.ConditionalFormatting.Count == 6);
+      Assert.That(ws.ConditionalFormatting[0].Type==eExcelConditionalFormattingRuleType.DataBar);
 
       var cf1 = ws.ConditionalFormatting.AddEqual(ws.Cells["C3"]);
       //cf1.Formula = "TRUE";
@@ -107,8 +91,8 @@ namespace EPPlusTest
     /// <summary>
     /// 
     /// </summary>
-    [TestMethod]
-    [Ignore]
+    [Test]
+    [Explicit]
     public void ReadConditionalFormattingError()
     {
       var pck = new ExcelPackage(new FileInfo(@"c:\temp\CofCTemplate.xlsx"));
@@ -119,7 +103,7 @@ namespace EPPlusTest
     /// <summary>
     /// 
     /// </summary>
-    [TestMethod]
+    [Test]
     public void TwoBackColor()
     {
         var ws = _pck.Workbook.Worksheets.Add("TwoBackColor");
@@ -134,7 +118,7 @@ namespace EPPlusTest
         condition2.Formula = "FALSE";
         condition2.Style.Fill.BackgroundColor.Color = Color.Red;
     }
-    [TestMethod]
+    [Test]
     public void Databar()
     {
         var ws = _pck.Workbook.Worksheets.Add("Databar");
@@ -145,20 +129,20 @@ namespace EPPlusTest
         ws.SetValue(4, 1, 4);
         ws.SetValue(5, 1, 5);
     }
-    [TestMethod]   
+    [Test]   
     public void DatabarChangingAddressAddsConditionalFormatNodeInSchemaOrder()
     {   
         var ws = _pck.Workbook.Worksheets.Add("DatabarAddressing");   
         // Ensure there is at least one element that always exists below ConditionalFormatting nodes.   
         ws.HeaderFooter.AlignWithMargins = true;   
         var cf = ws.ConditionalFormatting.AddDatabar(ws.Cells["A1:A5"], Color.BlueViolet);   
-        Assert.AreEqual("sheetData", cf.Node.ParentNode.PreviousSibling.LocalName);   
-        Assert.AreEqual("headerFooter", cf.Node.ParentNode.NextSibling.LocalName);   
+        Assert.That("sheetData", Is.EqualTo(cf.Node.ParentNode.PreviousSibling.LocalName));   
+        Assert.That("headerFooter", Is.EqualTo(cf.Node.ParentNode.NextSibling.LocalName));   
         cf.Address = new ExcelAddress("C3");   
-        Assert.AreEqual("sheetData", cf.Node.ParentNode.PreviousSibling.LocalName);   
-        Assert.AreEqual("headerFooter", cf.Node.ParentNode.NextSibling.LocalName);   
+        Assert.That("sheetData", Is.EqualTo(cf.Node.ParentNode.PreviousSibling.LocalName));   
+        Assert.That("headerFooter", Is.EqualTo(cf.Node.ParentNode.NextSibling.LocalName));   
     }
-    [TestMethod]
+    [Test]
     public void IconSet()
     {
         var ws = _pck.Workbook.Worksheets.Add("IconSet");
@@ -199,31 +183,31 @@ namespace EPPlusTest
         ws.SetValue(4, 3, 4);
         ws.SetValue(5, 3, 5);    
     }
-    //[TestMethod]
+    //[Test]
     //public void TwoAndThreeColorConditionalFormattingFromFileDoesNotGetOverwrittenWithDefaultValues()
     //{
     //    var file = new FileInfo(
     //        AppDomain.CurrentDomain.BaseDirectory.Substring(0, AppContext.BaseDirectory.IndexOf("bin"))
     //        + @"Workbooks\MultiColorConditionalFormatting.xlsx");
-    //        Assert.IsTrue(file.Exists);
+    //        Assert.That(file.Exists);
     //        using (var package = new ExcelPackage(file))
     //    {
     //        var sheet = package.Workbook.Worksheets.First();
-    //        Assert.AreEqual(2, sheet.ConditionalFormatting.Count);
+    //        Assert.That(2, Is.EqualTo(sheet.ConditionalFormatting.Count));
     //        var twoColor = (ExcelConditionalFormattingTwoColorScale)sheet.ConditionalFormatting.First(cf => cf is ExcelConditionalFormattingTwoColorScale);
     //        var threeColor = (ExcelConditionalFormattingThreeColorScale)sheet.ConditionalFormatting.First(cf => cf is ExcelConditionalFormattingThreeColorScale);
 
     //        var defaultTwoColorScale = new ExcelConditionalFormattingTwoColorScale(new ExcelAddress("A1"), 2, sheet);
     //        var defaultThreeColorScale = new ExcelConditionalFormattingThreeColorScale(new ExcelAddress("A1"), 2, sheet);
 
-    //        Assert.IsNull(twoColor.HighValue);
-    //        Assert.IsNull(twoColor.LowValue);
-    //        Assert.IsNotNull(defaultTwoColorScale.HighValue);
-    //        Assert.IsNotNull(defaultTwoColorScale.LowValue);
-    //        Assert.IsNull(threeColor.HighValue);
-    //        Assert.IsNull(threeColor.LowValue);
-    //        Assert.IsNotNull(defaultThreeColorScale.HighValue);
-    //        Assert.IsNotNull(defaultThreeColorScale.LowValue);
+    //        Assert.That(twoColor.HighValue, Is.Null);
+    //        Assert.That(twoColor.LowValue, Is.Null);
+    //        Assert.That(defaultTwoColorScale.HighValue, Is.Not.Null);
+    //        Assert.That(defaultTwoColorScale.LowValue, Is.Not.Null);
+    //        Assert.That(threeColor.HighValue, Is.Null);
+    //        Assert.That(threeColor.LowValue, Is.Null);
+    //        Assert.That(defaultThreeColorScale.HighValue, Is.Not.Null);
+    //        Assert.That(defaultThreeColorScale.LowValue, Is.Not.Null);
     //    }
     //}
 

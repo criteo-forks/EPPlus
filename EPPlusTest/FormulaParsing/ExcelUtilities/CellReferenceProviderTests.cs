@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using OfficeOpenXml.FormulaParsing.ExcelUtilities;
@@ -10,19 +10,19 @@ using FakeItEasy;
 
 namespace EPPlusTest.ExcelUtilities
 {
-    [TestClass]
+    [TestFixture]
     public class CellReferenceProviderTests
     {
         private ExcelDataProvider _provider;
 
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             _provider = A.Fake<ExcelDataProvider>();
             A.CallTo(() => _provider.ExcelMaxRows).Returns(5000);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldReturnReferencedSingleAddress()
         {
             var parsingContext = ParsingContext.Create();
@@ -31,10 +31,10 @@ namespace EPPlusTest.ExcelUtilities
             parsingContext.RangeAddressFactory = new RangeAddressFactory(_provider);
             var provider = new CellReferenceProvider();
             var result = provider.GetReferencedAddresses("A1", parsingContext);
-            Assert.AreEqual("A1", result.First());
+            Assert.That("A1", Is.EqualTo(result.First()));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldReturnReferencedMultipleAddresses()
         {
             var parsingContext = ParsingContext.Create();
@@ -43,8 +43,8 @@ namespace EPPlusTest.ExcelUtilities
             parsingContext.RangeAddressFactory = new RangeAddressFactory(_provider);
             var provider = new CellReferenceProvider();
             var result = provider.GetReferencedAddresses("A1:A2", parsingContext);
-            Assert.AreEqual("A1", result.First());
-            Assert.AreEqual("A2", result.Last());
+            Assert.That("A1", Is.EqualTo(result.First()));
+            Assert.That("A2", Is.EqualTo(result.Last()));
         }
     }
 }

@@ -2,21 +2,24 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.Utils;
 
 namespace EPPlusTest.Utils
 {
-    [TestClass]
+    [TestFixture]
     public class SqRefUtilityTests
     {
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void SqRefUtility_ToSqRefAddress_ShouldThrowIfAddressIsNullOrEmpty()
         {
-            SqRefUtility.ToSqRefAddress(null);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                SqRefUtility.ToSqRefAddress(null);
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void SqRefUtility_ToSqRefAddress_ShouldRemoveCommas()
         {
             // Arrange
@@ -26,11 +29,11 @@ namespace EPPlusTest.Utils
             var result = SqRefUtility.ToSqRefAddress(address);
 
             // Assert
-            Assert.AreEqual("A1 A2:A3", result);
+            Assert.That("A1 A2:A3", Is.EqualTo(result));
         }
 
 
-        [TestMethod]
+        [Test]
         public void SqRefUtility_ToSqRefAddress_ShouldRemoveCommasAndInsertSpaceIfNecesary()
         {
             // Arrange
@@ -40,10 +43,10 @@ namespace EPPlusTest.Utils
             var result = SqRefUtility.ToSqRefAddress(address);
 
             // Assert
-            Assert.AreEqual("A1 A2:A3", result);
+            Assert.That("A1 A2:A3", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SqRefUtility_ToSqRefAddress_ShouldRemoveMultipleSpaces()
         {
             // Arrange
@@ -53,10 +56,10 @@ namespace EPPlusTest.Utils
             var result = SqRefUtility.ToSqRefAddress(address);
 
             // Assert
-            Assert.AreEqual("A1 A2:A3", result);
+            Assert.That("A1 A2:A3", Is.EqualTo(result));
         }
 
-        [TestMethod]
+        [Test]
         public void SqRefUtility_FromSqRefAddress_ShouldReplaceSpaceWithComma()
         {
             // Arrange
@@ -66,7 +69,7 @@ namespace EPPlusTest.Utils
             var result = SqRefUtility.FromSqRefAddress(address);
 
             // Assert
-            Assert.AreEqual("A1,A2", result);
+            Assert.Equals("A1,A2", result);
         }
     }
 }

@@ -2,29 +2,29 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.DataValidation;
 using System.IO;
 
 namespace EPPlusTest.DataValidation
 {
-    [TestClass]
+    [TestFixture]
     public class DataValidationTests : ValidationTestBase
     {
-        [TestInitialize]
+        [SetUp]
         public void Setup()
         {
             SetupTestData();
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             CleanupTestData();
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_ShouldSetOperatorFromExistingXml()
         {
             // Arrange
@@ -32,18 +32,21 @@ namespace EPPlusTest.DataValidation
             // Act
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.AreEqual(ExcelDataValidationOperator.greaterThanOrEqual, validation.Operator);
+            Assert.That(ExcelDataValidationOperator.greaterThanOrEqual, Is.EqualTo(validation.Operator));
        }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void DataValidations_ShouldThrowIfOperatorIsEqualAndFormula1IsEmpty()
         {
-            var validations = _sheet.DataValidations.AddIntegerValidation("A1");
-            validations.Operator = ExcelDataValidationOperator.equal;
-            validations.Validate();
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var validations = _sheet.DataValidations.AddIntegerValidation("A1");
+                validations.Operator = ExcelDataValidationOperator.equal;
+                validations.Validate();
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_ShouldSetShowErrorMessageFromExistingXml()
         {
             // Arrange
@@ -51,10 +54,10 @@ namespace EPPlusTest.DataValidation
             // Act
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.IsTrue(validation.ShowErrorMessage ?? false);
+            Assert.That(validation.ShowErrorMessage ?? false);
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_ShouldSetShowInputMessageFromExistingXml()
         {
             // Arrange
@@ -62,10 +65,10 @@ namespace EPPlusTest.DataValidation
             // Act
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.IsTrue(validation.ShowInputMessage ?? false);
+            Assert.That(validation.ShowInputMessage ?? false);
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_ShouldSetPromptFromExistingXml()
         {
             // Arrange
@@ -73,10 +76,10 @@ namespace EPPlusTest.DataValidation
             // Act
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.AreEqual("Prompt", validation.Prompt);
+            Assert.That("Prompt", Is.EqualTo(validation.Prompt));
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_ShouldSetPromptTitleFromExistingXml()
         {
             // Arrange
@@ -84,10 +87,10 @@ namespace EPPlusTest.DataValidation
             // Act
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.AreEqual("PromptTitle", validation.PromptTitle);
+            Assert.That("PromptTitle", Is.EqualTo(validation.PromptTitle));
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_ShouldSetErrorFromExistingXml()
         {
             // Arrange
@@ -95,10 +98,10 @@ namespace EPPlusTest.DataValidation
             // Act
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.AreEqual("Error", validation.Error);
+            Assert.That("Error", Is.EqualTo(validation.Error));
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_ShouldSetErrorTitleFromExistingXml()
         {
             // Arrange
@@ -106,19 +109,22 @@ namespace EPPlusTest.DataValidation
             // Act
             var validation = new ExcelDataValidationInt(_sheet, "A1", ExcelDataValidationType.Whole, _dataValidationNode, _namespaceManager);
             // Assert
-            Assert.AreEqual("ErrorTitle", validation.ErrorTitle);
+            Assert.That("ErrorTitle", Is.EqualTo(validation.ErrorTitle));
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [Test]
         public void DataValidations_ShouldThrowIfOperatorIsBetweenAndFormula2IsEmpty()
         {
-            var validation = _sheet.DataValidations.AddIntegerValidation("A1");
-            validation.Formula.Value = 1;
-            validation.Operator = ExcelDataValidationOperator.between;
-            validation.Validate();
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var validation = _sheet.DataValidations.AddIntegerValidation("A1");
+                validation.Formula.Value = 1;
+                validation.Operator = ExcelDataValidationOperator.between;
+                validation.Validate();
+            });
         }
 
-        [TestMethod]
+        [Test]
         public void DataValidations_ShouldAcceptOneItemOnly()
         {
             var validation = _sheet.DataValidations.AddListValidation("A1");
@@ -126,24 +132,24 @@ namespace EPPlusTest.DataValidation
             validation.Validate();
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelDataValidation_ShouldReplaceLastPartInWholeColumnRangeWithMaxNumberOfRowsOneColumn()
         {
             // Act
             var validation = _sheet.DataValidations.AddIntegerValidation("A:A");
 
             // Assert
-            Assert.AreEqual("A1:A" + ExcelPackage.MaxRows.ToString(), validation.Address.Address);
+            Assert.That("A1:A" + ExcelPackage.MaxRows.ToString(), Is.EqualTo(validation.Address.Address));
         }
 
-        [TestMethod]
+        [Test]
         public void ExcelDataValidation_ShouldReplaceLastPartInWholeColumnRangeWithMaxNumberOfRowsDifferentColumns()
         {
             // Act
             var validation = _sheet.DataValidations.AddIntegerValidation("A:B");
 
             // Assert
-            Assert.AreEqual(string.Format("A1:B{0}", ExcelPackage.MaxRows), validation.Address.Address);
+            Assert.That(string.Format("A1:B{0}", ExcelPackage.MaxRows), Is.EqualTo(validation.Address.Address));
         }
 
     }

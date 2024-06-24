@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions;
@@ -9,10 +9,10 @@ using OfficeOpenXml.FormulaParsing.Exceptions;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 {
-	[TestClass]
+	[TestFixture]
 	public class AverageATests
 	{
-		[TestMethod]
+		[Test]
 		public void AverageALiterals()
 		{
 			// For literals, AverageA always parses and include numeric strings, date strings, bools, etc.
@@ -35,10 +35,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 				new FunctionArgument(date1),
 				new FunctionArgument(date2.ToString("d"))
 			}, ParsingContext.Create());
-			Assert.AreEqual((value1 + value2 + value3 + value4 + value5 + value6) / 6, result.Result);
+			Assert.That((value1 + value2 + value3 + value4 + value5 + value6) / 6, Is.EqualTo(result.Result));
 		}
 
-		[TestMethod]
+		[Test]
 		public void AverageACellReferences()
 		{
 			// For cell references, AverageA divides by all cells, but only adds actual numbers, dates, and booleans.
@@ -81,10 +81,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 				new FunctionArgument(rangeInfo2),
 				new FunctionArgument(rangeInfo3)
 			}, context);
-			Assert.AreEqual(values.Average(), result.Result);
+			Assert.That(values.Average(), Is.EqualTo(result.Result));
 		}
 
-		[TestMethod]
+		[Test]
 		public void AverageAArray()
 		{
 			// For arrays, AverageA completely ignores booleans.  It divides by strings and numbers, but only
@@ -111,20 +111,23 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 					new FunctionArgument("test")
 				})
 			}, ParsingContext.Create());
-			Assert.AreEqual(values.Average(), result.Result);
+			Assert.That(values.Average(), Is.EqualTo(result.Result));
 		}
 
-		[TestMethod]
-		[ExpectedException(typeof(ExcelErrorValueException))]
+		[Test]
+		
 		public void AverageAUnparsableLiteral()
 		{
-			// In the case of literals, any unparsable string literal results in a #VALUE.
-			AverageA average = new AverageA();
-			var result = average.Execute(new FunctionArgument[]
+			Assert.Throws<ExcelErrorValueException>(() =>
 			{
-				new FunctionArgument(1000),
-				new FunctionArgument("Test")
-			}, ParsingContext.Create());
+				// In the case of literals, any unparsable string literal results in a #VALUE.
+				AverageA average = new AverageA();
+				var result = average.Execute(new FunctionArgument[]
+				{
+					new FunctionArgument(1000),
+					new FunctionArgument("Test")
+				}, ParsingContext.Create());
+			});
 		}
 	}
 }

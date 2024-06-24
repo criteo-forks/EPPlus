@@ -1,5 +1,5 @@
 ﻿using EPPlusTest.FormulaParsing.TestHelpers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
@@ -8,7 +8,7 @@ using static OfficeOpenXml.FormulaParsing.ExcelDataProvider;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
 {
-    [TestClass]
+    [TestFixture]
     public class AverageIfTests
     {
         private ExcelPackage _package;
@@ -16,7 +16,7 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
         private ParsingContext _parsingContext;
         private ExcelWorksheet _worksheet;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             _package = new ExcelPackage();
@@ -26,13 +26,13 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             _worksheet = _package.Workbook.Worksheets.Add("testsheet");
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _package.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfNumeric()
         {
             _worksheet.Cells["A1"].Value = 1d;
@@ -46,10 +46,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, ">1", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(4d, result.Result);
+            Assert.That(4d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfNonNumeric()
         {
             _worksheet.Cells["A1"].Value = "Monday";
@@ -63,10 +63,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "T*day", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(4d, result.Result);
+            Assert.That(4d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfNumericExpression()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -76,10 +76,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range = _provider.GetRange(_worksheet.Name, 1, 1, 3, 1);
             var args = FunctionsHelper.CreateArgs(range, 1d);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(1d, result.Result);
+            Assert.That(1d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfEqualToEmptyString()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -93,10 +93,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(1d, result.Result);
+            Assert.That(1d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfNotEqualToNull()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -110,10 +110,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "<>", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(4d, result.Result);
+            Assert.That(4d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfEqualToZero()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -127,10 +127,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "0", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(5d, result.Result);
+            Assert.That(5d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfNotEqualToZero()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -144,10 +144,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "<>0", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(2d, result.Result);
+            Assert.That(2d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfGreaterThanZero()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -161,10 +161,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, ">0", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(5d, result.Result);
+            Assert.That(5d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfGreaterThanOrEqualToZero()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -178,10 +178,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, ">=0", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(5d, result.Result);
+            Assert.That(5d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfLessThanZero()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -195,10 +195,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "<0", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(5d, result.Result);
+            Assert.That(5d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfLessThanOrEqualToZero()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -212,10 +212,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "<=0", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(5d, result.Result);
+            Assert.That(5d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfLessThanCharacter()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -229,10 +229,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "<a", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(3d, result.Result);
+            Assert.That(3d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfLessThanOrEqualToCharacter()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -246,10 +246,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, "<=a", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(3d, result.Result);
+            Assert.That(3d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfGreaterThanCharacter()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -263,10 +263,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, ">a", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(5d, result.Result);
+            Assert.That(5d, Is.EqualTo(result.Result));
         }
 
-        [TestMethod]
+        [Test]
         public void AverageIfGreaterThanOrEqualToCharacter()
         {
             _worksheet.Cells["A1"].Value = null;
@@ -280,7 +280,7 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Math
             IRangeInfo range2 = _provider.GetRange(_worksheet.Name, 1, 2, 3, 2);
             var args = FunctionsHelper.CreateArgs(range1, ">=a", range2);
             var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(5d, result.Result);
+            Assert.That(5d, Is.EqualTo(result.Result));
         }
     }
 }

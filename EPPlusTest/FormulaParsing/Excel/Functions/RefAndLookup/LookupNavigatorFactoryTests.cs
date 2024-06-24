@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using EPPlusTest.FormulaParsing.TestHelpers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
@@ -9,13 +9,13 @@ using OfficeOpenXml.FormulaParsing.ExcelUtilities;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions.RefAndLookup
 {
-    [TestClass]
+    [TestFixture]
     public class LookupNavigatorFactoryTests
     {
         private ExcelPackage _excelPackage;
         private ParsingContext _context;
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             _excelPackage = new ExcelPackage(new MemoryStream());
@@ -25,26 +25,26 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.RefAndLookup
             _context.Scopes.NewScope(RangeAddress.Empty);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             _excelPackage.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void Should_Return_ExcelLookupNavigator_When_Range_Is_Set()
         {
             var args = new LookupArguments(FunctionsHelper.CreateArgs(8, "A:B", 1), ParsingContext.Create());
             var navigator = LookupNavigatorFactory.Create(LookupDirection.Horizontal, args, _context);
-            Assert.IsInstanceOfType(navigator, typeof(ExcelLookupNavigator));
+            Assert.That(navigator, Is.InstanceOf<ExcelLookupNavigator>());
         }
 
-        [TestMethod]
+        [Test]
         public void Should_Return_ArrayLookupNavigator_When_Array_Is_Supplied()
         {
             var args = new LookupArguments(FunctionsHelper.CreateArgs(8, FunctionsHelper.CreateArgs(1,2), 1), ParsingContext.Create());
             var navigator = LookupNavigatorFactory.Create(LookupDirection.Horizontal, args, _context);
-            Assert.IsInstanceOfType(navigator, typeof(ArrayLookupNavigator));
+            Assert.That(navigator, Is.InstanceOf<ArrayLookupNavigator>());
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 
 namespace EPPlusTest
 {
-    [TestClass]
+    [TestFixture]
     public class ExcelPackageTests
     {
         

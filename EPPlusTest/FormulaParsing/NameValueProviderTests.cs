@@ -2,23 +2,23 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 
 namespace EPPlusTest.FormulaParsing
 {
-    [TestClass]
+    [TestFixture]
     public class NameValueProviderTests
     {
         //private ExcelDataProvider _excelDataProvider;
 
-        //[TestInitialize]
+        //[SetUp]
         //public void Setup()
         //{
         //    _excelDataProvider = MockRepository.GenerateMock<ExcelDataProvider>();
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void IsNamedValueShouldReturnTrueIfKeyIsANamedValue()
         //{
         //    var dict = new Dictionary<string, object>();
@@ -28,10 +28,10 @@ namespace EPPlusTest.FormulaParsing
         //    var nameValueProvider = new EpplusNameValueProvider(_excelDataProvider);
 
         //    var result = nameValueProvider.IsNamedValue("A");
-        //    Assert.IsTrue(result);
+        //    Assert.That(result);
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void IsNamedValueShouldReturnFalseIfKeyIsNotANamedValue()
         //{
         //    var dict = new Dictionary<string, object>();
@@ -41,10 +41,10 @@ namespace EPPlusTest.FormulaParsing
         //    var nameValueProvider = new EpplusNameValueProvider(_excelDataProvider);
 
         //    var result = nameValueProvider.IsNamedValue("C");
-        //    Assert.IsFalse(result);
+        //    Assert.That(!result);
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void GetNamedValueShouldReturnCorrectValueIfKeyExists()
         //{
         //    var dict = new Dictionary<string, object>();
@@ -54,10 +54,10 @@ namespace EPPlusTest.FormulaParsing
         //    var nameValueProvider = new EpplusNameValueProvider(_excelDataProvider);
 
         //    var result = nameValueProvider.GetNamedValue("A");
-        //    Assert.AreEqual("B", result);
+        //    Assert.That("B", Is.EqualTo(result));
         //}
 
-        //[TestMethod]
+        //[Test]
         //public void ReloadShouldReloadDataFromExcelDataProvider()
         //{
         //    var dict = new Dictionary<string, object>();
@@ -67,11 +67,11 @@ namespace EPPlusTest.FormulaParsing
         //    var nameValueProvider = new EpplusNameValueProvider(_excelDataProvider);
 
         //    var result = nameValueProvider.GetNamedValue("A");
-        //    Assert.AreEqual("B", result);
+        //    Assert.That("B", Is.EqualTo(result));
 
         //    dict.Clear();
         //    nameValueProvider.Reload();
-        //    Assert.IsFalse(nameValueProvider.IsNamedValue("A"));
+        //    Assert.That(!nameValueProvider.IsNamedValue("A"));
         //}
     }
 }

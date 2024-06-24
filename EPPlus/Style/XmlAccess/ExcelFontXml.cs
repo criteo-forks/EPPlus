@@ -269,9 +269,9 @@ namespace OfficeOpenXml.Style.XmlAccess
                 _verticalAlign=value;
             }
         }
-        public void SetFromFont(System.Drawing.Font Font)
+        public void SetFromFont(Font Font)
         {
-            Name=Font.Name;
+            Name=Font.FamilyName;
             //Family=fnt.FontFamily.;
             Size=(int)Font.Size;
             Strike=Font.Strikeout;

@@ -1,17 +1,17 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using OfficeOpenXml.FormulaParsing;
 
 namespace EPPlusTest.FormulaParsing.LexicalAnalysis
 {
-    [TestClass]
+    [TestFixture]
     public class TokenHandlerTests
     {
         private TokenizerContext _tokenizerContext;
         private TokenHandler _handler;
 
-        [TestInitialize]
+        [SetUp]
         public void Init()
         {
             _tokenizerContext = new TokenizerContext("test");
@@ -25,20 +25,20 @@ namespace EPPlusTest.FormulaParsing.LexicalAnalysis
             _handler = new TokenHandler(_tokenizerContext, tokenFactory, new TokenSeparatorProvider()); 
         }
 
-        [TestMethod]
+        [Test]
         public void HasMoreTokensShouldBeTrueWhenTokensExists()
         {
-            Assert.IsTrue(_handler.HasMore());
+            Assert.That(_handler.HasMore());
         }
 
-        [TestMethod]
+        [Test]
         public void HasMoreTokensShouldBeFalseWhenAllAreHandled()
         {
             for (var x = 0; x < "test".Length; x++ )
             {
                 _handler.Next();
             }
-            Assert.IsFalse(_handler.HasMore());
+            Assert.That(!_handler.HasMore());
         }
     }
 }

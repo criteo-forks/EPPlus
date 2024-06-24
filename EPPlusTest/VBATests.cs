@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.Utils;
 using OfficeOpenXml;
 using System.Security.Cryptography.X509Certificates;
@@ -12,10 +12,10 @@ using OfficeOpenXml.VBA;
 
 namespace EPPlusTest
 {
-    [TestClass]
+    [TestFixture]
     public class VBATests
     {
-        [TestMethod]
+        [Test]
         public void Compression()
         {
             //Compression/Decompression
@@ -23,16 +23,16 @@ namespace EPPlusTest
 
             byte[] compValue = VBACompression.CompressPart(Encoding.GetEncoding(1252).GetBytes(value));
             string decompValue = Encoding.GetEncoding(1252).GetString(VBACompression.DecompressPart(compValue));
-            Assert.AreEqual(value, decompValue);
+            Assert.That(value, Is.EqualTo(decompValue));
 
             value = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
             compValue = VBACompression.CompressPart(Encoding.GetEncoding(1252).GetBytes(value));
             decompValue = Encoding.GetEncoding(1252).GetString(VBACompression.DecompressPart(compValue));
-            Assert.AreEqual(value, decompValue);
+            Assert.That(value, Is.EqualTo(decompValue));
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void ReadVBA()
         {
             var package = new ExcelPackage(new FileInfo(@"c:\temp\report.xlsm"));
@@ -53,8 +53,8 @@ namespace EPPlusTest
             //package.Workbook.VbaProject.Protection.SetPassword("");
             package.SaveAs(new FileInfo(@"c:\temp\vbaSaved.xlsm"));
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void WriteVBA()
         {
             var package = new ExcelPackage();
@@ -80,16 +80,16 @@ namespace EPPlusTest
             package.SaveAs(new FileInfo(@"c:\temp\vbaWrite.xlsm"));
 
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void Resign()
         {
             var package = new ExcelPackage(new FileInfo(@"c:\temp\vbaWrite.xlsm"));
             //package.Workbook.VbaProject.Signature.Certificate = store.Certificates[11];
             package.SaveAs(new FileInfo(@"c:\temp\vbaWrite2.xlsm"));
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void WriteLongVBAModule()
         {
             var package = new ExcelPackage();
@@ -115,8 +115,8 @@ namespace EPPlusTest
 
             package.SaveAs(new FileInfo(@"c:\temp\vbaLong.xlsm"));
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void VbaError()
         {
             DirectoryInfo workingDir = new DirectoryInfo(@"C:\epplusExample\folder");
@@ -138,8 +138,8 @@ namespace EPPlusTest
             myPackage.SaveAs(f2);
             myPackage.Dispose();
         }
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void ReadVBAUnicodeWsName()
         {
             var package = new ExcelPackage(new FileInfo(@"c:\temp\bug\VbaUnicodeWS.xlsm"));
@@ -160,7 +160,7 @@ namespace EPPlusTest
             //package.Workbook.VbaProject.Protection.SetPassword("");
             package.SaveAs(new FileInfo(@"c:\temp\vbaSaved.xlsm"));
         }
-        [TestMethod]
+        [Test]
         public void CreateUnicodeWsName()
         {
             using (var package = new ExcelPackage())
@@ -185,8 +185,8 @@ namespace EPPlusTest
             }
         }
         //Issue with chunk overwriting 4096 bytes
-        [Ignore]
-        [TestMethod]
+        [Explicit]
+        [Test]
         public void VbaBug()
         {
             using (var package = new ExcelPackage(new FileInfo(@"c:\temp\bug\outfile.xlsm")))
@@ -197,7 +197,7 @@ namespace EPPlusTest
                 package.SaveAs(new FileInfo(@"c:\temp\bug\outfile2.xlsm"));
             }
         }
-        [TestMethod]
+        [Test]
         public void DecompressionChunkGreaterThan4k()
         {
             // This is a test for Issue 15026: VBA decompression encounters index out of range
@@ -216,11 +216,11 @@ namespace EPPlusTest
                 using (var package = new ExcelPackage(f))
                 {
                     // Reading the Workbook.CodeModule.Code will cause an IndexOutOfRange if the problem hasn't been fixed.
-                    Assert.IsTrue(package.Workbook.CodeModule.Code.Length > 0);
+                    Assert.That(package.Workbook.CodeModule.Code.Length > 0);
                 }
             }
         }
-        [TestMethod, Ignore]
+        [Test] [Explicit]
         public void ReadNewVBA()
         {
             using (var package = new ExcelPackage(new FileInfo(@"c:\temp\bug\makro.xlsm")))

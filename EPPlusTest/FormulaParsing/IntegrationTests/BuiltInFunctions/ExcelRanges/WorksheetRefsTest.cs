@@ -1,17 +1,17 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml;
 
 namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRanges
 {
-    [TestClass]
+    [TestFixture]
     public class WorksheetRefsTest
     {
         private ExcelPackage _package;
         private ExcelWorksheet _firstSheet;
         private ExcelWorksheet _secondSheet;
 
-        [TestInitialize]
+        [SetUp]
         public void Init()
         {
             _package = new ExcelPackage();
@@ -21,22 +21,22 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             _firstSheet.Cells["A2"].Value = 2;
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             
             _package.Dispose();
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldHandleReferenceToOtherSheet()
         {
             _secondSheet.Cells["A1"].Formula = "SUM('sheet1'!A1:A2)";
             _secondSheet.Calculate();
-            Assert.AreEqual(3d, _secondSheet.Cells["A1"].Value);
+            Assert.That(3d, Is.EqualTo(_secondSheet.Cells["A1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldHandleReferenceToOtherSheetWithComplexName()
         {
             var sheet = _package.Workbook.Worksheets.Add("ab#k..2");
@@ -44,10 +44,10 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             sheet.Cells["A2"].Value = 2;
             _secondSheet.Cells["A1"].Formula = "SUM('ab#k..2'A1:A2)";
             _secondSheet.Calculate();
-            Assert.AreEqual(3d, _secondSheet.Cells["A1"].Value);
+            Assert.That(3d, Is.EqualTo(_secondSheet.Cells["A1"].Value));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldHandleInvalidRef()
         {
             var sheet = _package.Workbook.Worksheets.Add("ab#k..2");
@@ -55,7 +55,7 @@ namespace EPPlusTest.FormulaParsing.IntegrationTests.BuiltInFunctions.ExcelRange
             sheet.Cells["A2"].Value = 2;
             _secondSheet.Cells["A1"].Formula = "SUM('ab#k..2A1:A2')";
             _secondSheet.Calculate();
-            Assert.IsInstanceOfType(_secondSheet.Cells["A1"].Value, typeof(ExcelErrorValue));
+            Assert.That(_secondSheet.Cells["A1"].Value, Is.InstanceOf<ExcelErrorValue>());
         }
     }
 }

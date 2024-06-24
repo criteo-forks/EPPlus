@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Database;
 using FakeItEasy;
 
 namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
 {
-    [TestClass]
+    [TestFixture]
     public class RowMatcherTests
     {
         private ExcelDatabaseCriteria GetCriteria(Dictionary<ExcelDatabaseCriteriaField, object> items)
@@ -18,7 +18,7 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
             A.CallTo(() => criteria.Items).Returns(items);
             return criteria;
         }
-        [TestMethod]
+        [Test]
         public void IsMatchShouldReturnTrueIfCriteriasMatch()
         {
             var data = new ExcelDatabaseRow();
@@ -34,10 +34,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
 
             var criteria = GetCriteria(crit);
 
-            Assert.IsTrue(matcher.IsMatch(data, criteria));
+            Assert.That(matcher.IsMatch(data, criteria));
         }
 
-        [TestMethod]
+        [Test]
         public void IsMatchShouldReturnFalseIfCriteriasDoesNotMatch()
         {
             var data = new ExcelDatabaseRow();
@@ -53,10 +53,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
 
             var criteria = GetCriteria(crit);
 
-            Assert.IsFalse(matcher.IsMatch(data, criteria));
+            Assert.That(!matcher.IsMatch(data, criteria));
         }
 
-        [TestMethod]
+        [Test]
         public void IsMatchShouldMatchStrings1()
         {
             var data = new ExcelDatabaseRow();
@@ -72,10 +72,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
 
             var criteria = GetCriteria(crit);
 
-            Assert.IsTrue(matcher.IsMatch(data, criteria));
+            Assert.That(matcher.IsMatch(data, criteria));
         }
 
-        [TestMethod]
+        [Test]
         public void IsMatchShouldMatchStrings2()
         {
             var data = new ExcelDatabaseRow();
@@ -91,10 +91,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
 
             var criteria = GetCriteria(crit);
 
-            Assert.IsFalse(matcher.IsMatch(data, criteria));
+            Assert.That(!matcher.IsMatch(data, criteria));
         }
 
-        [TestMethod]
+        [Test]
         public void IsMatchShouldMatchWildcardStrings()
         {
             var data = new ExcelDatabaseRow();
@@ -110,10 +110,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
 
             var criteria = GetCriteria(crit);
 
-            Assert.IsTrue(matcher.IsMatch(data, criteria));
+            Assert.That(matcher.IsMatch(data, criteria));
         }
 
-        [TestMethod]
+        [Test]
         public void IsMatchShouldMatchNumericExpression()
         {
             var data = new ExcelDatabaseRow();
@@ -129,10 +129,10 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
 
             var criteria = GetCriteria(crit);
 
-            Assert.IsTrue(matcher.IsMatch(data, criteria));
+            Assert.That(matcher.IsMatch(data, criteria));
         }
 
-        [TestMethod]
+        [Test]
         public void IsMatchShouldHandleFieldIndex()
         {
             var data = new ExcelDatabaseRow();
@@ -148,7 +148,7 @@ namespace EPPlusTest.FormulaParsing.Excel.Functions.Database
 
             var criteria = GetCriteria(crit);
 
-            Assert.IsTrue(matcher.IsMatch(data, criteria));
+            Assert.That(matcher.IsMatch(data, criteria));
         }
     }
 }
