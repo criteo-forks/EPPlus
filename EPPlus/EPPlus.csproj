@@ -5,6 +5,7 @@
     <RootNamespace>OfficeOpenXml</RootNamespace>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <DefineConstants>Core</DefineConstants>
+    <Version>4.5.3.3-criteo1</Version>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Compatibility\ImageCompat.cs" />
