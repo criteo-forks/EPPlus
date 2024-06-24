@@ -144,10 +144,6 @@ namespace OfficeOpenXml.Encryption
         /// </summary>
         RIPEMD128,
         /// <summary>
-        /// RIPEMD-160 MUST conform to [ISO/IEC 10118]
-        /// </summary>
-        RIPEMD160,
-        /// <summary>
         /// WHIRLPOOL MUST conform to [ISO/IEC 10118]
         /// </summary>
         WHIRLPOOL
@@ -207,8 +203,6 @@ namespace OfficeOpenXml.Encryption
                 {
                     case "RIPEMD-128":
                         return eHashAlogorithm.RIPEMD128;
-                    case "RIPEMD-160":
-                        return eHashAlogorithm.RIPEMD160;
                     case "SHA-1":
                         return eHashAlogorithm.SHA1;
                     default:
@@ -229,8 +223,6 @@ namespace OfficeOpenXml.Encryption
                 {
                     case eHashAlogorithm.RIPEMD128:
                         return "RIPEMD-128";
-                    case eHashAlogorithm.RIPEMD160:
-                        return "RIPEMD-160";
                     case eHashAlogorithm.SHA1:
                         return "SHA-1";
                     default: 
