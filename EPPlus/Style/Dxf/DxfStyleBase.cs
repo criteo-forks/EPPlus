@@ -25,7 +25,7 @@ namespace OfficeOpenXml.Style.Dxf
             {
                 if (color.Color != null)
                 {
-                    SetValue(helper, path + "/@rgb", color.Color.Value.ToArgb().ToString("x"));
+                    SetValue(helper, path + "/@rgb", color.Color.ToArgb().ToString("x"));
                 }
                 else if (color.Auto != null)
                 {

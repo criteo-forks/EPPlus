@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using System.Drawing;
+using IronSoftware.Drawing;
 using System.IO;
 using OfficeOpenXml.Drawing;
 using OfficeOpenXml.Packaging;
@@ -66,7 +66,7 @@ namespace OfficeOpenXml
         /// The background image of the worksheet. 
         /// The image will be saved internally as a jpg.
         /// </summary>
-        public Image Image
+        public AnyBitmap Image
         {
             get
             {
@@ -75,7 +75,7 @@ namespace OfficeOpenXml
                 {
                     var rel = _workSheet.Part.GetRelationship(relID);
                     var imagePart = _workSheet.Part.Package.GetPart(UriHelper.ResolvePartUri(rel.SourceUri, rel.TargetUri));
-                    return Image.FromStream(imagePart.GetStream());
+                    return AnyBitmap.FromStream(imagePart.GetStream());
                 }
                 return null;
             }
@@ -88,12 +88,7 @@ namespace OfficeOpenXml
                 }
                 else
                 {
-#if (Core)
-                    var img=ImageCompat.GetImageAsByteArray(value);
-#else
-                    ImageConverter ic = new ImageConverter();
-                    byte[] img = (byte[])ic.ConvertTo(value, typeof(byte[]));
-#endif
+                    var img = value.ExportBytes();
                     var ii = _workSheet.Workbook._package.AddImage(img);
                     var rel = _workSheet.Part.CreateRelationship(ii.Uri, Packaging.TargetMode.Internal, ExcelPackage.schemaRelationships + "/image");
                     SetXmlNodeString(BACKGROUNDPIC_PATH, rel.Id);
@@ -109,12 +104,12 @@ namespace OfficeOpenXml
         {
             DeletePrevImage();
 
-            Image img;
+            AnyBitmap img;
             byte[] fileBytes;
             try
             {
                 fileBytes = File.ReadAllBytes(PictureFile.FullName);
-                img = Image.FromFile(PictureFile.FullName);
+                img = AnyBitmap.FromFile(PictureFile.FullName);
             }
             catch (Exception ex)
             {
@@ -147,12 +142,7 @@ namespace OfficeOpenXml
             var relID = GetXmlNodeString(BACKGROUNDPIC_PATH);
             if (relID != "")
             {
-#if (Core)
-                var img=ImageCompat.GetImageAsByteArray(Image);
-#else
-                var ic = new ImageConverter();
-                byte[] img = (byte[])ic.ConvertTo(Image, typeof(byte[]));
-#endif
+                var img = Image.ExportBytes();
                 var ii = _workSheet.Workbook._package.GetImageInfo(img);
 
                 //Delete the relation

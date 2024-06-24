@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Globalization;
-using System.Drawing;
+using IronSoftware.Drawing;
 
 
 namespace OfficeOpenXml.Drawing.Vml
@@ -133,7 +133,7 @@ namespace OfficeOpenXml.Drawing.Vml
         /// <summary>
         /// The image
         /// </summary>
-        public Image Image
+        public AnyBitmap Image
         {
             get
             {
@@ -141,7 +141,7 @@ namespace OfficeOpenXml.Drawing.Vml
                 if (pck.PartExists(ImageUri))
                 {
                     var part = pck.GetPart(ImageUri);
-                    return Image.FromStream(part.GetStream());
+                    return AnyBitmap.FromStream(part.GetStream());
                 }
                 else
                 {

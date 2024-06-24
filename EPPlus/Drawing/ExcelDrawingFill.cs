@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-using System.Drawing;
+using IronSoftware.Drawing;
 
 namespace OfficeOpenXml.Drawing
 {

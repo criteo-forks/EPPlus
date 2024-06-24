@@ -35,7 +35,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml;
 using OfficeOpenXml.Drawing;
-using System.Drawing;
+using IronSoftware.Drawing;
 
 namespace OfficeOpenXml.Style
 {
@@ -295,8 +295,8 @@ namespace OfficeOpenXml.Style
         /// <param name="Font"></param>
         public void SetFromFont(Font Font)
         {
-            LatinFont = Font.Name;
-            ComplexFont = Font.Name;
+            LatinFont = Font.FamilyName;
+            ComplexFont = Font.FamilyName;
             Size = Font.Size;
             if (Font.Bold) Bold = Font.Bold;
             if (Font.Italic) Italic = Font.Italic;

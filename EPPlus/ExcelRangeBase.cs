@@ -39,9 +39,9 @@ using System.Threading;
 using OfficeOpenXml.FormulaParsing;
 using OfficeOpenXml.Style;
 using System.Xml;
-using System.Drawing;
 using System.Globalization;
 using System.Collections;
+using System.Drawing;
 using OfficeOpenXml.Table;
 using System.Text.RegularExpressions;
 using System.IO;
@@ -57,6 +57,9 @@ using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using w = System.Windows;
 using OfficeOpenXml.Utils;
 using OfficeOpenXml.Compatibility;
+using SixLabors.Fonts;
+using Font = IronSoftware.Drawing.Font;
+using FontStyle = IronSoftware.Drawing.FontStyle;
 
 namespace OfficeOpenXml
 {
@@ -860,7 +863,7 @@ namespace OfficeOpenXml
             if (nf.UnderLine) fs |= FontStyle.Underline;
             if (nf.Italic) fs |= FontStyle.Italic;
             if (nf.Strike) fs |= FontStyle.Strikeout;
-            var nfont = new Font(nf.Name, nf.Size, fs);
+            var nfont = new Font(nf.Name, fs, nf.Size);
 
             var normalSize = Convert.ToSingle(ExcelWorkbook.GetWidthPixels(nf.Name, nf.Size));
 
@@ -898,7 +901,7 @@ namespace OfficeOpenXml
                     if (fnt.UnderLine) fs |= FontStyle.Underline;
                     if (fnt.Italic) fs |= FontStyle.Italic;
                     if (fnt.Strike) fs |= FontStyle.Strikeout;
-                    f = new Font(fnt.Name, fnt.Size, fs);
+                    f = new Font(fnt.Name, fs, fnt.Size);
 
                     fontCache.Add(fntID, f);
                 }
@@ -906,7 +909,7 @@ namespace OfficeOpenXml
                 var textForWidth = cell.TextForWidth;
                 var t = textForWidth + (ind > 0 && !string.IsNullOrEmpty(textForWidth) ? new string('_', ind) : "");
                 if (t.Length > 32000) t = t.Substring(0, 32000); //Issue
-                var size = g.MeasureString(t, f, 10000, StringFormat.GenericDefault);
+                var size = TextMeasurer.MeasureSize(t, new TextOptions(f));
 
                 double width;
                 double r = styles.CellXfs[cell.StyleID].TextRotation;

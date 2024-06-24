@@ -33,7 +33,7 @@
 using System;
 using System.Xml;
 using System.Text.RegularExpressions;
-using System.Drawing;
+using IronSoftware.Drawing;
 using System.Collections.Generic;
 using OfficeOpenXml.Drawing.Vml;
 using System.IO;
@@ -122,17 +122,12 @@ namespace OfficeOpenXml
         /// </summary>
         /// <param name="Picture">The image object containing the Picture</param>
         /// <param name="Alignment">Alignment. The image object will be inserted at the end of the Text.</param>
-        public ExcelVmlDrawingPicture InsertPicture(Image Picture, PictureAlignment Alignment)
+        public ExcelVmlDrawingPicture InsertPicture(AnyBitmap Picture, PictureAlignment Alignment)
         {
             string id = ValidateImage(Alignment);
 
             //Add the image
-#if (Core)
-            var img=ImageCompat.GetImageAsByteArray(Picture);
-#else
-            ImageConverter ic = new ImageConverter();
-            byte[] img = (byte[])ic.ConvertTo(Picture, typeof(byte[]));
-#endif
+	        var img = Picture.ExportBytes();
 
 
             var ii = _ws.Workbook._package.AddImage(img);
@@ -148,14 +143,14 @@ namespace OfficeOpenXml
         {
             string id = ValidateImage(Alignment);
 
-            Image Picture;
+            AnyBitmap Picture;
             try
             {
                 if (!PictureFile.Exists)
                 {
                     throw (new FileNotFoundException(string.Format("{0} is missing", PictureFile.FullName)));
                 }
-                Picture = Image.FromFile(PictureFile.FullName);
+                Picture = AnyBitmap.FromFile(PictureFile.FullName);
             }
             catch (Exception ex)
             {
@@ -164,22 +159,17 @@ namespace OfficeOpenXml
 
             string contentType = ExcelPicture.GetContentType(PictureFile.Extension);
             var uriPic = XmlHelper.GetNewUri(_ws._package.Package, "/xl/media/" + PictureFile.Name.Substring(0, PictureFile.Name.Length-PictureFile.Extension.Length) + "{0}" + PictureFile.Extension);
-#if (Core)
-            var imgBytes=ImageCompat.GetImageAsByteArray(Picture);
-#else
-            var ic = new ImageConverter();
-            byte[] imgBytes = (byte[])ic.ConvertTo(Picture, typeof(byte[]));
-#endif
+	        var imgBytes = Picture.ExportBytes();
 
             var ii = _ws.Workbook._package.AddImage(imgBytes, uriPic, contentType);
 
             return AddImage(Picture, id, ii);
         }
 
-        private ExcelVmlDrawingPicture AddImage(Image Picture, string id, ExcelPackage.ImageInfo ii)
+        private ExcelVmlDrawingPicture AddImage(AnyBitmap Picture, string id, ExcelPackage.ImageInfo ii)
         {
-            double width = Picture.Width * 72 / Picture.HorizontalResolution,      //Pixel --> Points
-                   height = Picture.Height * 72 / Picture.VerticalResolution;      //Pixel --> Points
+	        double width = (Picture.Width * 72 / Picture.HorizontalResolution).Value;      //Pixel --> Points
+            double height = (Picture.Height * 72 / Picture.VerticalResolution).Value;      //Pixel --> Points
             //Add VML-drawing            
             return _ws.HeaderFooter.Pictures.Add(id, ii.Uri, "", width, height);
         }

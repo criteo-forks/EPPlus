@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using System.Drawing;
+using IronSoftware.Drawing;
 using System.Globalization;
 
 namespace OfficeOpenXml.Style
@@ -130,7 +130,7 @@ namespace OfficeOpenXml.Style
                 ExcelRichText prevItem = _list[index < _list.Count ? index : _list.Count - 1];
                 rt.FontName = prevItem.FontName;
                 rt.Size = prevItem.Size;
-                if (prevItem.Color.IsEmpty)
+                if (prevItem.Color == Color.Empty)
                 {
                     rt.Color = Color.Black;
                 }

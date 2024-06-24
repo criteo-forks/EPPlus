@@ -35,8 +35,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml;
 using System.IO;
-using System.Drawing;
-using System.Drawing.Imaging;
+using IronSoftware.Drawing;
 using System.Diagnostics;
 using OfficeOpenXml.Utils;
 using OfficeOpenXml.Compatibility;
@@ -61,14 +60,9 @@ namespace OfficeOpenXml.Drawing
                 Part = drawings.Part.Package.GetPart(UriPic);
                 FileInfo f = new FileInfo(UriPic.OriginalString);
                 ContentType = GetContentType(f.Extension);
-                _image = Image.FromStream(Part.GetStream());
-
-#if (Core)
-                byte[] iby = ImageCompat.GetImageAsByteArray(_image);
-#else
-                ImageConverter ic =new ImageConverter();
-                var iby=(byte[])ic.ConvertTo(_image, typeof(byte[]));
-#endif
+                _image = AnyBitmap.FromStream(Part.GetStream());
+                
+                var iby = _image.ExportBytes();
                 var ii = _drawings._package.LoadImage(iby, UriPic, Part);
                 ImageHash = ii.Hash;
 
@@ -90,7 +84,7 @@ namespace OfficeOpenXml.Drawing
                 }
             }
         }
-        internal ExcelPicture(ExcelDrawings drawings, XmlNode node, Image image, Uri hyperlink) :
+        internal ExcelPicture(ExcelDrawings drawings, XmlNode node, AnyBitmap image, Uri hyperlink) :
             base(drawings, node, "xdr:pic/xdr:nvPicPr/xdr:cNvPr/@name")
         {
             XmlElement picNode = node.OwnerDocument.CreateElement("xdr", "pic", ExcelPackage.schemaSheetDrawings);
@@ -126,14 +120,9 @@ namespace OfficeOpenXml.Drawing
             var package = drawings.Worksheet._package.Package;
             ContentType = GetContentType(imageFile.Extension);
             var imagestream = new FileStream(imageFile.FullName, FileMode.Open, FileAccess.Read);
-            _image = Image.FromStream(imagestream);
-
-#if (Core)
-            var img=ImageCompat.GetImageAsByteArray(_image);
-#else
-            ImageConverter ic = new ImageConverter();
-            var img = (byte[])ic.ConvertTo(_image, typeof(byte[]));
-#endif
+            _image = AnyBitmap.FromStream(imagestream);
+            
+            var img = _image.ExportBytes();
 
             imagestream.Close();
             UriPic = GetNewUri(package, "/xl/media/{0}" + imageFile.Name);
@@ -195,26 +184,24 @@ namespace OfficeOpenXml.Drawing
 
             }
         }
-        internal static ImageFormat GetImageFormat(string contentType)
+        internal static AnyBitmap.ImageFormat GetImageFormat(string contentType)
         {
             switch (contentType.ToLower(CultureInfo.InvariantCulture))
             {
                 case "image/bmp":
-                    return ImageFormat.Bmp;
+                    return AnyBitmap.ImageFormat.Bmp;
                 case "image/jpeg":
-                    return ImageFormat.Jpeg;
+                    return AnyBitmap.ImageFormat.Jpeg;
                 case "image/gif":
-                    return ImageFormat.Gif;
+                    return AnyBitmap.ImageFormat.Gif;
                 case "image/png":
-                    return ImageFormat.Png;
-                case "image/x-emf":
-                    return ImageFormat.Emf;
+                    return AnyBitmap.ImageFormat.Png;
                 case "image/x-tiff":
-                    return ImageFormat.Tiff;
+                    return AnyBitmap.ImageFormat.Tiff;
                 case "image/x-wmf":
-                    return ImageFormat.Wmf;
+                    return AnyBitmap.ImageFormat.Wmf;
                 default:
-                    return ImageFormat.Jpeg;
+                    return AnyBitmap.ImageFormat.Jpeg;
 
             }
         }        //Add a new image to the compare collection
@@ -226,14 +213,9 @@ namespace OfficeOpenXml.Drawing
             //_drawings._pics.Add(newPic);
         }
         #endregion
-        private string SavePicture(Image image)
+        private string SavePicture(AnyBitmap image)
         {
-#if (Core)
-            byte[] img = ImageCompat.GetImageAsByteArray(image);
-#else
-            ImageConverter ic = new ImageConverter();
-            byte[] img = (byte[])ic.ConvertTo(image, typeof(byte[]));
-#endif
+            var img = image.ExportBytes();
             var ii = _drawings._package.AddImage(img);
             
 
@@ -259,11 +241,11 @@ namespace OfficeOpenXml.Drawing
 
             return RelPic.Id;
         }
-        private void SetPosDefaults(Image image)
+        private void SetPosDefaults(AnyBitmap image)
         {
             EditAs = eEditAs.OneCell;
-            SetPixelWidth(image.Width, image.HorizontalResolution);
-            SetPixelHeight(image.Height, image.VerticalResolution);
+            SetPixelWidth(image.Width, (float)image.HorizontalResolution.Value);
+            SetPixelHeight(image.Height, (float)image.VerticalResolution.Value);
         }
 
         private string PicStartXml()
@@ -302,11 +284,11 @@ namespace OfficeOpenXml.Drawing
         }
 
         internal string ImageHash { get; set; }
-        Image _image = null;
+        AnyBitmap _image = null;
         /// <summary>
         /// The Image
         /// </summary>
-        public Image Image 
+        public AnyBitmap Image 
         {
             get
             {
@@ -332,12 +314,12 @@ namespace OfficeOpenXml.Drawing
                 }
             }
         }
-        ImageFormat _imageFormat=ImageFormat.Jpeg;
+        AnyBitmap.ImageFormat _imageFormat=AnyBitmap.ImageFormat.Jpeg;
         /// <summary>
         /// Image format
         /// If the picture is created from an Image this type is always Jpeg
         /// </summary>
-        public ImageFormat ImageFormat
+        public AnyBitmap.ImageFormat ImageFormat
         {
             get
             {
@@ -372,8 +354,8 @@ namespace OfficeOpenXml.Drawing
                 _width = (int)(_width * ((decimal)Percent / 100));
                 _height = (int)(_height * ((decimal)Percent / 100));
 
-                SetPixelWidth(_width, Image.HorizontalResolution);
-                SetPixelHeight(_height, Image.VerticalResolution);
+                SetPixelWidth(_width, (float)Image.HorizontalResolution);
+                SetPixelHeight(_height, (float)Image.VerticalResolution);
             }
         }
         internal Uri UriPic { get; set; }

@@ -32,7 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
+using IronSoftware.Drawing;
 
 namespace OfficeOpenXml.Style
 {
@@ -215,7 +215,7 @@ namespace OfficeOpenXml.Style
         /// <param name="Font"></param>
         public void SetFromFont(Font Font)
         {
-            Name = Font.Name;
+            Name = Font.FamilyName;
             //Family=fnt.FontFamily.;
             Size = (int)Font.Size;
             Strike = Font.Strikeout;
