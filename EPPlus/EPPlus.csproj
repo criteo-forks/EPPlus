@@ -5,7 +5,7 @@
     <RootNamespace>OfficeOpenXml</RootNamespace>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <DefineConstants>Core</DefineConstants>
-    <Version>4.5.3.3-criteo1</Version>
+    <Version>4.5.3.3-criteo2</Version>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Compatibility\ImageCompat.cs" />
@@ -15,7 +15,8 @@
   </ItemGroup>
   <PropertyGroup />
   <ItemGroup>
-    <PackageReference Include="IronSoftware.System.Drawing" Version="2024.7.2" />
+    <PackageReference Include="IronSoftware.System.Drawing" Version="2023.3.3" />
+    <PackageReference Include="SixLabors.Fonts" Version="1.0.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.4" />
   </ItemGroup>
