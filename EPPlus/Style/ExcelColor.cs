@@ -112,7 +112,7 @@ namespace OfficeOpenXml.Style
         /// <param name="color">The color</param>
         public void SetColor(Color color)
         {
-            Rgb = (color ?? Color.Empty).ToArgb().ToString("X");
+            Rgb = (color?.ToArgb() ?? 0).ToString("X");
         }
         /// <summary>
         /// Set the color of the object
