@@ -173,7 +173,7 @@ namespace OfficeOpenXml.Drawing
                 }
                 CreateNode(_fillPath, false);
                 //fix ArgumentOutOfRangeException for Fill colors for solid fills with an alpha-value from zero (100% transparency)
-                SetXmlNodeString(_fillPath + ColorPath, value.ToArgb().ToString("X8").Substring(2));
+                SetXmlNodeString(_fillPath + ColorPath, (value ?? Color.Empty).ToArgb().ToString("X8").Substring(2));
             }
         }
         const string alphaPath = "/a:solidFill/a:srgbClr/a:alpha/@val";

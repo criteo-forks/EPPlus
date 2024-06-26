@@ -307,7 +307,7 @@ namespace OfficeOpenXml.Style
             set
             {
                 _collection.ConvertRichtext();
-                SetXmlNodeString(COLOR_PATH, value.ToArgb().ToString("X")/*.Substring(2, 6)*/);
+                SetXmlNodeString(COLOR_PATH, (value ?? Color.Empty).ToArgb().ToString("X")/*.Substring(2, 6)*/);
                 if (_callback != null) _callback();
             }
         }

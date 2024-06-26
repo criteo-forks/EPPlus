@@ -231,7 +231,7 @@ namespace OfficeOpenXml.ConditionalFormatting
             }
             set
             {
-                SetXmlNodeString(_colorPath, value.ToArgb().ToString("X"));
+                SetXmlNodeString(_colorPath, (value ?? Color.Empty).ToArgb().ToString("X"));
             }
         }
     }

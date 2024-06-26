@@ -233,7 +233,7 @@ namespace OfficeOpenXml.Style
             set
             {
                 CreateTopNode();
-                SetXmlNodeString(_colorPath, value.ToArgb().ToString("X").Substring(2, 6));
+                SetXmlNodeString(_colorPath, (value ?? Color.Empty).ToArgb().ToString("X").Substring(2, 6));
             }
         }
         #region "Translate methods"
