@@ -895,7 +895,18 @@ namespace OfficeOpenXml
                 var textForWidth = cell.TextForWidth;
                 var t = textForWidth + (ind > 0 && !string.IsNullOrEmpty(textForWidth) ? new string('_', ind) : "");
                 if (t.Length > 32000) t = t.Substring(0, 32000); //Issue
-                var size = TextMeasurer.MeasureSize(t, new TextOptions(f));
+                var unpaddedSize = TextMeasurer.MeasureSize(t, new TextOptions(f) {Dpi = 92});
+
+                // TextMeasurer.MeasureSize returns a different size compared to Graphics.MeasureString
+                // The function from System.Drawing.Common adds a padding around the text before measuring,
+                // while the function SixLabors.Fonts returns the absolute minimum space required to fit the text
+                // The Graphics.MeasureString was replaced by TextMeasurer.MeasureSize to be able to continue using
+                // EPPlus on net8 on linux, but now we need to "hackily" add back the padding to avoid the breaking change.
+                // Empirically the difference between the two sizes is usually the width of the "Q" character and half its height
+                var paddingSize = TextMeasurer.MeasureSize("Q", new TextOptions(f) {Dpi = 92});
+                var size = new FontRectangle(unpaddedSize.X, unpaddedSize.Y,
+                    unpaddedSize.Width + paddingSize.Width,
+                    unpaddedSize.Height + paddingSize.Height/2);
 
                 double width;
                 double r = styles.CellXfs[cell.StyleID].TextRotation;
